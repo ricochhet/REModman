@@ -59,6 +59,40 @@ namespace REFramework.Utils
             return string.Empty;
         }
 
+        public static void CopyFile(string folderPath, string destinationPath, bool suppressLogs)
+        {
+            if (createDirectories) Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
+
+            LineWriter(new string[] {
+                "[COPY] VARIABLE(folderPath)      : " + folderPath,
+                "[COPY] VARIABLE(destinationPath) : " + destinationPath,
+                "[COPY] OPERATION(srcPathToFile)  : " + folderPath,
+                "[COPY] OPERATION(destPathToFile) : " + destinationPath
+            }, suppressLogs);
+
+            if (debug) return;
+
+            if (File.Exists(folderPath))
+            {
+                File.Copy(folderPath, destinationPath, true);
+                if (logMd5)
+                {
+                    LineWriter(new string[] {
+                        "[COPY] MD5(srcPathToFile)        : " + Md5Checksum(folderPath),
+                        "[COPY] MD5(destPathToFile)       : " + Md5Checksum(destinationPath),
+                    }, suppressLogs);
+                }
+
+                if (logSha256)
+                {
+                    LineWriter(new string[] {
+                        "[COPY] SHA256(srcPathToFile)        : " + Sha256Checksum(folderPath),
+                        "[COPY] SHA256(destPathToFile)       : " + Sha256Checksum(destinationPath),
+                    }, suppressLogs);
+                }
+            }
+        }
+
         public static void CopyFile(string folderPath, string fileName, string destinationPath, bool suppressLogs)
         {
             if (createDirectories) Directory.CreateDirectory(destinationPath);

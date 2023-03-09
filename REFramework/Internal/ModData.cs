@@ -8,15 +8,19 @@ namespace REFramework.Data
         public string Description { get; set; }
         public string Author { get; set; }
         public string Version { get; set; }
-        public string LoadAfter { get; set; }
+        public string LoadOrder { get; set; }
         public string Path { get; set; }
+        public string Guid { get; set; }
         public List<ModFile> ModFiles { get; set; }
     }
 
     public class ModFile
     {
+        public string LocalFilePath { get; set; }
         public string SourceRelativePath { get; set; }
         public string SourceAbsolutePath { get; set; }
+        public string InstallRelativePath { get; set; }
+        public string InstallAbsolutePath { get; set; }
         public string SHA256 { get; set; }
         public string MD5 { get; set; }
     }

@@ -11,8 +11,8 @@ namespace REFramework.Internal
         {
             string appId = type switch
             {
-                GameType.Rise => Constants.MONSTER_HUNTER_RISE_APP_ID,
-                GameType.World => Constants.MONSTER_HUNTER_WORLD_APP_ID,
+                GameType.MonsterHunterRise => Constants.MONSTER_HUNTER_RISE_APP_ID,
+                GameType.MonsterHunterWorld => Constants.MONSTER_HUNTER_WORLD_APP_ID,
                 _ => throw new NotImplementedException(),
             };
 

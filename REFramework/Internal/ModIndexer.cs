@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Collections.Generic;
 using IniParser;
@@ -7,61 +8,129 @@ using IniParser.Model;
 using REFramework.Utils;
 using REFramework.Data;
 using REFramework.Configuration;
-// rename this to mod indexer or something lol
+using REFramework.Configuration.Enums;
+
 namespace REFramework.Internal
 {
-    public class ModManager
+    public class ModIndexer
     {
-        public static List<ModData> IndexModDirectory(string directory)
+        public static void CreateDataFolder()
+        {
+            if (!File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.MOD_INDEX_FILE)))
+            {
+                FileStreamHelper.WriteFile(Constants.DATA_FOLDER, Constants.MOD_INDEX_FILE, "[]", false);
+            }
+
+            if (!File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.MOD_LIST_FILE)))
+            {
+                FileStreamHelper.WriteFile(Constants.DATA_FOLDER, Constants.MOD_LIST_FILE, "[]", false);
+            }
+        }
+
+        public static void DeleteDataFolder()
+        {
+            if (Directory.Exists(Constants.DATA_FOLDER))
+            {
+                Directory.Delete(Constants.DATA_FOLDER, true);
+            }
+        }
+
+        public static void CreateModFolder(GameType type)
+        {
+            string gameModFolder = type switch
+            {
+                GameType.MonsterHunterRise => Constants.MONSTER_HUNTER_RISE_MOD_FOLDER,
+                GameType.MonsterHunterWorld => Constants.MONSTER_HUNTER_WORLD_MOD_FOLDER,
+                _ => throw new NotImplementedException(),
+            };
+
+            if (!Directory.Exists(Path.Combine(Constants.MODS_FOLDER, gameModFolder)))
+            {
+                Directory.CreateDirectory(Path.Combine(Constants.MODS_FOLDER, gameModFolder));
+            }
+        }
+
+        public static List<ModData> IndexModDirectory(GameType type)
         {
             List<ModData> modList = new List<ModData>();
             IniDataParser parser = new IniDataParser();
 
-            foreach (string data in FileStreamHelper.GetFiles(directory, Constants.MOD_INFO, false))
+            string gameName = type switch
             {
-                byte[] bytes = FileStreamHelper.ReadFile(data);
-                string file = FileStreamHelper.UnkBytesToStr(bytes);
-                IniData modIni = parser.Parse(file);
-                PropertyCollection modInfo = modIni["modinfo"];
-                string modPath = Path.Join(Path.GetDirectoryName(data), modInfo["files"]);
+                GameType.MonsterHunterRise => Constants.MONSTER_HUNTER_RISE_MOD_FOLDER,
+                GameType.MonsterHunterWorld => Constants.MONSTER_HUNTER_WORLD_MOD_FOLDER,
+                _ => throw new NotImplementedException(),
+            };
 
-                if (Directory.Exists(modPath))
+            if (Directory.Exists(Path.Combine(Constants.MODS_FOLDER, gameName)))
+            {
+                string gameModFolder = Path.Combine(Constants.MODS_FOLDER, gameName);
+
+                foreach (string data in FileStreamHelper.GetFiles(gameModFolder, Constants.MOD_INFO_FILE, false))
                 {
-                    List<ModFile> modFiles = new List<ModFile>();
+                    byte[] bytes = FileStreamHelper.ReadFile(data);
+                    string file = FileStreamHelper.UnkBytesToStr(bytes);
+                    IniData modIni = parser.Parse(file);
+                    PropertyCollection modInfo = modIni["modinfo"];
+                    string modPath = Path.Join(Path.GetDirectoryName(data), modInfo["files"]);
 
-                    foreach (string filePath in FileStreamHelper.GetFiles(modPath, "*.*", false))
+                    if (Directory.Exists(modPath))
                     {
-                        string sha256 = FileStreamHelper.Sha256Checksum(filePath);
-                        string md5 = FileStreamHelper.Md5Checksum(filePath);
+                        List<ModFile> modFiles = new List<ModFile>();
 
-                        modFiles.Add(new ModFile
+                        foreach (string filePath in FileStreamHelper.GetFiles(modPath, "*.*", false))
                         {
-                            SourceRelativePath = filePath,
-                            SourceAbsolutePath = PathHelper.GetAbsolutePath(filePath),
-                            SHA256 = sha256,
-                            MD5 = md5
+                            string sha256 = FileStreamHelper.Sha256Checksum(filePath);
+                            string md5 = FileStreamHelper.Md5Checksum(filePath);
+
+                            modFiles.Add(new ModFile
+                            {
+                                LocalFilePath = "." + filePath.Substring(StringHelper.IndexOfNth(filePath, "\\", 2)),
+                                SourceRelativePath = filePath,
+                                SourceAbsolutePath = PathHelper.GetAbsolutePath(filePath),
+                                SHA256 = sha256,
+                                MD5 = md5
+                            });
+                        }
+
+                        modList.Add(new ModData
+                        {
+                            Name = modInfo["name"],
+                            Description = modInfo["description"],
+                            Author = modInfo["author"],
+                            Version = modInfo["version"],
+                            LoadOrder = modIni["user"]["loadOrder"],
+                            Path = modInfo["files"],
+                            Guid = Guid.NewGuid().ToString(),
+                            ModFiles = modFiles
                         });
                     }
-
-                    modList.Add(new ModData
-                    {
-                        Name = modInfo["name"],
-                        Description = modInfo["description"],
-                        Author = modInfo["author"],
-                        Version = modInfo["version"],
-                        LoadAfter = string.Empty,
-                        Path = modInfo["files"],
-                        ModFiles = modFiles
-                    });
                 }
             }
 
-            return modList;
+            return modList.OrderBy(o => o.LoadOrder).ToList();
         }
 
-        public static void WriteModIndex(string directory, List<ModData> modList)
+        public static List<ModData> DeserializeModIndex()
         {
-            FileStreamHelper.WriteFile(directory, Constants.MOD_INDEX, JsonSerializer.Serialize(modList, new JsonSerializerOptions { WriteIndented = true }), false);
+            List<ModData> modData = new List<ModData>();
+
+            if (Directory.Exists(Constants.DATA_FOLDER))
+            {
+                if (File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.MOD_INDEX_FILE)))
+                {
+                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(Constants.DATA_FOLDER, Constants.MOD_INDEX_FILE));
+                    string file = FileStreamHelper.UnkBytesToStr(bytes);
+                    modData = JsonSerializer.Deserialize<List<ModData>>(file);
+                }
+            }
+
+            return modData;
+        }
+
+        public static void SaveModIndex(List<ModData> modList)
+        {
+            FileStreamHelper.WriteFile(Constants.DATA_FOLDER, Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(modList, new JsonSerializerOptions { WriteIndented = true }), false);
         }
     }
 }
