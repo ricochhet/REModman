@@ -19,15 +19,18 @@ namespace REFramework.Internal
 
             foreach (ModData mod in modData)
             {
+                installList.Add(mod);
+                
                 if (selectedMods.ContainsKey(mod.Name))
                 {
                     if (selectedMods[mod.Name] == mod.Guid)
                     {
-                        installList.Remove(mod);
                         foreach (ModFile file in mod.ModFiles)
                         {
                             File.Delete(file.InstallAbsolutePath);
                         }
+
+                        installList.Remove(mod);
                     }
                 }
             }
