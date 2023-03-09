@@ -17,7 +17,5 @@ namespace REFramework.Configuration
         public const string MONSTER_HUNTER_RISE_APP_ID = "1446780";
         public const string MONSTER_HUNTER_RISE_MOD_FOLDER = "MonsterHunterRise";
         public const string MONSTER_HUNTER_RISE_PROC_NAME = "MonsterHunterRise";
-
-        public const string RE_ENGINE_DEFAULT_PAK_NAME = "re_chunk_000.pak.patch_000.pak";
     }
 }

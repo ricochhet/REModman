@@ -56,7 +56,6 @@ namespace REFramework.Internal
             if (Directory.Exists(Path.Combine(Constants.MODS_FOLDER, gameName)))
             {
                 string gameModFolder = Path.Combine(Constants.MODS_FOLDER, gameName);
-
                 foreach (string data in FileStreamHelper.GetFiles(gameModFolder, Constants.MOD_INFO_FILE, false))
                 {
                     byte[] bytes = FileStreamHelper.ReadFile(data);
@@ -95,7 +94,6 @@ namespace REFramework.Internal
                     else if (Directory.Exists(modPath))
                     {
                         List<ModFile> modFiles = new List<ModFile>();
-
                         foreach (string filePath in FileStreamHelper.GetFiles(modPath, "*.*", false))
                         {
                             string sha256 = FileStreamHelper.Sha256Checksum(filePath);
