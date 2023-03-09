@@ -8,6 +8,7 @@ using IniParser.Model;
 using REFramework.Utils;
 using REFramework.Data;
 using REFramework.Configuration;
+using REFramework.Configuration.Enums;
 
 namespace REFramework.Internal
 {
@@ -20,7 +21,7 @@ namespace REFramework.Internal
             foreach (ModData mod in modData)
             {
                 installList.Add(mod);
-                
+
                 if (selectedMods.ContainsKey(mod.Name))
                 {
                     if (selectedMods[mod.Name] == mod.Guid)
@@ -73,15 +74,17 @@ namespace REFramework.Internal
             }
         }
 
-        public static List<ModData> DeserializeModList()
+        public static List<ModData> DeserializeModList(GameType type)
         {
             List<ModData> modData = new List<ModData>();
+            string gameModFolder = EnumSwitch.GetModFolder(type);
+            string gameDataFolder = Path.Combine(Constants.DATA_FOLDER, gameModFolder);
 
-            if (Directory.Exists(Constants.DATA_FOLDER))
+            if (Directory.Exists(gameDataFolder))
             {
-                if (File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.MOD_LIST_FILE)))
+                if (File.Exists(Path.Combine(gameDataFolder, Constants.MOD_LIST_FILE)))
                 {
-                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(Constants.DATA_FOLDER, Constants.MOD_LIST_FILE));
+                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(gameDataFolder, Constants.MOD_LIST_FILE));
                     string file = FileStreamHelper.UnkBytesToStr(bytes);
                     modData = JsonSerializer.Deserialize<List<ModData>>(file);
                 }
@@ -90,9 +93,11 @@ namespace REFramework.Internal
             return modData;
         }
 
-        public static void SaveModList(List<ModData> modList)
+        public static void SaveModList(GameType type, List<ModData> modList)
         {
-            FileStreamHelper.WriteFile(Constants.DATA_FOLDER, Constants.MOD_LIST_FILE, JsonSerializer.Serialize(modList, new JsonSerializerOptions { WriteIndented = true }), false);
+            string gameModFolder = EnumSwitch.GetModFolder(type);
+            string gameDataFolder = Path.Combine(Constants.DATA_FOLDER, gameModFolder);
+            FileStreamHelper.WriteFile(gameDataFolder, Constants.MOD_LIST_FILE, JsonSerializer.Serialize(modList, new JsonSerializerOptions { WriteIndented = true }), false);
         }
     }
 }

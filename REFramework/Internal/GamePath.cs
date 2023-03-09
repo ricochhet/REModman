@@ -16,20 +16,8 @@ namespace REFramework.Internal
     {
         public static void SaveGamePath(GameType type)
         {
-            string gameName = type switch
-            {
-                GameType.MonsterHunterRise => Constants.MONSTER_HUNTER_RISE_PROC_NAME,
-                GameType.MonsterHunterWorld => Constants.MONSTER_HUNTER_WORLD_PROC_NAME,
-                _ => throw new NotImplementedException(),
-            };
-
-            string gameModFolder = type switch
-            {
-                GameType.MonsterHunterRise => Constants.MONSTER_HUNTER_RISE_MOD_FOLDER,
-                GameType.MonsterHunterWorld => Constants.MONSTER_HUNTER_WORLD_MOD_FOLDER,
-                _ => throw new NotImplementedException(),
-            };
-
+            string gameName = EnumSwitch.GetProcName(type);
+            string gameModFolder = EnumSwitch.GetModFolder(type);
             int id = ProcessHelper.GetProcIdFromName(gameName);
             
             if (Directory.Exists(Constants.DATA_FOLDER))
@@ -40,13 +28,7 @@ namespace REFramework.Internal
 
         public static string GetSavedGamePath(GameType type)
         {
-            string gameModFolder = type switch
-            {
-                GameType.MonsterHunterRise => Constants.MONSTER_HUNTER_RISE_MOD_FOLDER,
-                GameType.MonsterHunterWorld => Constants.MONSTER_HUNTER_WORLD_MOD_FOLDER,
-                _ => throw new NotImplementedException(),
-            };
-
+            string gameModFolder = EnumSwitch.GetModFolder(type);
             string dataPath = Path.Combine(Constants.DATA_FOLDER, gameModFolder);
             if (File.Exists(Path.Combine(dataPath, Constants.GAME_PATH_STORE)))
             {

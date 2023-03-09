@@ -16,13 +16,7 @@ namespace REFramework.Internal
     {
         public static void CreateDataFolder(GameType type)
         {
-            string gameModFolder = type switch
-            {
-                GameType.MonsterHunterRise => Constants.MONSTER_HUNTER_RISE_MOD_FOLDER,
-                GameType.MonsterHunterWorld => Constants.MONSTER_HUNTER_WORLD_MOD_FOLDER,
-                _ => throw new NotImplementedException(),
-            };
-
+            string gameModFolder = EnumSwitch.GetModFolder(type);
             string gameDataFolder = Path.Combine(Constants.DATA_FOLDER, gameModFolder);
 
             if (!File.Exists(Path.Combine(gameDataFolder, Constants.MOD_INDEX_FILE)))
@@ -46,13 +40,7 @@ namespace REFramework.Internal
 
         public static void CreateModFolder(GameType type)
         {
-            string gameModFolder = type switch
-            {
-                GameType.MonsterHunterRise => Constants.MONSTER_HUNTER_RISE_MOD_FOLDER,
-                GameType.MonsterHunterWorld => Constants.MONSTER_HUNTER_WORLD_MOD_FOLDER,
-                _ => throw new NotImplementedException(),
-            };
-
+            string gameModFolder = EnumSwitch.GetModFolder(type);
             if (!Directory.Exists(Path.Combine(Constants.MODS_FOLDER, gameModFolder)))
             {
                 Directory.CreateDirectory(Path.Combine(Constants.MODS_FOLDER, gameModFolder));
@@ -63,13 +51,7 @@ namespace REFramework.Internal
         {
             List<ModData> modList = new List<ModData>();
             IniDataParser parser = new IniDataParser();
-
-            string gameName = type switch
-            {
-                GameType.MonsterHunterRise => Constants.MONSTER_HUNTER_RISE_MOD_FOLDER,
-                GameType.MonsterHunterWorld => Constants.MONSTER_HUNTER_WORLD_MOD_FOLDER,
-                _ => throw new NotImplementedException(),
-            };
+            string gameName = EnumSwitch.GetModFolder(type);
 
             if (Directory.Exists(Path.Combine(Constants.MODS_FOLDER, gameName)))
             {
@@ -147,15 +129,17 @@ namespace REFramework.Internal
             return modList.OrderBy(o => o.LoadOrder).ToList();
         }
 
-        public static List<ModData> DeserializeModIndex()
+        public static List<ModData> DeserializeModIndex(GameType type)
         {
             List<ModData> modData = new List<ModData>();
+            string gameModFolder = EnumSwitch.GetModFolder(type);
+            string gameDataFolder = Path.Combine(Constants.DATA_FOLDER, gameModFolder);
 
-            if (Directory.Exists(Constants.DATA_FOLDER))
+            if (Directory.Exists(gameDataFolder))
             {
-                if (File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.MOD_INDEX_FILE)))
+                if (File.Exists(Path.Combine(gameDataFolder, Constants.MOD_INDEX_FILE)))
                 {
-                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(Constants.DATA_FOLDER, Constants.MOD_INDEX_FILE));
+                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(gameDataFolder, Constants.MOD_INDEX_FILE));
                     string file = FileStreamHelper.UnkBytesToStr(bytes);
                     modData = JsonSerializer.Deserialize<List<ModData>>(file);
                 }
@@ -164,9 +148,11 @@ namespace REFramework.Internal
             return modData;
         }
 
-        public static void SaveModIndex(List<ModData> modList)
+        public static void SaveModIndex(GameType type, List<ModData> modList)
         {
-            FileStreamHelper.WriteFile(Constants.DATA_FOLDER, Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(modList, new JsonSerializerOptions { WriteIndented = true }), false);
+            string gameModFolder = EnumSwitch.GetModFolder(type);
+            string gameDataFolder = Path.Combine(Constants.DATA_FOLDER, gameModFolder);
+            FileStreamHelper.WriteFile(gameDataFolder, Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(modList, new JsonSerializerOptions { WriteIndented = true }), false);
         }
     }
 }
