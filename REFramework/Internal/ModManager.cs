@@ -36,7 +36,7 @@ namespace REFramework.Internal
                         Author = modInfo["author"],
                         Version = modInfo["version"],
                         SourceRelativePath = modPath,
-                        SourceAbsolutePath = FileStreamHelper.GetAbsolutePath(modPath),
+                        SourceAbsolutePath = PathHelper.GetAbsolutePath(modPath),
                         InstallRelativePath = "UNK",
                         InstallAbsolutePath = "UNK",
                         FileName = defaultModPackageName,
