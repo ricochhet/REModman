@@ -1,18 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace REFramework.Internal
+namespace REFramework.Utils
 {
-    public class ArgParser
+    public class CommandHelper
     {
         private static string[] programArgs;
         private static string input;
         private static string[] arguments;
 
-        public ArgParser(string[] args)
+        public CommandHelper(string[] args)
         {
             programArgs = args;
         }

@@ -1,13 +1,11 @@
-using System;
 using System.IO;
-using System.Text;
-using System.Diagnostics;
+using System.Text.Json;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using IniParser;
 using IniParser.Model;
-using REFramework.Extensions;
-using System.Text.Json;
+using REFramework.Utils;
+using REFramework.Data;
+using REFramework.Configuration;
 
 namespace REFramework.Internal
 {
@@ -18,26 +16,27 @@ namespace REFramework.Internal
             List<ModData> modList = new List<ModData>();
             IniDataParser parser = new IniDataParser();
 
-            foreach (string data in EFileStream.GetFiles(directory, Constants.MOD_INFO, false))
+            foreach (string data in FileStreamHelper.GetFiles(directory, Constants.MOD_INFO, false))
             {
-                byte[] bytes = EFileStream.ReadFile(data);
-                string file = EFileStream.UnkBytesToStr(bytes);
+                byte[] bytes = FileStreamHelper.ReadFile(data);
+                string file = FileStreamHelper.UnkBytesToStr(bytes);
                 IniData modIni = parser.Parse(file);
                 string modPath = Path.Join(Path.GetDirectoryName(data), defaultModPackageName);
                 PropertyCollection modInfo = modIni["modinfo"];
 
                 if (File.Exists(modPath))
                 {
-                    string sha256 = EFileStream.Sha256Checksum(modPath);
-                    string md5 = EFileStream.Md5Checksum(modPath);
+                    string sha256 = FileStreamHelper.Sha256Checksum(modPath);
+                    string md5 = FileStreamHelper.Md5Checksum(modPath);
 
-                    modList.Add(new ModData {
+                    modList.Add(new ModData
+                    {
                         Name = modInfo["name"],
                         Description = modInfo["description"],
                         Author = modInfo["author"],
                         Version = modInfo["version"],
                         SourceRelativePath = modPath,
-                        SourceAbsolutePath = EFileStream.GetAbsolutePath(modPath),
+                        SourceAbsolutePath = FileStreamHelper.GetAbsolutePath(modPath),
                         InstallRelativePath = "UNK",
                         InstallAbsolutePath = "UNK",
                         FileName = defaultModPackageName,
@@ -47,7 +46,7 @@ namespace REFramework.Internal
                 }
                 else
                 {
-                    EFileStream.LineWriter(new string[]
+                    FileStreamHelper.LineWriter(new string[]
                     {
                         $"Error: The PAK for mod \"{modInfo["name"]}\" could not be found."
                     }, false);
@@ -89,7 +88,7 @@ namespace REFramework.Internal
 
         public static void WriteModlist(string directory, List<ModData> modList)
         {
-            EFileStream.WriteFile(directory, Constants.MOD_LIST, JsonSerializer.Serialize(modList, new JsonSerializerOptions { WriteIndented = true }), false);
+            FileStreamHelper.WriteFile(directory, Constants.MOD_LIST, JsonSerializer.Serialize(modList, new JsonSerializerOptions { WriteIndented = true }), false);
         }
     }
 }

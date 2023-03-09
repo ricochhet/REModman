@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace REFramework.Extensions
+namespace REFramework.Utils
 {
-    public class EFileStream
+    public class FileStreamHelper
     {
         private static bool createDirectories = true;
         private static bool overwrite = true;
