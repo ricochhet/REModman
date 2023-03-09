@@ -1,4 +1,7 @@
 using System;
+using REFramework.Data;
+using REFramework.Internal;
+using System.Collections.Generic;
 
 namespace REFramework
 {
@@ -6,7 +9,8 @@ namespace REFramework
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("TODO");
+            List<ModData> modData = ModManager.IndexModDirectory("./Mods/");
+            ModManager.WriteModIndex("./Mods/", modData);
             // Console.WriteLine(EFileStream.GetProcPath(EFileStream.GetProcIdFromName("Discord")));
             // List<ModData> mods = ModManager.FindAllMods("./Mods/", Constants.RE_ENGINE);
             // ModManager.CreateModIndex("./Mods/", mods);
