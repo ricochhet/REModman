@@ -9,7 +9,7 @@ using REFramework.Utils;
 using REFramework.Data;
 using REFramework.Configuration.Enums;
 
-namespace REFramework.Addons
+namespace REFramework.Patches
 {
     public class REChunkPatchPak
     {

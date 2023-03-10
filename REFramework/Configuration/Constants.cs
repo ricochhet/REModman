@@ -2,6 +2,15 @@ namespace REFramework.Configuration
 {
     public class Constants
     {
+        public const string LOG_INFO = "INFO";
+        public const string LOG_WARN = "WARN";
+        public const string LOG_ERROR = "ERROR";
+
+        public const string LOG_WRITE = "WRITE";
+        public const string LOG_COPY = "COPY";
+        public const string LOG_READ = "READ";
+        public const string LOG_DELETE = "DELETE";
+
         public const string DATA_FOLDER = ".\\REMMData\\";
         public const string MODS_FOLDER = ".\\Mods\\";
 

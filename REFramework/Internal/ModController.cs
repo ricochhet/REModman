@@ -7,7 +7,7 @@ using IniParser;
 using IniParser.Model;
 using REFramework.Utils;
 using REFramework.Data;
-using REFramework.Addons;
+using REFramework.Patches;
 using REFramework.Configuration;
 using REFramework.Configuration.Enums;
 
@@ -15,26 +15,62 @@ namespace REFramework.Internal
 {
     public class ModController
     {
-        public static List<ModData> UninstallMod(List<ModData> modData, Dictionary<string, string> selectedMods)
+        public static List<ModData> UninstallMods(List<ModData> modData, Dictionary<string, string> selectedMods)
         {
             List<ModData> installList = new List<ModData>();
 
-            foreach (ModData mod in modData)
+            if (modData.Count != 0)
             {
-                installList.Add(mod);
-
-                if (selectedMods.ContainsKey(mod.Name))
+                foreach (ModData mod in modData)
                 {
-                    if (selectedMods[mod.Name] == mod.Guid)
+                    installList.Add(mod);
+                    Logger.Log(LogType.Info, new string[]
                     {
-                        foreach (ModFile file in mod.ModFiles)
-                        {
-                            File.Delete(file.InstallAbsolutePath);
-                        }
+                        $"Added mod to List<ModData> with name \"{mod.Name}\" in function UninstallMod()"
+                    });
 
-                        installList.Remove(mod);
+                    if (selectedMods.ContainsKey(mod.Name))
+                    {
+                        if (selectedMods[mod.Name] == mod.Guid)
+                        {
+                            foreach (ModFile file in mod.ModFiles)
+                            {
+                                File.Delete(file.InstallAbsolutePath);
+                                Logger.Log(LogOpType.Delete, new string[]
+                                {
+                                    $"{file.LocalFilePath}, {file.InstallAbsolutePath}"
+                                });
+                            }
+
+                            installList.Remove(mod);
+                            Logger.Log(LogType.Info, new string[]
+                            {
+                                $"\"{mod.Name}\" was remove from List<ModData> in function UninstallMod()"
+                            });
+                        }
+                        else
+                        {
+                            Logger.Log(LogType.Info, new string[]
+                            {
+                                $"Matching Guid for \"{mod.Name}\" was not found in function UninstallMod()"
+                            });
+                        }
+                    }
+                    else
+                    {
+                        Logger.Log(LogType.Info, new string[]
+                        {
+                            $"Dictionary did not contain \"{mod.Name}\" in function UninstallMod()"
+                        });
                     }
                 }
+            }
+            else
+            {
+                Logger.Log(LogType.Error, new string[]
+                {
+                    $"List<ModData> was empty in function UninstallMod()"
+                });
             }
 
             return installList;
@@ -44,15 +80,43 @@ namespace REFramework.Internal
         {
             List<ModData> installList = new List<ModData>();
 
-            foreach (ModData mod in modData)
+            if (modData.Count != 0)
             {
-                if (selectedMods.ContainsKey(mod.Name))
+                foreach (ModData mod in modData)
                 {
-                    if (selectedMods[mod.Name] == mod.Guid)
+                    if (selectedMods.ContainsKey(mod.Name))
                     {
-                        installList.Add(mod);
+                        if (selectedMods[mod.Name] == mod.Guid)
+                        {
+                            installList.Add(mod);
+                            Logger.Log(LogType.Info, new string[]
+                            {
+                                $"\"{mod.Name}\" was added to List<ModData> in function SelectMods()"
+                            });
+                        }
+                        else
+                        {
+                            Logger.Log(LogType.Info, new string[]
+                            {
+                                $"Matching Guid for \"{mod.Name}\" was not found in function SelectMods()"
+                            });
+                        }
+                    }
+                    else
+                    {
+                        Logger.Log(LogType.Info, new string[]
+                        {
+                            $"Dictionary did not contain \"{mod.Name}\" in function UninstallMod()"
+                        });
                     }
                 }
+            }
+            else
+            {
+                Logger.Log(LogType.Error, new string[]
+                {
+                    $"List<ModData> was empty in function SelectMods()"
+                });
             }
 
             return installList;
@@ -81,22 +145,29 @@ namespace REFramework.Internal
                             string path = "." + file.LocalFilePath.Substring(StringHelper.IndexOfNth(file.LocalFilePath, "\\", 1));
                             file.InstallAbsolutePath = PathHelper.GetAbsolutePath(Path.Combine(installPath, path));
                             file.InstallRelativePath = Path.Combine(installPath, path);
-                            // FileStreamHelper.CopyFile(file.SourceRelativePath, Path.Combine(installPath, path), false);
+                            FileStreamHelper.CopyFile(file.SourceRelativePath, Path.Combine(installPath, path), false);
                         }
                     }
                 }
 
                 if (REChunkPatchPak.IsValidGameType(type))
                 {
-                    List<ModData> temp = REChunkPatchPak.InterceptModInstaller(intercepted);
-                    foreach (ModData mod in modData)
+                    if (intercepted.Count != 0)
                     {
-                        foreach (ModFile file in mod.ModFiles)
+                        List<ModData> temp = REChunkPatchPak.InterceptModInstaller(intercepted);
+
+                        foreach (ModData mod in modData)
                         {
-                            string path = "." + file.LocalFilePath.Substring(StringHelper.IndexOfNth(file.LocalFilePath, "\\", 1));
-                            file.InstallAbsolutePath = PathHelper.GetAbsolutePath(Path.Combine(installPath, path));
-                            file.InstallRelativePath = Path.Combine(installPath, path);
-                            // FileStreamHelper.CopyFile(file.SourceRelativePath, Path.Combine(installPath, path), false);
+                            if (REChunkPatchPak.IsREChunkPatchPak(mod.Path))
+                            {
+                                foreach (ModFile file in mod.ModFiles)
+                                {
+                                    string path = "." + file.LocalFilePath.Substring(StringHelper.IndexOfNth(file.LocalFilePath, "\\", 1));
+                                    file.InstallAbsolutePath = PathHelper.GetAbsolutePath(Path.Combine(installPath, path));
+                                    file.InstallRelativePath = Path.Combine(installPath, path);
+                                    FileStreamHelper.CopyFile(file.SourceRelativePath, Path.Combine(installPath, path), false);
+                                }
+                            }
                         }
                     }
                 }
