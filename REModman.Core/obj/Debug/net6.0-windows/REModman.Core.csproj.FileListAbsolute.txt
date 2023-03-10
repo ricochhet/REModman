@@ -1,0 +1,12 @@
+D:\dev\REModman\REModman.Core\bin\Debug\net6.0-windows\REModman.Core.deps.json
+D:\dev\REModman\REModman.Core\bin\Debug\net6.0-windows\REModman.Core.dll
+D:\dev\REModman\REModman.Core\bin\Debug\net6.0-windows\REModman.Core.pdb
+D:\dev\REModman\REModman.Core\obj\Debug\net6.0-windows\REModman.Core.csproj.AssemblyReference.cache
+D:\dev\REModman\REModman.Core\obj\Debug\net6.0-windows\REModman.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\dev\REModman\REModman.Core\obj\Debug\net6.0-windows\REModman.Core.AssemblyInfoInputs.cache
+D:\dev\REModman\REModman.Core\obj\Debug\net6.0-windows\REModman.Core.AssemblyInfo.cs
+D:\dev\REModman\REModman.Core\obj\Debug\net6.0-windows\REModman.Core.csproj.CoreCompileInputs.cache
+D:\dev\REModman\REModman.Core\obj\Debug\net6.0-windows\REModman.Core.dll
+D:\dev\REModman\REModman.Core\obj\Debug\net6.0-windows\refint\REModman.Core.dll
+D:\dev\REModman\REModman.Core\obj\Debug\net6.0-windows\REModman.Core.pdb
+D:\dev\REModman\REModman.Core\obj\Debug\net6.0-windows\ref\REModman.Core.dll
