@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using IniParser;
 using IniParser.Model;
 using REModman.Utils;
-using REModman.Data;
 using REModman.Configuration.Enums;
+using REModman.Configuration.Structs;
 
 namespace REModman.Patches
 {

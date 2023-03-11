@@ -6,14 +6,15 @@ using System.Collections.Generic;
 using IniParser;
 using IniParser.Model;
 using REModman.Utils;
-using REModman.Data;
 using REModman.Configuration;
 using REModman.Configuration.Enums;
 using System.Diagnostics;
+using REModman.Internal;
+using REModman.Configuration.Structs;
 
 namespace REModman.Internal
 {
-    public class ModIndexer
+    public class Collection
     {
         public static void CreateDataFolder(GameType type)
         {
@@ -28,6 +29,15 @@ namespace REModman.Internal
             if (!File.Exists(Path.Combine(gameDataFolder, Constants.MOD_LIST_FILE)))
             {
                 FileStreamHelper.WriteFile(gameDataFolder, Constants.MOD_LIST_FILE, "[]", false);
+            }
+
+            if (!File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
+            {
+                Settings.SaveSettings(new SettingsData
+                {
+                    LastSelectedGame = GameType.None,
+                    GamePaths = new Dictionary<string, string>()
+                });
             }
         }
 

@@ -24,7 +24,6 @@ namespace REMod.Models
                 Name = Values[0].ToString(),
                 Guid = Values[1].ToString(),
                 GameType = Values[2].ToString(),
-                LogBox = (TextBlock)Values[3],
             };
         }
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)

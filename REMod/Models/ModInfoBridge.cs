@@ -18,7 +18,6 @@ namespace REMod.Models
         public string? Version { get; set; }
         public string? Description { get; set; }
         public string? GameType { get; set; }
-        public TextBlock? LogBox { get; set; }
 
         public void Execute() { }
     }

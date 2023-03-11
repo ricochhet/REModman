@@ -7,6 +7,8 @@ using WinRT;
 using REModman.Configuration;
 using REModman.Utils;
 using REMod.Helpers;
+using System.Windows.Controls;
+using REModman;
 
 namespace REMod.Views.Pages
 {
@@ -21,22 +23,23 @@ namespace REMod.Views.Pages
             ResourceDictionary languageDictionary = new ResourceDictionary();
             languageDictionary.Source = new Uri(@".\Languages\en-us.xaml", UriKind.Relative);
             this.Resources.MergedDictionaries.Add(languageDictionary);
+            StatusNotifyHelper.Assign("Important information will show up here.");
         }
 
-        private void GameSelector_ComboBox_Initialize(object sender, System.EventArgs e)
+        private void GameSelector_ComboBox_Initialize(object sender, EventArgs e)
         {
             GameSelector_ComboBox.Items.Clear();
             GameSelector_ComboBox.ItemsSource = Enum.GetValues(typeof(GameType));
             GameSelector_ComboBox.SelectedIndex = 0;
-            StatusNotifier_TextBlock.Text = StatusNotifyHelper.Assign("Important information will show up here.");
+            StatusNotifyHelper.Assign("Important information will show up here.");
         }
 
-        private void GameSelector_ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void GameSelector_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (GameSelector_ComboBox.SelectedItem != null)
             {
                 selectedGameType = (GameType)Enum.Parse(typeof(GameType), GameSelector_ComboBox.SelectedItem.ToString() ?? "None");
-                StatusNotifier_TextBlock.Text = $"Selected game: {selectedGameType}";
+                StatusNotifyHelper.Assign($"Selected game: {selectedGameType}");
             }
         }
 
@@ -44,19 +47,19 @@ namespace REMod.Views.Pages
         {
             if (selectedGameType != GameType.None)
             {
-                if (!ModIndexer.CheckForDataFolder(selectedGameType))
+                if (!Collection.CheckForDataFolder(selectedGameType))
                 {
-                    ModIndexer.CreateDataFolder(selectedGameType);
-                    StatusNotifier_TextBlock.Text = $"Data folder created for {selectedGameType}.";
+                    Collection.CreateDataFolder(selectedGameType);
+                    StatusNotifyHelper.Assign($"Data folder created for {selectedGameType}.");
                 }
                 else
                 {
-                    StatusNotifier_TextBlock.Text = $"{selectedGameType} already has a data folder.";
+                    StatusNotifyHelper.Assign($"{selectedGameType} already has a data folder.");
                 }
             }
             else
             {
-                StatusNotifier_TextBlock.Text = $"Please select a valid game.";
+                StatusNotifyHelper.Assign($"Please select a valid game.");
             }
         }
 
@@ -64,19 +67,19 @@ namespace REMod.Views.Pages
         {
             if (selectedGameType != GameType.None)
             {
-                if (!ModIndexer.CheckForModFolder(selectedGameType))
+                if (!Collection.CheckForModFolder(selectedGameType))
                 {
-                    ModIndexer.CreateModFolder(selectedGameType);
-                    StatusNotifier_TextBlock.Text = $"Mod folder created for {selectedGameType}.";
+                    Collection.CreateModFolder(selectedGameType);
+                    StatusNotifyHelper.Assign($"Mod folder created for {selectedGameType}.");
                 }
                 else
                 {
-                    StatusNotifier_TextBlock.Text = $"{selectedGameType} already has a mod folder.";
+                    StatusNotifyHelper.Assign($"{selectedGameType} already has a mod folder.");
                 }
             }
             else
             {
-                StatusNotifier_TextBlock.Text = $"Please select a valid game.";
+                StatusNotifyHelper.Assign($"Please select a valid game.");
             }
         }
 
@@ -84,26 +87,26 @@ namespace REMod.Views.Pages
         {
             if (selectedGameType != GameType.None)
             {
-                if (ModIndexer.CheckForDataFolder(selectedGameType))
+                if (Collection.CheckForDataFolder(selectedGameType))
                 {
                     if (ProcessHelper.GetProcIdFromName(EnumSwitch.GetProcName(selectedGameType)) != 0)
                     {
-                        GamePath.SaveGamePath(selectedGameType);
-                        StatusNotifier_TextBlock.Text = $"Game data created for {selectedGameType}.";
+                        Settings.SaveGamePath(selectedGameType);
+                        StatusNotifyHelper.Assign($"Game data created for {selectedGameType}.");
                     }
                     else
                     {
-                        StatusNotifier_TextBlock.Text = $"{selectedGameType} must be running.";
+                        StatusNotifyHelper.Assign($"{selectedGameType} must be running.");
                     }
                 }
                 else
                 {
-                    StatusNotifier_TextBlock.Text = $"{selectedGameType} does not have any data.";
+                    StatusNotifyHelper.Assign($"{selectedGameType} does not have any data.");
                 }
             }
             else
             {
-                StatusNotifier_TextBlock.Text = $"Please select a valid game.";
+                StatusNotifyHelper.Assign($"Please select a valid game.");
             }
         }
 
@@ -111,19 +114,19 @@ namespace REMod.Views.Pages
         {
             if (selectedGameType != GameType.None)
             {
-                if (ModIndexer.CheckForDataFolder(selectedGameType))
+                if (Collection.CheckForDataFolder(selectedGameType))
                 {
-                    StatusNotifier_TextBlock.Text = $"Deleting data for game: {selectedGameType}.";
-                    ModIndexer.DeleteDataFolder(selectedGameType);
+                    StatusNotifyHelper.Assign($"Deleting data for game: {selectedGameType}.");
+                    Collection.DeleteDataFolder(selectedGameType);
                 }
                 else
                 {
-                    StatusNotifier_TextBlock.Text = $"{selectedGameType} does not have any data.";
+                    StatusNotifyHelper.Assign($"{selectedGameType} does not have any data.");
                 }
             }
             else
             {
-                StatusNotifier_TextBlock.Text = $"Please select a valid game.";
+                StatusNotifyHelper.Assign($"Please select a valid game.");
             }
         }
     }

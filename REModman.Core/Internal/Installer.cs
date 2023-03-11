@@ -6,14 +6,15 @@ using System.Collections.Generic;
 using IniParser;
 using IniParser.Model;
 using REModman.Utils;
-using REModman.Data;
 using REModman.Patches;
 using REModman.Configuration;
 using REModman.Configuration.Enums;
+using REModman.Internal;
+using REModman.Configuration.Structs;
 
 namespace REModman.Internal
 {
-    public class ModController
+    public class Installer
     {
         public static List<ModData> UninstallMods(List<ModData> modData, Dictionary<string, string> selectedMods)
         {
@@ -66,7 +67,7 @@ namespace REModman.Internal
 
         public static void InstallMods(GameType type, List<ModData> selectedMods)
         {
-            string installPath = GamePath.GetSavedGamePath(type);
+            string installPath = Settings.GetGamePath(type);
             List<ModData> intercepted = new List<ModData>();
 
             if (Directory.Exists(installPath))

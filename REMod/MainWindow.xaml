@@ -27,8 +27,8 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ui:NavigationView x:Name="RootNavigation" Grid.Row="1">
-            <ui:NavigationView.AutoSuggestBox>
+        <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" IsBackButtonVisible="Collapsed" IsPaneToggleVisible="False">
+            <!--<ui:NavigationView.AutoSuggestBox>
                 <ui:AutoSuggestBox
                     Margin="8,8,8,16"
                     IconPlacement="Right"
@@ -40,8 +40,9 @@
                     Margin="42,32,0,0"
                     FontSize="28"
                     FontWeight="DemiBold" />
-            </ui:NavigationView.Header>
+            </ui:NavigationView.Header>-->
             <ui:NavigationView.MenuItems>
+                <TextBlock Text="REMod" FontSize="28" FontWeight="Medium" Margin="10" HorizontalAlignment="Center" />
                 <ui:NavigationViewItem Content="Setup" TargetPageType="{x:Type pages:SetupPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Home24" />
@@ -94,7 +95,7 @@
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
             <StatusBarItem Grid.Column="1" Padding="0,0,4,0">
-                <TextBlock Text="Placeholder." />
+                <TextBlock Name="StatusBarNotifier_TextBlock" Text="PLACEHOLDER" />
             </StatusBarItem>
         </StatusBar>
     </Grid>

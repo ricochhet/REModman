@@ -1,8 +1,10 @@
-﻿using REModman.Configuration.Enums;
-using REModman.Data;
+﻿using REMod.Helpers;
+using REModman.Configuration.Enums;
+using REModman.Configuration.Structs;
 using REModman.Internal;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,7 +23,7 @@ namespace REMod.Models
         {
             if (data != null)
             {
-                if (data.Name == null || data.Guid == null || data.GameType == null || data.LogBox == null)
+                if (data.Name == null || data.Guid == null || data.GameType == null)
                 {
                     throw new NullReferenceException();
                 }
@@ -30,7 +32,7 @@ namespace REMod.Models
 
                 if (gameType != GameType.None)
                 {
-                    List<ModData> selectedMods = ModController.SelectMods(ModIndexer.DeserializeModIndex(gameType), new Dictionary<string, string>
+                    List<ModData> selectedMods = Installer.SelectMods(Collection.DeserializeModIndex(gameType), new Dictionary<string, string>
                     {
                         { data.Name, data.Guid }
                     });
@@ -42,10 +44,10 @@ namespace REMod.Models
                             selectedMods[0]
                         };
 
-                        if (Directory.Exists(GamePath.GetSavedGamePath(gameType)))
+                        if (Directory.Exists(Settings.GetGamePath(gameType)))
                         {
                             bool isModInstalled = false;
-                            List<ModData> installedModList = ModController.DeserializeModList(gameType);
+                            List<ModData> installedModList = Installer.DeserializeModList(gameType);
 
                             foreach (ModData installedMod in installedModList)
                             {
@@ -59,28 +61,28 @@ namespace REMod.Models
                             if (isModInstalled == false)
                             {
                                 installedModList.Add(selectedMods[0]);
-                                ModController.InstallMods(gameType, firstInSelection);
-                                ModController.SaveModList(gameType, installedModList);
-                                data.LogBox.Text = $"Installed mod: {data.Name} for {gameType}.";
+                                Installer.InstallMods(gameType, firstInSelection);
+                                Installer.SaveModList(gameType, installedModList);
+                                StatusNotifyHelper.Assign($"Installed mod: {data.Name} for {gameType}.");
                             }
                             else
                             {
-                                data.LogBox.Text = $"Mod: {data.Name} is already installed for {gameType}.";
+                                StatusNotifyHelper.Assign($"Mod: {data.Name} is already installed for {gameType}.");
                             }
                         }
                         else
                         {
-                            data.LogBox.Text = $"Could not find the game path for game: {gameType}.";
+                            StatusNotifyHelper.Assign($"Could not find the game path for game: {gameType}.");
                         }
                     }
                     else
                     {
-                        data.LogBox.Text = $"Could not get the selected mod: {data.Name}.";
+                        StatusNotifyHelper.Assign($"Could not get the selected mod: {data.Name}.");
                     }
                 }
                 else
                 {
-                    data.LogBox.Text = $"Please select a valid game.";
+                    StatusNotifyHelper.Assign($"Please select a valid game.");
                 }
             }
             else

@@ -10,5 +10,8 @@
     <Page Update="Views\Pages\CollectionPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\Pages\DashboardPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 </Project>

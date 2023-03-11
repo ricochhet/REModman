@@ -18,31 +18,31 @@
 
     <ScrollViewer>
         <StackPanel Margin="42" VerticalAlignment="Top">
-            <StatusBar x:Name="RootStatusBar" Margin="8,0,8,0" Padding="16,13,16,12" Background="{ui:ThemeResource ApplicationBackgroundBrush}">
-                <StatusBar.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                        </Grid>
-                    </ItemsPanelTemplate>
-                </StatusBar.ItemsPanel>
-                <StatusBarItem Grid.Column="1" Padding="0,0,4,0">
-                    <TextBlock Name="StatusNotifier_TextBlock" Text="PLACEHOLDER" />
-                </StatusBarItem>
-            </StatusBar>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3.5*" />
-                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="1*" />
+                    <!--<ColumnDefinition Width="3.5*" />
+                    <ColumnDefinition Width="1.5*" />-->
                 </Grid.ColumnDefinitions>
-                <ui:CardControl Margin="8,8,8,0" Padding="16,13,16,12" Grid.Column="0" HorizontalAlignment="Stretch" MinHeight="65">
+                <!--<ui:CardControl Margin="8,8,8,0" Padding="16,13,16,12" Grid.Column="0" HorizontalAlignment="Stretch" MinHeight="65">
                     <ui:CardControl.Header>
                         <StackPanel>
-                            <!-- {Binding Source={ x:Static conf:Constants.MAX_NOTIFY_CHAR_LENGTH }}-->
+                            {Binding Source={ x:Static conf:Constants.MAX_NOTIFY_CHAR_LENGTH }}
+                            <TextBlock FontSize="14" Text="Select Game" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ComboBox
+                        MinWidth="200"
+                        HorizontalAlignment="Left"
+                        SelectedIndex="0"
+                        Name="GameSelector_ComboBox"
+                        Initialized="GameSelector_ComboBox_Initialize"
+                        SelectionChanged="GameSelector_ComboBox_SelectionChanged">
+                    </ComboBox>
+                </ui:CardControl>-->
+                <ui:CardControl Margin="8,8,8,0" Padding="16,13,16,12" HorizontalAlignment="Stretch">
+                    <ui:CardControl.Header>
+                        <StackPanel>
                             <TextBlock FontSize="14" Text="Select Game" />
                         </StackPanel>
                     </ui:CardControl.Header>
@@ -55,11 +55,11 @@
                         SelectionChanged="GameSelector_ComboBox_SelectionChanged">
                     </ComboBox>
                 </ui:CardControl>
-                <ui:CardAction Grid.Column="1" Margin="0,8,8,0" Padding="16,13,16,12" Icon="ArrowCounterclockwise32" HorizontalAlignment="Stretch" MinHeight="65">
+                <!--<ui:CardAction Grid.Column="1" Margin="0,8,8,0" Padding="16,13,16,12" Icon="ArrowCounterclockwise32" HorizontalAlignment="Stretch" MinHeight="65">
                     <StackPanel>
                         <TextBlock FontSize="14" Text="Refresh" />
                     </StackPanel>
-                </ui:CardAction>
+                </ui:CardAction>-->
             </Grid>
             <Grid Margin="0,8,0,0">
                 <ui:VirtualizingItemsControl

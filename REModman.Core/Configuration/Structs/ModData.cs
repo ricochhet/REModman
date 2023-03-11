@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace REModman.Data
+namespace REModman.Configuration.Structs
 {
     public class ModData
     {
