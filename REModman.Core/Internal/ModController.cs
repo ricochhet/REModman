@@ -64,14 +64,14 @@ namespace REModman.Internal
             return installList;
         }
 
-        public static void InstallMods(GameType type, List<ModData> modData)
+        public static void InstallMods(GameType type, List<ModData> selectedMods)
         {
             string installPath = GamePath.GetSavedGamePath(type);
             List<ModData> intercepted = new List<ModData>();
 
             if (Directory.Exists(installPath))
             {
-                foreach (ModData mod in modData)
+                foreach (ModData mod in selectedMods)
                 {
                     if (REChunkPatchPak.IsREChunkPatchPak(mod.Path))
                     {
@@ -98,7 +98,7 @@ namespace REModman.Internal
                     {
                         List<ModData> temp = REChunkPatchPak.InterceptModInstaller(intercepted);
 
-                        foreach (ModData mod in modData)
+                        foreach (ModData mod in selectedMods)
                         {
                             if (REChunkPatchPak.IsREChunkPatchPak(mod.Path))
                             {
