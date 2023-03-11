@@ -11,39 +11,12 @@ using REModman.Configuration;
 using REModman.Configuration.Enums;
 using REModman.Internal;
 using REModman.Configuration.Structs;
+using System.Security.AccessControl;
 
 namespace REModman.Internal
 {
     public class Installer
     {
-        public static List<ModData> UninstallMods(List<ModData> modData, Dictionary<string, string> selectedMods)
-        {
-            List<ModData> installList = new List<ModData>();
-
-            if (modData.Count != 0)
-            {
-                foreach (ModData mod in modData)
-                {
-                    installList.Add(mod);
-
-                    if (selectedMods.ContainsKey(mod.Name))
-                    {
-                        if (selectedMods[mod.Name] == mod.Guid)
-                        {
-                            foreach (ModFile file in mod.ModFiles)
-                            {
-                                File.Delete(file.InstallAbsolutePath);
-                            }
-
-                            installList.Remove(mod);
-                        }
-                    }
-                }
-            }
-
-            return installList;
-        }
-
         public static List<ModData> SelectMods(List<ModData> modData, Dictionary<string, string> selectedMods)
         {
             List<ModData> installList = new List<ModData>();
@@ -115,6 +88,39 @@ namespace REModman.Internal
                     }
                 }
             }
+        }
+
+        public static void UninstallMods(GameType type, List<ModData> selectedMods)
+        {
+            string installPath = Settings.GetGamePath(type);
+
+            if (Directory.Exists(installPath))
+            {
+                foreach (ModData mod in selectedMods)
+                {
+                    foreach (ModFile file in mod.ModFiles)
+                    {
+                        File.Delete(file.InstallAbsolutePath);
+                    }
+                }
+            }
+        }
+
+        public static bool IsModInstalled(GameType type, ModData mod)
+        {
+            bool isInstalled = false;
+            List<ModData> installedModList = DeserializeModList(type);
+
+            foreach (ModData installedMod in installedModList)
+            {
+                if (installedMod.Name == mod.Name && installedMod.Guid == mod.Guid)
+                {
+                    isInstalled = true;
+                    break;
+                }
+            }
+
+            return isInstalled;
         }
 
         public static List<ModData> DeserializeModList(GameType type)
