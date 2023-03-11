@@ -11,8 +11,8 @@ namespace REModman.Configuration
         public const string LOG_READ = "READ";
         public const string LOG_DELETE = "DELETE";
 
-        public const string DATA_FOLDER = ".\\REMMData\\";
-        public const string MODS_FOLDER = ".\\Mods\\";
+        public const string DATA_FOLDER = ".\\REMData\\";
+        public const string MODS_FOLDER = ".\\REMMods\\";
 
         public const string MOD_INDEX_FILE = "modindex.json";
         public const string MOD_LIST_FILE = "modlist.json";

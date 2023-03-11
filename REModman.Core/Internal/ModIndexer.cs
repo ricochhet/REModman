@@ -9,6 +9,7 @@ using REModman.Utils;
 using REModman.Data;
 using REModman.Configuration;
 using REModman.Configuration.Enums;
+using System.Diagnostics;
 
 namespace REModman.Internal
 {
@@ -30,12 +31,28 @@ namespace REModman.Internal
             }
         }
 
-        public static void DeleteDataFolder()
+        public static void DeleteDataFolder(GameType type)
         {
-            if (Directory.Exists(Constants.DATA_FOLDER))
+            string gameModFolder = EnumSwitch.GetModFolder(type);
+            string gameDataFolder = Path.Combine(Constants.DATA_FOLDER, gameModFolder);
+
+            if (Directory.Exists(gameDataFolder))
             {
-                Directory.Delete(Constants.DATA_FOLDER, true);
+                Directory.Delete(gameDataFolder, true);
             }
+        }
+
+        public static bool CheckForDataFolder(GameType type)
+        {
+            string gameModFolder = EnumSwitch.GetModFolder(type);
+            string gameDataFolder = Path.Combine(Constants.DATA_FOLDER, gameModFolder);
+
+            if (Directory.Exists(gameDataFolder))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public static void CreateModFolder(GameType type)
@@ -45,6 +62,17 @@ namespace REModman.Internal
             {
                 Directory.CreateDirectory(Path.Combine(Constants.MODS_FOLDER, gameModFolder));
             }
+        }
+
+        public static bool CheckForModFolder(GameType type)
+        {
+            string gameModFolder = EnumSwitch.GetModFolder(type);
+            if (Directory.Exists(Path.Combine(Constants.MODS_FOLDER, gameModFolder)))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public static List<ModData> IndexModDirectory(GameType type)

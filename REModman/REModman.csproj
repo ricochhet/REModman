@@ -1,20 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
+    <Version>$(Version)</Version>
+    <AssemblyName>WPF UI - Simple Demo</AssemblyName>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>10.0</LangVersion>
+    <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>applicationIcon.ico</ApplicationIcon>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <TrimmerRootAssembly Include="Avalonia.Themes.Fluent" />
+    <Content Include="applicationIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.18" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
-    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.18" />
-    <PackageReference Include="XamlNameReferenceGenerator" Version="1.6.1" />
+    <None Remove="Assets\applicationIcon-1024.png" />
+    <None Remove="Assets\applicationIcon-256.png" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\REModman.Core\REModman.Core.csproj" />
+    <ProjectReference Include="..\Wpf.Ui\Wpf.Ui.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\applicationIcon-1024.png" />
+    <Resource Include="Assets\applicationIcon-256.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+  </ItemGroup>
+
 </Project>
