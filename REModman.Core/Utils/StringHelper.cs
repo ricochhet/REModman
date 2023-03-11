@@ -22,5 +22,22 @@ namespace REModman.Utils
 
             return offset;
         }
+
+        public static string Truncate(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+
+            return value.Length <= maxLength ? value : value[..maxLength];
+        }
+
+        public static string Truncate(string value, int maxLength, string truncationSuffix = "…")
+        {
+            return value?.Length > maxLength
+                ? string.Concat(value.AsSpan(0, maxLength), truncationSuffix)
+                : value;
+        }
     }
 }

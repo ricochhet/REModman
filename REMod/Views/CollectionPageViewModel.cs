@@ -11,7 +11,7 @@ using System.Windows;
 using System.Windows.Input;
 using Wpf.Ui.Common;
 
-namespace Wpf.Ui.Demo.Simple.Models
+namespace REMod.Models
 {
     public static class CollectionPageViewModel
     {
@@ -27,6 +27,7 @@ namespace Wpf.Ui.Demo.Simple.Models
                 }
 
                 GameType gameType = (GameType)Enum.Parse(typeof(GameType), data.GameType ?? "None");
+
                 if (gameType != GameType.None)
                 {
                     List<ModData> selectedMods = ModController.SelectMods(ModIndexer.DeserializeModIndex(gameType), new Dictionary<string, string>

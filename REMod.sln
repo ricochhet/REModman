@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "REModman", "REModman\REModman.csproj", "{E1B4A9F3-1542-4BF7-9366-ACA6655FD582}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "REModman.Core", "REModman.Core\REModman.Core.csproj", "{F8FAE56C-FE83-4EBE-BC6E-A223DCED439E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wpf.Ui", "Wpf.Ui\Wpf.Ui.csproj", "{C747B31E-A8B1-49DE-8E65-126CDE1C86DF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "REMod", "REMod\REMod.csproj", "{53918EE8-172A-47FB-A41A-3957E5D55DE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E1B4A9F3-1542-4BF7-9366-ACA6655FD582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E1B4A9F3-1542-4BF7-9366-ACA6655FD582}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E1B4A9F3-1542-4BF7-9366-ACA6655FD582}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E1B4A9F3-1542-4BF7-9366-ACA6655FD582}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F8FAE56C-FE83-4EBE-BC6E-A223DCED439E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8FAE56C-FE83-4EBE-BC6E-A223DCED439E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8FAE56C-FE83-4EBE-BC6E-A223DCED439E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +23,10 @@ Global
 		{C747B31E-A8B1-49DE-8E65-126CDE1C86DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C747B31E-A8B1-49DE-8E65-126CDE1C86DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C747B31E-A8B1-49DE-8E65-126CDE1C86DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53918EE8-172A-47FB-A41A-3957E5D55DE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53918EE8-172A-47FB-A41A-3957E5D55DE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53918EE8-172A-47FB-A41A-3957E5D55DE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53918EE8-172A-47FB-A41A-3957E5D55DE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
