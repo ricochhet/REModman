@@ -14,7 +14,7 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
     <ScrollViewer>
-        <StackPanel Margin="42" VerticalAlignment="Top">
+        <StackPanel Margin="42" VerticalAlignment="Top" CanVerticallyScroll="True">
             <ui:CardControl Margin="8,8,8,0" Padding="16,13,16,12">
                 <ui:CardControl.Header>
                     <StackPanel>
@@ -22,12 +22,12 @@
                     </StackPanel>
                 </ui:CardControl.Header>
                 <ComboBox
-                MinWidth="200"
-                HorizontalAlignment="Left"
-                SelectedIndex="0"
-                Name="GameSelector_ComboBox"
-                Initialized="GameSelector_ComboBox_Initialize"
-                SelectionChanged="GameSelector_ComboBox_SelectionChanged">
+            MinWidth="200"
+            HorizontalAlignment="Left"
+            SelectedIndex="0"
+            Name="GameSelector_ComboBox"
+            Initialized="GameSelector_ComboBox_Initialize"
+            SelectionChanged="GameSelector_ComboBox_SelectionChanged">
                 </ComboBox>
             </ui:CardControl>
             <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Database32" Name="CreateDataFolder_CardAction" Click="CreateDataFolder_CardAction_Click">

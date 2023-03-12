@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows;
 using System.Windows.Controls;
+using Wpf.Ui.Controls;
 
 namespace REMod.Models
 {
@@ -24,6 +25,7 @@ namespace REMod.Models
                 Name = Values[0].ToString(),
                 Guid = Values[1].ToString(),
                 GameType = Values[2].ToString(),
+                VirtualizingItemsControl = Values[3] as VirtualizingItemsControl,
             };
         }
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)

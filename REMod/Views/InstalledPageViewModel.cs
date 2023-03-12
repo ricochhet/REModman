@@ -1,4 +1,5 @@
 ﻿using REMod.Helpers;
+using REMod.Views.Pages;
 using REModman.Configuration.Enums;
 using REModman.Configuration.Structs;
 using REModman.Internal;
@@ -65,11 +66,14 @@ namespace REMod.Models
                                 if (temp != null)
                                 {
                                     installedModList.Remove(temp);
+                                    Installer.UninstallMods(gameType, firstInSelection);
+                                    Installer.SaveModList(gameType, installedModList);
+
+                                    if (data.VirtualizingItemsControl != null)
+                                    {
+                                        data.VirtualizingItemsControl.Visibility = Visibility.Collapsed;
+                                    }
                                 }
-                                //.Remove(selectedMods[0]);
-                                Debug.Write(JsonSerializer.Serialize(installedModList, new JsonSerializerOptions { WriteIndented = true }));
-                                // Installer.UninstallMods(gameType, firstInSelection);
-                                // Installer.SaveModList(gameType, installedModList);
                             }
                             else
                             {

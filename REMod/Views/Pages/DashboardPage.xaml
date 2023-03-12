@@ -15,6 +15,7 @@
     mc:Ignorable="d">
     <ScrollViewer>
         <StackPanel Margin="42" VerticalAlignment="Top">
+            <TextBlock Text="Dashboard" FontSize="32" FontWeight="Medium" Margin="0,8,0,0" HorizontalAlignment="Center" />
         </StackPanel>
     </ScrollViewer>
 </Page>

@@ -8,6 +8,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Wpf.Ui.Controls;
 
 namespace REMod.Models
 {
@@ -18,6 +19,7 @@ namespace REMod.Models
         public string? Version { get; set; }
         public string? Description { get; set; }
         public string? GameType { get; set; }
+        public VirtualizingItemsControl? VirtualizingItemsControl { get; set; }
 
         public void Execute() { }
     }

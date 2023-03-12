@@ -17,38 +17,23 @@ namespace REMod.Views.Pages
 {
     public partial class CollectionPage
     {
-        private GameType selectedGameType = GameType.None;
-        public ObservableCollection<ModInfoBridge> ModCollection = new();
+        private ObservableCollection<ModInfoBridge> modCollection = new();
 
         public CollectionPage()
         {
             InitializeComponent();
-        }
 
-        private void GameSelector_ComboBox_Initialize(object sender, EventArgs e)
-        {
-            GameSelector_ComboBox.Items.Clear();
-            GameSelector_ComboBox.ItemsSource = Enum.GetValues(typeof(GameType));
-            GameSelector_ComboBox.SelectedIndex = 0;
-            StatusNotifyHelper.Assign("Important information will show up here.");
-        }
-
-        private void GameSelector_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (GameSelector_ComboBox.SelectedItem != null)
+            if (Settings.GetLastSelectedGame() != GameType.None)
             {
-                selectedGameType = (GameType)Enum.Parse(typeof(GameType), GameSelector_ComboBox.SelectedItem.ToString() ?? "None");
-                StatusNotifyHelper.Assign($"Selected game: {selectedGameType}");
-
                 ModCollection.Clear();
-                StatusNotifyHelper.Assign($"Selected game: {selectedGameType}");
+                StatusNotifyHelper.Assign($"Selected game: {Settings.GetLastSelectedGame()}");
 
-                if (selectedGameType != GameType.None)
+                if (Settings.GetLastSelectedGame() != GameType.None)
                 {
-                    if (Collection.CheckForDataFolder(selectedGameType) && Collection.CheckForModFolder(selectedGameType))
+                    if (Collection.CheckForDataFolder(Settings.GetLastSelectedGame()) && Collection.CheckForModFolder(Settings.GetLastSelectedGame()))
                     {
-                        List<ModData> index = Collection.IndexModDirectory(selectedGameType);
-                        Collection.SaveModIndex(selectedGameType, index);
+                        List<ModData> index = Collection.IndexModDirectory(Settings.GetLastSelectedGame());
+                        Collection.SaveModIndex(Settings.GetLastSelectedGame(), index);
 
                         foreach (ModData mod in index)
                         {
@@ -58,16 +43,17 @@ namespace REMod.Views.Pages
                                 Guid = mod.Guid,
                                 Version = mod.Version,
                                 Description = mod.Description,
-                                GameType = selectedGameType.ToString(),
+                                VirtualizingItemsControl = ModsItemsControl,
+                                GameType = Settings.GetLastSelectedGame().ToString(),
                             });
                         }
 
                         ModsItemsControl.ItemsSource = ModCollection;
-                        StatusNotifyHelper.Assign($"Indexed mod collection for {selectedGameType}.");
+                        StatusNotifyHelper.Assign($"Indexed mod collection for {Settings.GetLastSelectedGame()}.");
                     }
                     else
                     {
-                        StatusNotifyHelper.Assign($"{selectedGameType} has not been fully setup.");
+                        StatusNotifyHelper.Assign($"{Settings.GetLastSelectedGame()} has not been fully setup.");
                     }
                 }
                 else
@@ -76,5 +62,7 @@ namespace REMod.Views.Pages
                 }
             }
         }
+
+        public ObservableCollection<ModInfoBridge> ModCollection { get => modCollection; set => modCollection = value; }
     }
 }

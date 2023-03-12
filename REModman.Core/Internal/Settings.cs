@@ -15,6 +15,29 @@ namespace REModman.Internal
 {
     public class Settings
     {
+        public static void SaveLastSelectedGame(GameType type)
+        {
+            if (File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
+            {
+                SettingsData settingsData = DeserializeSettings();
+                settingsData.LastSelectedGame = type;
+                SaveSettings(settingsData);
+            }
+        }
+
+        public static GameType GetLastSelectedGame()
+        {
+            GameType lastSelectedGame = GameType.None;
+
+            if (File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
+            {
+                SettingsData settingsData = DeserializeSettings();
+                lastSelectedGame = settingsData.LastSelectedGame;
+            }
+
+            return lastSelectedGame;
+        }
+
         public static void SaveGamePath(GameType type)
         {
             string gameName = EnumSwitch.GetProcName(type);

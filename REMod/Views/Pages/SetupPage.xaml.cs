@@ -20,9 +20,6 @@ namespace REMod.Views.Pages
         {
             InitializeComponent();
 
-            ResourceDictionary languageDictionary = new ResourceDictionary();
-            languageDictionary.Source = new Uri(@".\Languages\en-us.xaml", UriKind.Relative);
-            this.Resources.MergedDictionaries.Add(languageDictionary);
             StatusNotifyHelper.Assign("Important information will show up here.");
         }
 
@@ -30,7 +27,7 @@ namespace REMod.Views.Pages
         {
             GameSelector_ComboBox.Items.Clear();
             GameSelector_ComboBox.ItemsSource = Enum.GetValues(typeof(GameType));
-            GameSelector_ComboBox.SelectedIndex = 0;
+            GameSelector_ComboBox.SelectedIndex = ((int)Settings.GetLastSelectedGame());
             StatusNotifyHelper.Assign("Important information will show up here.");
         }
 
@@ -39,6 +36,12 @@ namespace REMod.Views.Pages
             if (GameSelector_ComboBox.SelectedItem != null)
             {
                 selectedGameType = (GameType)Enum.Parse(typeof(GameType), GameSelector_ComboBox.SelectedItem.ToString() ?? "None");
+                if (Settings.GetLastSelectedGame() != GameType.None)
+                {
+                    selectedGameType = Settings.GetLastSelectedGame();
+                }
+
+                Settings.SaveLastSelectedGame(selectedGameType);
                 StatusNotifyHelper.Assign($"Selected game: {selectedGameType}");
             }
         }
