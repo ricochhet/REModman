@@ -27,110 +27,70 @@ namespace REMod.Views.Pages
         {
             GameSelector_ComboBox.Items.Clear();
             GameSelector_ComboBox.ItemsSource = Enum.GetValues(typeof(GameType));
-            GameSelector_ComboBox.SelectedIndex = ((int)Settings.GetLastSelectedGame());
+            GameSelector_ComboBox.SelectedIndex = ((int)SettingsManager.GetLastSelectedGame());
             StatusNotifyHelper.Assign("Important information will show up here.");
         }
 
-        private void GameSelector_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void GameSelector_ComboBox_DropDownClosed(object sender, EventArgs e)
         {
             if (GameSelector_ComboBox.SelectedItem != null)
             {
-                selectedGameType = (GameType)Enum.Parse(typeof(GameType), GameSelector_ComboBox.SelectedItem.ToString() ?? "None");
-                if (Settings.GetLastSelectedGame() != GameType.None)
-                {
-                    selectedGameType = Settings.GetLastSelectedGame();
-                }
+                selectedGameType = GameTypeParser.Parse(GameSelector_ComboBox);
+                SettingsManager.SaveLastSelectedGame(selectedGameType);
 
-                Settings.SaveLastSelectedGame(selectedGameType);
+                GameSelector_ComboBox.SelectedIndex = ((int)SettingsManager.GetLastSelectedGame());
                 StatusNotifyHelper.Assign($"Selected game: {selectedGameType}");
             }
         }
 
-        private void CreateDataFolder_CardAction_Click(object sender, RoutedEventArgs e)
+        private void Setup_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedGameType != GameType.None)
-            {
-                if (!Collection.CheckForDataFolder(selectedGameType))
-                {
-                    Collection.CreateDataFolder(selectedGameType);
-                    StatusNotifyHelper.Assign($"Data folder created for {selectedGameType}.");
-                }
-                else
-                {
-                    StatusNotifyHelper.Assign($"{selectedGameType} already has a data folder.");
-                }
-            }
-            else
-            {
-                StatusNotifyHelper.Assign($"Please select a valid game.");
-            }
+            // SetupActionHelper.GetSetupAction(SetupType.CREATE_INDEX, selectedGameType);
+        }
+
+        private void CreateIndex_CardAction_Click(object sender, RoutedEventArgs e)
+        {
+            SetupActionHelper.GetAction(SetupType.CREATE_INDEX, selectedGameType);
+        }
+
+        private void CreateList_CardAction_Click(object sender, RoutedEventArgs e)
+        {
+            SetupActionHelper.GetAction(SetupType.CREATE_LIST, selectedGameType);
+        }
+
+        private void CreateSettings_CardAction_Click(object sender, RoutedEventArgs e)
+        {
+            SetupActionHelper.GetAction(SetupType.CREATE_SETTINGS, selectedGameType);
         }
 
         private void CreateModsFolder_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedGameType != GameType.None)
-            {
-                if (!Collection.CheckForModFolder(selectedGameType))
-                {
-                    Collection.CreateModFolder(selectedGameType);
-                    StatusNotifyHelper.Assign($"Mod folder created for {selectedGameType}.");
-                }
-                else
-                {
-                    StatusNotifyHelper.Assign($"{selectedGameType} already has a mod folder.");
-                }
-            }
-            else
-            {
-                StatusNotifyHelper.Assign($"Please select a valid game.");
-            }
+            SetupActionHelper.GetAction(SetupType.CREATE_MODS_FOLDER, selectedGameType);
         }
 
-        private void SetupGameData_CardAction_Click(object sender, RoutedEventArgs e)
+        private void SaveGamePath_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedGameType != GameType.None)
-            {
-                if (Collection.CheckForDataFolder(selectedGameType))
-                {
-                    if (ProcessHelper.GetProcIdFromName(EnumSwitch.GetProcName(selectedGameType)) != 0)
-                    {
-                        Settings.SaveGamePath(selectedGameType);
-                        StatusNotifyHelper.Assign($"Game data created for {selectedGameType}.");
-                    }
-                    else
-                    {
-                        StatusNotifyHelper.Assign($"{selectedGameType} must be running.");
-                    }
-                }
-                else
-                {
-                    StatusNotifyHelper.Assign($"{selectedGameType} does not have any data.");
-                }
-            }
-            else
-            {
-                StatusNotifyHelper.Assign($"Please select a valid game.");
-            }
+            SetupActionHelper.GetAction(SetupType.SAVE_GAME_PATH, selectedGameType);
         }
 
-        private void ClearData_CardAction_Click(object sender, RoutedEventArgs e)
+        private void DeleteIndex_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedGameType != GameType.None)
-            {
-                if (Collection.CheckForDataFolder(selectedGameType))
-                {
-                    StatusNotifyHelper.Assign($"Deleting data for game: {selectedGameType}.");
-                    Collection.DeleteDataFolder(selectedGameType);
-                }
-                else
-                {
-                    StatusNotifyHelper.Assign($"{selectedGameType} does not have any data.");
-                }
-            }
-            else
-            {
-                StatusNotifyHelper.Assign($"Please select a valid game.");
-            }
+            SetupActionHelper.GetAction(SetupType.DELETE_INDEX, selectedGameType);
+        }
+
+        private void DeleteList_CardAction_Click(object sender, RoutedEventArgs e)
+        {
+            SetupActionHelper.GetAction(SetupType.DELETE_LIST, selectedGameType);
+        }
+
+        private void DeleteSettings_CardAction_Click(object sender, RoutedEventArgs e)
+        {
+            SetupActionHelper.GetAction(SetupType.DELETE_SETTINGS, selectedGameType);
+        }
+
+        private void DeleteData_CardAction_Click(object sender, RoutedEventArgs e)
+        {
+            SetupActionHelper.GetAction(SetupType.DELETE_DATA_FOLDER, selectedGameType);
         }
     }
 }

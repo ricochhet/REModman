@@ -15,9 +15,9 @@ using System.Security.AccessControl;
 
 namespace REModman.Internal
 {
-    public class Installer
+    public class ModManager
     {
-        public static List<ModData> SelectMods(List<ModData> modData, Dictionary<string, string> selectedMods)
+        public static List<ModData> Select(List<ModData> modData, Dictionary<string, string> selectedMods)
         {
             List<ModData> installList = new List<ModData>();
 
@@ -38,9 +38,9 @@ namespace REModman.Internal
             return installList;
         }
 
-        public static void InstallMods(GameType type, List<ModData> selectedMods)
+        public static void Install(GameType type, List<ModData> selectedMods)
         {
-            string installPath = Settings.GetGamePath(type);
+            string installPath = SettingsManager.GetGamePath(type);
             List<ModData> intercepted = new List<ModData>();
 
             if (Directory.Exists(installPath))
@@ -90,9 +90,9 @@ namespace REModman.Internal
             }
         }
 
-        public static void UninstallMods(GameType type, List<ModData> selectedMods)
+        public static void Uninstall(GameType type, List<ModData> selectedMods)
         {
-            string installPath = Settings.GetGamePath(type);
+            string installPath = SettingsManager.GetGamePath(type);
 
             if (Directory.Exists(installPath))
             {
@@ -106,10 +106,10 @@ namespace REModman.Internal
             }
         }
 
-        public static bool IsModInstalled(GameType type, ModData mod)
+        public static bool IsInstalled(GameType type, ModData mod)
         {
             bool isInstalled = false;
-            List<ModData> installedModList = DeserializeModList(type);
+            List<ModData> installedModList = DeserializeData(type);
 
             foreach (ModData installedMod in installedModList)
             {
@@ -123,7 +123,7 @@ namespace REModman.Internal
             return isInstalled;
         }
 
-        public static List<ModData> DeserializeModList(GameType type)
+        public static List<ModData> DeserializeData(GameType type)
         {
             List<ModData> modData = new List<ModData>();
             string gameModFolder = EnumSwitch.GetModFolder(type);
@@ -142,7 +142,7 @@ namespace REModman.Internal
             return modData;
         }
 
-        public static void SaveModList(GameType type, List<ModData> modList)
+        public static void SaveData(GameType type, List<ModData> modList)
         {
             string gameModFolder = EnumSwitch.GetModFolder(type);
             string gameDataFolder = Path.Combine(Constants.DATA_FOLDER, gameModFolder);

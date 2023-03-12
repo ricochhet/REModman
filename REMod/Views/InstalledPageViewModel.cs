@@ -30,11 +30,11 @@ namespace REMod.Models
                     throw new NullReferenceException();
                 }
 
-                GameType gameType = (GameType)Enum.Parse(typeof(GameType), data.GameType ?? "None");
+                GameType gameType = GameTypeParser.Parse(data);
 
                 if (gameType != GameType.None)
                 {
-                    List<ModData> selectedMods = Installer.SelectMods(Installer.DeserializeModList(gameType), new Dictionary<string, string>
+                    List<ModData> selectedMods = ModManager.Select(ModManager.DeserializeData(gameType), new Dictionary<string, string>
                     {
                         { data.Name, data.Guid }
                     });
@@ -46,10 +46,10 @@ namespace REMod.Models
                             selectedMods[0]
                         };
 
-                        if (Directory.Exists(Settings.GetGamePath(gameType)))
+                        if (Directory.Exists(SettingsManager.GetGamePath(gameType)))
                         {
                             bool isModInstalled = false;
-                            List<ModData> installedModList = Installer.DeserializeModList(gameType);
+                            List<ModData> installedModList = ModManager.DeserializeData(gameType);
 
                             foreach (ModData installedMod in installedModList)
                             {
@@ -66,8 +66,8 @@ namespace REMod.Models
                                 if (temp != null)
                                 {
                                     installedModList.Remove(temp);
-                                    Installer.UninstallMods(gameType, firstInSelection);
-                                    Installer.SaveModList(gameType, installedModList);
+                                    ModManager.Uninstall(gameType, firstInSelection);
+                                    ModManager.SaveData(gameType, installedModList);
 
                                     if (data.VirtualizingItemsControl != null)
                                     {

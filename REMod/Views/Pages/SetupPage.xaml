@@ -22,33 +22,65 @@
                     </StackPanel>
                 </ui:CardControl.Header>
                 <ComboBox
-            MinWidth="200"
-            HorizontalAlignment="Left"
-            SelectedIndex="0"
-            Name="GameSelector_ComboBox"
-            Initialized="GameSelector_ComboBox_Initialize"
-            SelectionChanged="GameSelector_ComboBox_SelectionChanged">
+                    MinWidth="200"
+                    HorizontalAlignment="Left"
+                    SelectedIndex="0"
+                    Name="GameSelector_ComboBox"
+                    Initialized="GameSelector_ComboBox_Initialize"
+                    DropDownClosed="GameSelector_ComboBox_DropDownClosed">
                 </ComboBox>
             </ui:CardControl>
-            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Database32" Name="CreateDataFolder_CardAction" Click="CreateDataFolder_CardAction_Click">
+            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Accessibility28" Name="Setup_CardAction" Click="Setup_CardAction_Click">
                 <StackPanel>
-                    <TextBlock FontSize="14" Text="Setup Data Folder" />
+                    <TextBlock FontSize="14" Text="Setup" />
                 </StackPanel>
             </ui:CardAction>
-            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Folder32" Name="CreateModsFolder_CardAction" Click="CreateModsFolder_CardAction_Click">
+            
+            <TextBlock Text="Advanced" FontSize="16" FontWeight="Medium" Margin="8,16,0,0" />
+            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Add28" Name="CreateIndex_CardAction" Click="CreateIndex_CardAction_Click">
                 <StackPanel>
-                    <TextBlock FontSize="14" Text="Setup Mods Folder" />
+                    <TextBlock FontSize="14" Text="Create Index" />
                 </StackPanel>
             </ui:CardAction>
-            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Accessibility32" Name="SetupGameData_CardAction" Click="SetupGameData_CardAction_Click">
+            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Add28" Name="CreateList_CardAction" Click="CreateList_CardAction_Click">
                 <StackPanel>
-                    <TextBlock FontSize="14" Text="Setup Game Data" />
-                    <TextBlock Margin="0,2,0,0" FontSize="12" Text="Game must be running." Padding="0,0,16,0"  Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                    <TextBlock FontSize="14" Text="Create List" />
                 </StackPanel>
             </ui:CardAction>
-            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Delete32" Name="ClearData_CardAction" Click="ClearData_CardAction_Click">
+            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Add28" Name="CreateSettings_CardAction" Click="CreateSettings_CardAction_Click">
                 <StackPanel>
-                    <TextBlock FontSize="14" Text="Clear Data" />
+                    <TextBlock FontSize="14" Text="Create Settings" />
+                </StackPanel>
+            </ui:CardAction>
+            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Add28" Name="CreateModsFolder_CardAction" Click="CreateModsFolder_CardAction_Click">
+                <StackPanel>
+                    <TextBlock FontSize="14" Text="Create Mods Folder" />
+                </StackPanel>
+            </ui:CardAction>
+            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Add28" Name="SaveGamePath_CardAction" Click="SaveGamePath_CardAction_Click">
+                <StackPanel>
+                    <TextBlock FontSize="14" Text="Create Mods Folder" />
+                </StackPanel>
+            </ui:CardAction>
+
+            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Delete28" Name="DeleteIndex_CardAction" Click="DeleteIndex_CardAction_Click">
+                <StackPanel>
+                    <TextBlock FontSize="14" Text="Delete Index" />
+                </StackPanel>
+            </ui:CardAction>
+            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Delete28" Name="DeleteList_CardAction" Click="DeleteList_CardAction_Click">
+                <StackPanel>
+                    <TextBlock FontSize="14" Text="Delete List" />
+                </StackPanel>
+            </ui:CardAction>
+            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Delete28" Name="DeleteSettings_CardAction" Click="DeleteSettings_CardAction_Click">
+                <StackPanel>
+                    <TextBlock FontSize="14" Text="Delete Settings" />
+                </StackPanel>
+            </ui:CardAction>
+            <ui:CardAction Grid.Column="1" Margin="8,8,8,0" Padding="16,13,16,12" Icon="Delete28" Name="DeleteData_CardAction" Click="DeleteData_CardAction_Click">
+                <StackPanel>
+                    <TextBlock FontSize="14" Text="Delete Data" />
                 </StackPanel>
             </ui:CardAction>
         </StackPanel>

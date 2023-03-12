@@ -13,7 +13,7 @@ using REModman.Configuration.Structs;
 
 namespace REModman.Internal
 {
-    public class Settings
+    public class SettingsManager
     {
         public static void SaveLastSelectedGame(GameType type)
         {
@@ -43,16 +43,19 @@ namespace REModman.Internal
             string gameName = EnumSwitch.GetProcName(type);
             int id = ProcessHelper.GetProcIdFromName(gameName);
 
-            if (File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
+            if (id != 0)
             {
-                SettingsData settingsData = DeserializeSettings();
-                
-                if (!settingsData.GamePaths.ContainsKey(type.ToString()))
+                if (File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
                 {
-                    settingsData.GamePaths.Add(type.ToString(), ProcessHelper.GetProcPath(id).ToString());
-                }
+                    SettingsData settingsData = DeserializeSettings();
 
-                SaveSettings(settingsData);
+                    if (!settingsData.GamePaths.ContainsKey(type.ToString()))
+                    {
+                        settingsData.GamePaths.Add(type.ToString(), ProcessHelper.GetProcPath(id).ToString());
+                    }
+
+                    SaveSettings(settingsData);
+                }
             }
         }
 

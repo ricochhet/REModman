@@ -14,78 +14,9 @@ using REModman.Configuration.Structs;
 
 namespace REModman.Internal
 {
-    public class Collection
+    public class ModIndexer
     {
-        public static void CreateDataFolder(GameType type)
-        {
-            string gameModFolder = EnumSwitch.GetModFolder(type);
-            string gameDataFolder = Path.Combine(Constants.DATA_FOLDER, gameModFolder);
-
-            if (!File.Exists(Path.Combine(gameDataFolder, Constants.MOD_INDEX_FILE)))
-            {
-                FileStreamHelper.WriteFile(gameDataFolder, Constants.MOD_INDEX_FILE, "[]", false);
-            }
-
-            if (!File.Exists(Path.Combine(gameDataFolder, Constants.MOD_LIST_FILE)))
-            {
-                FileStreamHelper.WriteFile(gameDataFolder, Constants.MOD_LIST_FILE, "[]", false);
-            }
-
-            if (!File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
-            {
-                Settings.SaveSettings(new SettingsData
-                {
-                    LastSelectedGame = GameType.None,
-                    GamePaths = new Dictionary<string, string>()
-                });
-            }
-        }
-
-        public static void DeleteDataFolder(GameType type)
-        {
-            string gameModFolder = EnumSwitch.GetModFolder(type);
-            string gameDataFolder = Path.Combine(Constants.DATA_FOLDER, gameModFolder);
-
-            if (Directory.Exists(gameDataFolder))
-            {
-                Directory.Delete(gameDataFolder, true);
-            }
-        }
-
-        public static bool CheckForDataFolder(GameType type)
-        {
-            string gameModFolder = EnumSwitch.GetModFolder(type);
-            string gameDataFolder = Path.Combine(Constants.DATA_FOLDER, gameModFolder);
-
-            if (Directory.Exists(gameDataFolder))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public static void CreateModFolder(GameType type)
-        {
-            string gameModFolder = EnumSwitch.GetModFolder(type);
-            if (!Directory.Exists(Path.Combine(Constants.MODS_FOLDER, gameModFolder)))
-            {
-                Directory.CreateDirectory(Path.Combine(Constants.MODS_FOLDER, gameModFolder));
-            }
-        }
-
-        public static bool CheckForModFolder(GameType type)
-        {
-            string gameModFolder = EnumSwitch.GetModFolder(type);
-            if (Directory.Exists(Path.Combine(Constants.MODS_FOLDER, gameModFolder)))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public static List<ModData> IndexModDirectory(GameType type)
+        public static List<ModData> Index(GameType type)
         {
             List<ModData> modList = new List<ModData>();
             IniDataParser parser = new IniDataParser();
@@ -165,7 +96,7 @@ namespace REModman.Internal
             return modList.OrderBy(o => o.LoadOrder).ToList();
         }
 
-        public static List<ModData> DeserializeModIndex(GameType type)
+        public static List<ModData> DeserializeData(GameType type)
         {
             List<ModData> modData = new List<ModData>();
             string gameModFolder = EnumSwitch.GetModFolder(type);
@@ -184,7 +115,7 @@ namespace REModman.Internal
             return modData;
         }
 
-        public static void SaveModIndex(GameType type, List<ModData> modList)
+        public static void SaveData(GameType type, List<ModData> modList)
         {
             string gameModFolder = EnumSwitch.GetModFolder(type);
             string gameDataFolder = Path.Combine(Constants.DATA_FOLDER, gameModFolder);

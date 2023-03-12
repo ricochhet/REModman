@@ -23,16 +23,16 @@ namespace REMod.Views.Pages
         {
             InitializeComponent();
 
-            if (Settings.GetLastSelectedGame() != GameType.None)
+            if (SettingsManager.GetLastSelectedGame() != GameType.None)
             {
                 ModCollection.Clear();
-                StatusNotifyHelper.Assign($"Selected game: {Settings.GetLastSelectedGame()}");
+                StatusNotifyHelper.Assign($"Selected game: {SettingsManager.GetLastSelectedGame()}");
 
-                if (Settings.GetLastSelectedGame() != GameType.None)
+                if (SettingsManager.GetLastSelectedGame() != GameType.None)
                 {
-                    if (Collection.CheckForDataFolder(Settings.GetLastSelectedGame()) && Collection.CheckForModFolder(Settings.GetLastSelectedGame()))
+                    if (SetupManager.DataFolderExists(SettingsManager.GetLastSelectedGame()) && SetupManager.ModsFolderExists(SettingsManager.GetLastSelectedGame()))
                     {
-                        List<ModData> index = Installer.DeserializeModList(Settings.GetLastSelectedGame());
+                        List<ModData> index = ModManager.DeserializeData(SettingsManager.GetLastSelectedGame());
 
                         foreach (ModData mod in index)
                         {
@@ -43,16 +43,16 @@ namespace REMod.Views.Pages
                                 Version = mod.Version,
                                 Description = mod.Description,
                                 VirtualizingItemsControl = ModsItemsControl,
-                                GameType = Settings.GetLastSelectedGame().ToString(),
+                                GameType = SettingsManager.GetLastSelectedGame().ToString(),
                             });
                         }
 
                         ModsItemsControl.ItemsSource = ModCollection;
-                        StatusNotifyHelper.Assign($"Indexed installed mods for {Settings.GetLastSelectedGame()}.");
+                        StatusNotifyHelper.Assign($"Indexed installed mods for {SettingsManager.GetLastSelectedGame()}.");
                     }
                     else
                     {
-                        StatusNotifyHelper.Assign($"{Settings.GetLastSelectedGame()} has not been fully setup.");
+                        StatusNotifyHelper.Assign($"{SettingsManager.GetLastSelectedGame()} has not been fully setup.");
                     }
                 }
                 else
