@@ -5,23 +5,24 @@
 
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Wpf.Ui.Controls;
+using Wpf.Ui.Common;
 
 namespace REMod.Models
 {
-    public class ModInfoBridge
+    public class ModItem
     {
         public string? Name { get; set; }
         public string? Guid { get; set; }
         public string? Version { get; set; }
         public string? Description { get; set; }
         public string? GameType { get; set; }
-        public VirtualizingItemsControl? VirtualizingItemsControl { get; set; }
 
-        public void Execute() { }
+        public void Execute() 
+        {
+        }
     }
-
 }

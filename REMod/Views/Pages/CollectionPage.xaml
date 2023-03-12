@@ -32,7 +32,7 @@
             Foreground="{DynamicResource TextFillColorSecondaryBrush}"
             VirtualizingPanel.CacheLengthUnit="Item">
             <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type models:ModInfoBridge}">
+                <DataTemplate DataType="{x:Type models:ModItem}">
                     <ui:CardControl Margin="8" Padding="16,13,16,12" Width="300" MaxWidth="300">
                         <ui:CardControl.Header>
                             <StackPanel>
@@ -42,16 +42,7 @@
                                 <TextBlock TextTrimming="CharacterEllipsis" FontSize="12" Text="{Binding Version, Mode=OneWay}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
                             </StackPanel>
                         </ui:CardControl.Header>
-                        <ui:Button Grid.Column="0" Margin="0,0,4,0" Icon="Add28" Name="InstallMod_Button" Content="Install" HorizontalAlignment="Stretch" Command="models:CollectionPageViewModel.InstallModCommand">
-                            <Button.CommandParameter>
-                                <MultiBinding Converter="{StaticResource ModInfoBindings}">
-                                    <Binding Path="Name"/>
-                                    <Binding Path="Guid"/>
-                                    <Binding Path="GameType"/>
-                                    <Binding Path="VirtualizingItemsControl"/>
-                                </MultiBinding>
-                            </Button.CommandParameter>
-                        </ui:Button>
+                        <ui:Button Grid.Column="0" Margin="0,0,4,0" Icon="Add28" Name="InstallMod_Button" Content="Install" HorizontalAlignment="Stretch" Tag="{Binding}" Click="InstallMod_Button_Click" />
                     </ui:CardControl>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

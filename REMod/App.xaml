@@ -7,7 +7,6 @@
     StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
-            <models:ModInfoBindings x:Key="ModInfoBindings" />
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemesDictionary Theme="Dark" />
                 <ui:ControlsDictionary />

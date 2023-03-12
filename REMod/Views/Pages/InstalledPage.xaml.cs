@@ -10,14 +10,15 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using REMod;
 using REMod.Helpers;
-using System.Windows.Controls;
 using REModman.Configuration.Structs;
+using Wpf.Ui.Controls;
+using System.IO;
 
 namespace REMod.Views.Pages
 {
     public partial class InstalledPage
     {
-        public ObservableCollection<ModInfoBridge> ModCollection = new();
+        public ObservableCollection<ModItem> ModCollection = new();
 
         public InstalledPage()
         {
@@ -36,13 +37,12 @@ namespace REMod.Views.Pages
 
                         foreach (ModData mod in index)
                         {
-                            ModCollection.Add(new ModInfoBridge
+                            ModCollection.Add(new ModItem
                             {
                                 Name = mod.Name,
                                 Guid = mod.Guid,
                                 Version = mod.Version,
                                 Description = mod.Description,
-                                VirtualizingItemsControl = ModsItemsControl,
                                 GameType = SettingsManager.GetLastSelectedGame().ToString(),
                             });
                         }
@@ -59,6 +59,52 @@ namespace REMod.Views.Pages
                 {
                     StatusNotifyHelper.Assign($"Please select a valid game.");
                 }
+            }
+        }
+
+        private void UninstallMod_Button_Click(object sender, RoutedEventArgs e)
+        {
+            Button? button = sender as Button;
+            ModItem? item = button?.Tag as ModItem;
+
+            if (item != null)
+            {
+                if (SettingsManager.GetLastSelectedGame() != GameType.None)
+                {
+                    if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
+                    {
+                        ModData selectedMod = ModManager.Select(ModManager.DeserializeData(SettingsManager.GetLastSelectedGame()), item.Name, item.Guid);
+                        bool isModInstalled = ModManager.IsInstalled(SettingsManager.GetLastSelectedGame(), selectedMod);
+                        List<ModData> installedModList = ModManager.DeserializeData(SettingsManager.GetLastSelectedGame());
+
+                        if (isModInstalled == true)
+                        {
+                            ModData? temp = installedModList.Find(i => i.Name == selectedMod.Name && i.Guid == selectedMod.Guid);
+                            if (temp != null)
+                            {
+                                installedModList.Remove(temp);
+                                ModManager.Uninstall(SettingsManager.GetLastSelectedGame(), selectedMod);
+                                ModManager.SaveData(SettingsManager.GetLastSelectedGame(), installedModList);
+                            }
+                        }
+                        else
+                        {
+                            StatusNotifyHelper.Assign($"Mod: {item.Name} is not installed for {SettingsManager.GetLastSelectedGame()}.");
+                        }
+                    }
+                    else
+                    {
+                        StatusNotifyHelper.Assign($"Could not find the game path for game: {SettingsManager.GetLastSelectedGame()}.");
+                    }
+                }
+                else
+                {
+                    StatusNotifyHelper.Assign($"Could not get the selected mod: {item.Name}.");
+                }
+            }
+            else
+            {
+                throw new NullReferenceException();
             }
         }
     }

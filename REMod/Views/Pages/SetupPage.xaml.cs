@@ -35,7 +35,7 @@ namespace REMod.Views.Pages
         {
             if (GameSelector_ComboBox.SelectedItem != null)
             {
-                selectedGameType = GameTypeParser.Parse(GameSelector_ComboBox);
+                selectedGameType = (GameType)Enum.Parse(typeof(GameType), GameSelector_ComboBox.SelectedItem.ToString() ?? GameType.None.ToString());
                 SettingsManager.SaveLastSelectedGame(selectedGameType);
 
                 GameSelector_ComboBox.SelectedIndex = ((int)SettingsManager.GetLastSelectedGame());
