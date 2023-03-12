@@ -13,6 +13,7 @@ using REMod.Helpers;
 using REModman.Configuration.Structs;
 using Wpf.Ui.Controls;
 using System.IO;
+using REMod.Dialogs;
 
 namespace REMod.Views.Pages
 {
@@ -27,37 +28,27 @@ namespace REMod.Views.Pages
             if (SettingsManager.GetLastSelectedGame() != GameType.None)
             {
                 ModCollection.Clear();
-                StatusNotifyHelper.Assign($"Selected game: {SettingsManager.GetLastSelectedGame()}");
-
-                if (SettingsManager.GetLastSelectedGame() != GameType.None)
+                if (SetupManager.DataFolderExists(SettingsManager.GetLastSelectedGame()) && SetupManager.ModsFolderExists(SettingsManager.GetLastSelectedGame()))
                 {
-                    if (SetupManager.DataFolderExists(SettingsManager.GetLastSelectedGame()) && SetupManager.ModsFolderExists(SettingsManager.GetLastSelectedGame()))
-                    {
-                        List<ModData> index = ModManager.DeserializeData(SettingsManager.GetLastSelectedGame());
+                    List<ModData> index = ModManager.DeserializeData(SettingsManager.GetLastSelectedGame());
 
-                        foreach (ModData mod in index)
+                    foreach (ModData mod in index)
+                    {
+                        ModCollection.Add(new ModItem
                         {
-                            ModCollection.Add(new ModItem
-                            {
-                                Name = mod.Name,
-                                Guid = mod.Guid,
-                                Version = mod.Version,
-                                Description = mod.Description,
-                                GameType = SettingsManager.GetLastSelectedGame().ToString(),
-                            });
-                        }
+                            Name = mod.Name,
+                            Guid = mod.Guid,
+                            Version = mod.Version,
+                            Description = mod.Description,
+                        });
+                    }
 
-                        ModsItemsControl.ItemsSource = ModCollection;
-                        StatusNotifyHelper.Assign($"Indexed installed mods for {SettingsManager.GetLastSelectedGame()}.");
-                    }
-                    else
-                    {
-                        StatusNotifyHelper.Assign($"{SettingsManager.GetLastSelectedGame()} has not been fully setup.");
-                    }
+                    ModsItemsControl.ItemsSource = ModCollection;
                 }
                 else
                 {
-                    StatusNotifyHelper.Assign($"Please select a valid game.");
+                    BaseDialog dialog = new BaseDialog("Configuration Error", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    dialog.Show();
                 }
             }
         }
@@ -85,21 +76,20 @@ namespace REMod.Views.Pages
                                 installedModList.Remove(temp);
                                 ModManager.Uninstall(SettingsManager.GetLastSelectedGame(), selectedMod);
                                 ModManager.SaveData(SettingsManager.GetLastSelectedGame(), installedModList);
+                                ModCollection.Remove(item);
                             }
                         }
                         else
                         {
-                            StatusNotifyHelper.Assign($"Mod: {item.Name} is not installed for {SettingsManager.GetLastSelectedGame()}.");
+                            BaseDialog dialog = new BaseDialog("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} does not have an installed mod called {item.Name}.");
+                            dialog.Show();
                         }
                     }
                     else
                     {
-                        StatusNotifyHelper.Assign($"Could not find the game path for game: {SettingsManager.GetLastSelectedGame()}.");
+                        BaseDialog dialog = new BaseDialog("Configuration Error", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                        dialog.Show();
                     }
-                }
-                else
-                {
-                    StatusNotifyHelper.Assign($"Could not get the selected mod: {item.Name}.");
                 }
             }
             else

@@ -25,40 +25,6 @@ namespace REModman.Utils
             }
         }
 
-        public static string Md5Checksum(string pathToFile)
-        {
-            if (File.Exists(pathToFile))
-            {
-                using (MD5 md5 = MD5.Create())
-                {
-                    using (FileStream fs = File.OpenRead(pathToFile))
-                    {
-                        byte[] hash = md5.ComputeHash(fs);
-                        return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
-                    }
-                }
-            }
-
-            return string.Empty;
-        }
-
-        public static string Sha256Checksum(string pathToFile)
-        {
-            if (File.Exists(pathToFile))
-            {
-                using (SHA256 sha256 = SHA256.Create())
-                {
-                    using (FileStream fs = File.OpenRead(pathToFile))
-                    {
-                        byte[] hash = sha256.ComputeHash(fs);
-                        return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
-                    }
-                }
-            }
-
-            return string.Empty;
-        }
-
         public static void CopyFile(string folderPath, string destinationPath, bool suppressLogs)
         {
             if (createDirectories) Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
@@ -78,16 +44,16 @@ namespace REModman.Utils
                 if (logMd5)
                 {
                     LineWriter(new string[] {
-                        "[COPY] MD5(srcPathToFile)        : " + Md5Checksum(folderPath),
-                        "[COPY] MD5(destPathToFile)       : " + Md5Checksum(destinationPath),
+                        "[COPY] MD5(srcPathToFile)        : " + CryptoHelper.FileHash.Md5(folderPath),
+                        "[COPY] MD5(destPathToFile)       : " + CryptoHelper.FileHash.Md5(destinationPath),
                     }, suppressLogs);
                 }
 
                 if (logSha256)
                 {
                     LineWriter(new string[] {
-                        "[COPY] SHA256(srcPathToFile)        : " + Sha256Checksum(folderPath),
-                        "[COPY] SHA256(destPathToFile)       : " + Sha256Checksum(destinationPath),
+                        "[COPY] SHA256(srcPathToFile)        : " + CryptoHelper.FileHash.Sha256(folderPath),
+                        "[COPY] SHA256(destPathToFile)       : " + CryptoHelper.FileHash.Sha256(destinationPath),
                     }, suppressLogs);
                 }
             }
@@ -116,16 +82,16 @@ namespace REModman.Utils
                 if (logMd5)
                 {
                     LineWriter(new string[] {
-                        "[COPY] MD5(srcPathToFile)        : " + Md5Checksum(srcPathToFile),
-                        "[COPY] MD5(destPathToFile)       : " + Md5Checksum(destPathToFile),
+                        "[COPY] MD5(srcPathToFile)        : " + CryptoHelper.FileHash.Md5(srcPathToFile),
+                        "[COPY] MD5(destPathToFile)       : " + CryptoHelper.FileHash.Md5(destPathToFile),
                     }, suppressLogs);
                 }
 
                 if (logSha256)
                 {
                     LineWriter(new string[] {
-                        "[COPY] SHA256(srcPathToFile)        : " + Sha256Checksum(srcPathToFile),
-                        "[COPY] SHA256(destPathToFile)       : " + Sha256Checksum(destPathToFile),
+                        "[COPY] SHA256(srcPathToFile)        : " + CryptoHelper.FileHash.Sha256(srcPathToFile),
+                        "[COPY] SHA256(destPathToFile)       : " + CryptoHelper.FileHash.Sha256(destPathToFile),
                     }, suppressLogs);
                 }
             }
@@ -157,14 +123,14 @@ namespace REModman.Utils
                 if (logMd5)
                 {
                     LineWriter(new string[] {
-                        "[WRITE] MD5(srcPathToFile)       : " + Md5Checksum(pathToFile),
+                        "[WRITE] MD5(srcPathToFile)       : " + CryptoHelper.FileHash.Md5(pathToFile),
                     }, suppressLogs);
                 }
 
                 if (logSha256)
                 {
                     LineWriter(new string[] {
-                        "[WRITE] SHA256(srcPathToFile)       : " + Sha256Checksum(pathToFile),
+                        "[WRITE] SHA256(srcPathToFile)       : " + CryptoHelper.FileHash.Sha256(pathToFile),
                     }, suppressLogs);
                 }
             }

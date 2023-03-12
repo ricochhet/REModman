@@ -36,16 +36,16 @@ namespace REModman.Internal
                     if (File.Exists(modPath))
                     {
                         List<ModFile> modFiles = new List<ModFile>();
-                        string sha256 = FileStreamHelper.Sha256Checksum(modPath);
-                        string md5 = FileStreamHelper.Md5Checksum(modPath);
+                        string fileSHA256 = CryptoHelper.FileHash.Sha256(modPath);
+                        string fileMD5 = CryptoHelper.FileHash.Md5(modPath);
 
                         modFiles.Add(new ModFile
                         {
                             LocalFilePath = "." + modPath.Substring(StringHelper.IndexOfNth(modPath, "\\", 2)),
                             SourceRelativePath = modPath,
                             SourceAbsolutePath = PathHelper.GetAbsolutePath(modPath),
-                            SHA256 = sha256,
-                            MD5 = md5
+                            SHA256 = fileSHA256,
+                            MD5 = fileMD5
                         });
 
                         modList.Add(new ModData
@@ -56,25 +56,28 @@ namespace REModman.Internal
                             Version = modInfo["version"],
                             LoadOrder = modIni["user"]["loadOrder"],
                             Path = modInfo["files"],
-                            Guid = Guid.NewGuid().ToString(),
+                            Guid = fileSHA256,
                             ModFiles = modFiles
                         });
                     }
                     else if (Directory.Exists(modPath))
                     {
                         List<ModFile> modFiles = new List<ModFile>();
+                        string modSHA256 = string.Empty;
+
                         foreach (string filePath in FileStreamHelper.GetFiles(modPath, "*.*", false))
                         {
-                            string sha256 = FileStreamHelper.Sha256Checksum(filePath);
-                            string md5 = FileStreamHelper.Md5Checksum(filePath);
+                            string fileSHA256 = CryptoHelper.FileHash.Sha256(filePath);
+                            string fileMD5 = CryptoHelper.FileHash.Md5(filePath);
+                            modSHA256 += fileSHA256;
 
                             modFiles.Add(new ModFile
                             {
                                 LocalFilePath = "." + filePath.Substring(StringHelper.IndexOfNth(filePath, "\\", 2)),
                                 SourceRelativePath = filePath,
                                 SourceAbsolutePath = PathHelper.GetAbsolutePath(filePath),
-                                SHA256 = sha256,
-                                MD5 = md5
+                                SHA256 = fileSHA256,
+                                MD5 = fileMD5
                             });
                         }
 
@@ -86,7 +89,7 @@ namespace REModman.Internal
                             Version = modInfo["version"],
                             LoadOrder = modIni["user"]["loadOrder"],
                             Path = modInfo["files"],
-                            Guid = Guid.NewGuid().ToString(),
+                            Guid = CryptoHelper.StringHash.Sha256(modSHA256),
                             ModFiles = modFiles
                         });
                     }

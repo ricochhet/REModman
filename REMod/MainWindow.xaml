@@ -28,19 +28,6 @@
         </Grid.RowDefinitions>
 
         <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" IsBackButtonVisible="Collapsed" IsPaneToggleVisible="False">
-            <!--<ui:NavigationView.AutoSuggestBox>
-                <ui:AutoSuggestBox
-                    Margin="8,8,8,16"
-                    IconPlacement="Right"
-                    PlaceholderEnabled="True"
-                    PlaceholderText="Search" />
-            </ui:NavigationView.AutoSuggestBox>
-            <ui:NavigationView.Header>
-                <ui:NavigationViewBreadcrumb
-                    Margin="42,32,0,0"
-                    FontSize="28"
-                    FontWeight="DemiBold" />
-            </ui:NavigationView.Header>-->
             <ui:NavigationView.MenuItems>
                 <TextBlock Text="REMod" FontSize="28" FontWeight="Medium" Margin="10" HorizontalAlignment="Center" />
                 <ui:NavigationViewItem Content="Setup" TargetPageType="{x:Type pages:SetupPage}">
@@ -58,6 +45,18 @@
                         <ui:SymbolIcon Symbol="Collections24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
+                <Border CornerRadius="4" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" Margin="8">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Status Log" FontSize="12" FontWeight="Medium" Margin="10" HorizontalAlignment="left" />
+                        <TextBlock Grid.Row="1" Padding="16,13,16,12" Text="No new notifications" FontSize="12" FontWeight="Medium" Margin="10" HorizontalAlignment="Center" Visibility="Collapsed" />
+                        <TextBlock Name="StatusBarNotifier_TextBlock" Grid.Row="1" Padding="16,13,16,12" Text="Notification 1&#x0a;Notification 2" FontSize="12" FontWeight="Medium" Margin="10" HorizontalAlignment="Left"/>
+                    </Grid>
+                </Border>
             </ui:NavigationView.MenuItems>
             <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem Content="Settings" TargetPageType="{x:Type pages:SettingsPage}">
@@ -69,7 +68,7 @@
         </ui:NavigationView>
 
         <ui:TitleBar
-            Title="WPF UI - Simple Demo"
+            Title="REMod - Mod Manager"
             Grid.Row="0"
             Icon="pack://application:,,,/Assets/applicationIcon-256.png"
             Background="{ui:ThemeResource ApplicationBackgroundBrush}" 
@@ -100,7 +99,7 @@
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
             <StatusBarItem Grid.Column="1" Padding="0,0,4,0">
-                <TextBlock Name="StatusBarNotifier_TextBlock" Text="PLACEHOLDER" />
+                <TextBlock Text="Version 1" />
             </StatusBarItem>
         </StatusBar>
     </Grid>
