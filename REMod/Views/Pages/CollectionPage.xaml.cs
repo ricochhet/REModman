@@ -33,14 +33,16 @@ namespace REMod.Views.Pages
                 {
                     List<ModData> index = ModDeploy.Index(SettingsManager.GetLastSelectedGame());
                     ModDeploy.Save(SettingsManager.GetLastSelectedGame(), index);
+
                     foreach (ModData mod in index)
                     {
                         ModCollection.Add(new ModItem
                         {
                             Name = mod.Name,
-                            Guid = mod.Guid,
+                            Guid = mod.Hash,
                             Version = mod.Version,
                             Description = mod.Description,
+                            IsEnabled = mod.IsEnabled,
                         });
                     }
 
@@ -54,35 +56,66 @@ namespace REMod.Views.Pages
             }
         }
 
-        private async void InstallMod_Button_Click(object sender, RoutedEventArgs e)
+        private void EnableMod_ToggleSwitch_Checked(object sender, RoutedEventArgs e)
+        {
+            ToggleSwitch? toggle = sender as ToggleSwitch;
+            ModItem? item = toggle?.Tag as ModItem;
+
+            if (item != null && SettingsManager.GetLastSelectedGame() != GameType.None)
+            {
+                if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
+                {
+                    ModDeploy.Enable(SettingsManager.GetLastSelectedGame(), item.Guid, true);
+                }
+                else
+                {
+                    BaseDialog dialog = new BaseDialog("Configuration Error", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    dialog.Show();
+                }
+            }
+        }
+
+        private void EnableMod_ToggleSwitch_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ToggleSwitch? toggle = sender as ToggleSwitch;
+            ModItem? item = toggle?.Tag as ModItem;
+
+            if (item != null && SettingsManager.GetLastSelectedGame() != GameType.None)
+            {
+                if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
+                {
+                    ModDeploy.Enable(SettingsManager.GetLastSelectedGame(), item.Guid, false);
+                }
+                else
+                {
+                    BaseDialog dialog = new BaseDialog("Configuration Error", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    dialog.Show();
+                }
+            }
+        }
+
+        private async void DeleteMod_Button_Click(object sender, RoutedEventArgs e)
         {
             Button? button = sender as Button;
             ModItem? item = button?.Tag as ModItem;
-            if (item != null)
-            {
-                if (SettingsManager.GetLastSelectedGame() != GameType.None)
-                {
-                    if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
-                    {
-                        BaseDialog confirmDialog = new BaseDialog("Mod Manager", $"Do you want to install mod {item.Name} for {SettingsManager.GetLastSelectedGame()}?");
-                        confirmDialog.Show();
 
-                        if (await confirmDialog.Confirmed.Task)
-                        {
-                            ModDeploy.Enable(SettingsManager.GetLastSelectedGame(), item.Guid, true);
-                            // ModDeploy.Patch(SettingsManager.GetLastSelectedGame());
-                        }
-                    }
-                    else
+            if (item != null && SettingsManager.GetLastSelectedGame() != GameType.None)
+            {
+                if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
+                {
+                    BaseDialog confirmDialog = new BaseDialog("Mod Manager", $"Do you want to delete mod {item.Name} for {SettingsManager.GetLastSelectedGame()}?");
+                    confirmDialog.Show();
+
+                    if (await confirmDialog.Confirmed.Task)
                     {
-                        BaseDialog dialog = new BaseDialog("Configuration Error", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
-                        dialog.Show();
+                        ModDeploy.Delete(SettingsManager.GetLastSelectedGame(), item.Guid);
                     }
                 }
-            }
-            else
-            {
-                throw new NullReferenceException();
+                else
+                {
+                    BaseDialog dialog = new BaseDialog("Configuration Error", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    dialog.Show();
+                }
             }
         }
     }

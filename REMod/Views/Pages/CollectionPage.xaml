@@ -31,9 +31,14 @@
             Grid.Row="1"
             Foreground="{DynamicResource TextFillColorSecondaryBrush}"
             VirtualizingPanel.CacheLengthUnit="Item">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="1"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type models:ModItem}">
-                    <ui:CardControl Margin="8" Padding="16,13,16,12" Width="300" MaxWidth="300">
+                    <ui:CardControl Margin="8" Padding="16,13,16,12" HorizontalAlignment="Stretch" MinWidth="200">
                         <ui:CardControl.Header>
                             <StackPanel>
                                 <TextBlock TextTrimming="CharacterEllipsis" FontSize="14" Text="{Binding Name, Mode=OneWay}"/>
@@ -42,7 +47,14 @@
                                 <TextBlock TextTrimming="CharacterEllipsis" FontSize="12" Text="{Binding Version, Mode=OneWay}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
                             </StackPanel>
                         </ui:CardControl.Header>
-                        <ui:Button Grid.Column="0" Margin="0,0,4,0" Icon="Add28" Name="InstallMod_Button" Content="Install" HorizontalAlignment="Stretch" Tag="{Binding}" Click="InstallMod_Button_Click" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ui:ToggleSwitch Margin="4" Grid.Row="0" Content="Enable" Name="EnableMod_ToggleSwitch" Tag="{Binding}" IsChecked="{Binding IsEnabled}" Checked="EnableMod_ToggleSwitch_Checked" Unchecked="EnableMod_ToggleSwitch_Unchecked" />
+                            <ui:Button Margin="4" Grid.Row="1" Content="Delete" Name="DeleteMod_Button" Click="DeleteMod_Button_Click" HorizontalAlignment="Stretch" Appearance="Danger" />
+                        </Grid>
                     </ui:CardControl>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

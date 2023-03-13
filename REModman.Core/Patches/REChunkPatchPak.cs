@@ -35,29 +35,5 @@ namespace REModman.Patches
         {
             return CHUNK_PATCH_PAK_TEMPLATE.Replace("<REPLACE>", value.ToString("D3"));
         }
-
-        public static List<ModData> Patch(string installPath, List<ModData> modData)
-        {
-            List<ModData> installList = new List<ModData>();
-
-            for (int i = 0; i < modData.Count; i++)
-            {
-                ModData tempMod = modData[i];
-                string replacer = CHUNK_PATCH_PAK_TEMPLATE.Replace("<REPLACE>", i.ToString("D3"));
-
-                foreach (ModFile file in tempMod.ModFiles)
-                {
-                    string path = "." + file.LocalFilePath.Substring(StringHelper.IndexOfNth(file.LocalFilePath, "\\", 1));
-                    file.LocalFilePath = file.LocalFilePath.Replace(tempMod.Path, replacer);
-                    file.InstallAbsolutePath = PathHelper.GetAbsolutePath(Path.Combine(installPath, path)).Replace(tempMod.Path, replacer);
-                    file.InstallRelativePath = Path.Combine(installPath, path).Replace(tempMod.Path, replacer);
-                }
-
-                tempMod.Path = replacer;
-                installList.Add(tempMod);
-            }
-
-            return installList;
-        }
     }
 }

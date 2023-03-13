@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using IniParser.Model;
 using System.Text.Json;
 using REModman.Patches;
+using System.Diagnostics;
 
 namespace REModman.Internal
 {
@@ -37,12 +38,12 @@ namespace REModman.Internal
 
         private static ModData Find(List<ModData> list, string identifier)
         {
-            return list.Find(i => i.Guid == identifier);
+            return list.Find(i => i.Hash == identifier);
         }
 
         private static ModFile Find(List<ModFile> list, string identifier)
         {
-            return list.Find(i => i.SHA256 == identifier);
+            return list.Find(i => i.Hash == identifier);
         }
 
         private static bool Exists(List<ModData> list, string identifier)
@@ -55,10 +56,10 @@ namespace REModman.Internal
             return true;
         }
 
-        public static void Save(GameType type, List<ModData> modList)
+        public static void Save(GameType type, List<ModData> list)
         {
             string modFolder = Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type));
-            FileStreamHelper.WriteFile(modFolder, Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(modList, new JsonSerializerOptions { WriteIndented = true }), false);
+            FileStreamHelper.WriteFile(modFolder, Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true }), false);
         }
 
         public static List<ModData> Index(GameType type)
@@ -81,27 +82,22 @@ namespace REModman.Internal
                     
                     string modPath = Path.GetDirectoryName(infoFile);
                     List<ModFile> modFiles = new List<ModFile>();
-                    string modSha256 = string.Empty;
+                    string modHash = string.Empty;
 
                     foreach (string modFilePath in FileStreamHelper.GetFiles(modPath, "*.*", false))
                     {
-                        string localPath = "." + modFilePath.Substring(StringHelper.IndexOfNth(modFilePath, "\\", 2));
-                        string basePath = "." + modFilePath.Substring(StringHelper.IndexOfNth(modFilePath, "\\", 3));
-                        string sha256 = CryptoHelper.FileHash.Sha256(modFilePath);
-                        modSha256 += sha256;
+                        string fileHash = CryptoHelper.FileHash.Sha256(modFilePath);
+                        modHash += fileHash;
 
                         modFiles.Add(new ModFile
                         {
-                            LocalFilePath = localPath,
-                            SourceRelativePath = modFilePath,
-                            SourceAbsolutePath = PathHelper.GetAbsolutePath(modFilePath),
-                            InstallAbsolutePath = PathHelper.GetAbsolutePath(Path.Combine(gamePath, basePath)),
-                            InstallRelativePath = Path.Combine(gamePath, basePath),
-                            SHA256 = sha256,
+                            SourcePath = PathHelper.GetAbsolutePath(modFilePath),
+                            InstallPath = PathHelper.GetAbsolutePath(Path.Combine(gamePath, "." + modFilePath.Substring(StringHelper.IndexOfNth(modFilePath, "\\", 3)))),
+                            Hash = fileHash,
                         });
                     }
 
-                    string identifier = CryptoHelper.StringHash.Sha256(modSha256);
+                    string identifier = CryptoHelper.StringHash.Sha256(modHash);
 
                     if (!Exists(modList, identifier))
                     {
@@ -111,11 +107,9 @@ namespace REModman.Internal
                             Description = modInfo["description"],
                             Author = modInfo["author"],
                             Version = modInfo["version"],
-                            LoadOrder = modIni["user"]["loadOrder"],
-                            Path = modInfo["files"],
-                            Guid = identifier,
+                            Hash = identifier,
                             IsEnabled = false,
-                            ModFiles = modFiles
+                            Files = modFiles
                         });
                     }
                 }
@@ -126,50 +120,40 @@ namespace REModman.Internal
 
         public static void Enable(GameType type, string identifier, bool isEnabled)
         {
+            List<ModData> list = Deserialize(type);
+            ModData enabledMod = Find(list, identifier);
+            enabledMod.IsEnabled = isEnabled;
+
+            int i = 0;
+            foreach (ModData mod in list)
+            {
+                foreach (ModFile file in mod.Files)
+                {
+                    if (REChunkPatchPak.IsPatchable(type, Path.GetFileName(file.InstallPath)))
+                    {
+                        file.InstallPath = file.InstallPath.Replace(Path.GetFileName(file.InstallPath), REChunkPatchPak.Patch(i));
+                        i++;
+                    }
+                }
+            }
+
+            Save(type, list);
+        }
+
+        public static void Delete (GameType type, string identifier)
+        {
             List<ModData> data = Deserialize(type);
             ModData mod = Find(data, identifier);
-            mod.IsEnabled = isEnabled;
 
-            Save(type, data);
-        }
-
-        public static void Remove(GameType type, string identifier)
-        {
-            List<ModData> data = Deserialize(type);
-            data.Remove(Find(data, identifier));
-
-            Save(type, data);
-        }
-
-        public static void Patch(GameType type)
-        {
-            List<ModData> data = Deserialize(type);
-
-            foreach (ModData mod in data)
+            foreach (ModFile file in mod.Files)
             {
-                List<ModFile> patchable = new List<ModFile>();
-                List<ModFile> nonPatchable = new List<ModFile>();
-
-                foreach (ModFile file in mod.ModFiles)
+                if (File.Exists(file.InstallPath))
                 {
-                    if (REChunkPatchPak.IsPatchable(type, file.LocalFilePath))
-                    {
-                        patchable.Add(file);
-                    }
-                    else
-                    {
-                        nonPatchable.Add(file);
-                    }
+                    File.Delete(file.InstallPath);
                 }
-
-                for (int i = 0; i < patchable.Count; i++)
-                {
-                    patchable[i].InstallRelativePath = patchable[i].InstallRelativePath.Replace(REChunkPatchPak.CHUNK_PATCH_PAK_DEFAULT, REChunkPatchPak.Patch(i));
-                    patchable[i].InstallAbsolutePath = patchable[i].InstallAbsolutePath.Replace(REChunkPatchPak.CHUNK_PATCH_PAK_DEFAULT, REChunkPatchPak.Patch(i));
-                }
-
-                mod.ModFiles = patchable.Concat(nonPatchable).ToList();
             }
+
+            data.Remove(Find(data, identifier));
 
             Save(type, data);
         }

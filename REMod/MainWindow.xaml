@@ -40,11 +40,6 @@
                         <ui:SymbolIcon Symbol="CollectionsAdd24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-                <ui:NavigationViewItem Content="Installed" TargetPageType="{x:Type pages:InstalledPage}">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:SymbolIcon Symbol="Collections24" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
             <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem Content="Settings" TargetPageType="{x:Type pages:SettingsPage}">
