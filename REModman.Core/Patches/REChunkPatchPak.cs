@@ -30,7 +30,7 @@ namespace REModman.Patches
             return isPak;
         }
 
-        public static List<ModData> Patch(List<ModData> modData)
+        public static List<ModData> Patch(string installPath, List<ModData> modData)
         {
             List<ModData> installList = new List<ModData>();
 
@@ -41,9 +41,10 @@ namespace REModman.Patches
 
                 foreach (ModFile file in tempMod.ModFiles)
                 {
+                    string path = "." + file.LocalFilePath.Substring(StringHelper.IndexOfNth(file.LocalFilePath, "\\", 1));
                     file.LocalFilePath = file.LocalFilePath.Replace(tempMod.Path, replacer);
-                    file.SourceAbsolutePath = file.SourceAbsolutePath.Replace(tempMod.Path, replacer);
-                    file.SourceRelativePath = file.SourceRelativePath.Replace(tempMod.Path, replacer);
+                    file.InstallAbsolutePath = PathHelper.GetAbsolutePath(Path.Combine(installPath, path)).Replace(tempMod.Path, replacer);
+                    file.InstallRelativePath = Path.Combine(installPath, path).Replace(tempMod.Path, replacer);
                 }
 
                 tempMod.Path = replacer;

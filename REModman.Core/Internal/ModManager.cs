@@ -18,27 +18,6 @@ namespace REModman.Internal
 {
     public class ModManager
     {
-        public static List<ModData> Select(List<ModData> modData, Dictionary<string, string> selectedMods)
-        {
-            List<ModData> installList = new List<ModData>();
-
-            if (modData.Count != 0)
-            {
-                foreach (ModData mod in modData)
-                {
-                    if (selectedMods.ContainsKey(mod.Name))
-                    {
-                        if (selectedMods[mod.Name] == mod.Guid)
-                        {
-                            installList.Add(mod);
-                        }
-                    }
-                }
-            }
-
-            return installList;
-        }
-
         public static ModData Select(List<ModData> modData, string name, string guid)
         {
             List<ModData> installList = new List<ModData>();
@@ -82,13 +61,11 @@ namespace REModman.Internal
                     }
 
                     pakModList.Add(selectedMod);
-                    ModData patchedMod = REChunkPatchPak.Patch(pakModList).Last();
+                    ModData patchedMod = REChunkPatchPak.Patch(installPath, pakModList).Last();
 
                     foreach (ModFile file in patchedMod.ModFiles)
                     {
                         string path = "." + file.LocalFilePath.Substring(StringHelper.IndexOfNth(file.LocalFilePath, "\\", 1));
-                        file.InstallAbsolutePath = PathHelper.GetAbsolutePath(Path.Combine(installPath, path));
-                        file.InstallRelativePath = Path.Combine(installPath, path);
                         FileStreamHelper.CopyFile(file.SourceRelativePath, Path.Combine(installPath, path), false);
                     }
                 }
