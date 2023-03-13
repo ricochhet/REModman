@@ -29,7 +29,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="1">
-                <TextBlock Margin="16,8,0,0" FontSize="20" Text="CONTENT_PLACEHOLDER" Name="Content_TextBlock" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                <TextBlock TextWrapping="Wrap" Margin="16,8,0,0" FontSize="20" Text="CONTENT_PLACEHOLDER" Name="Content_TextBlock" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
             </StackPanel>
         </Grid>
         <Grid>

@@ -15,23 +15,22 @@ namespace REModman.Patches
     {
         public static string CHUNK_PATCH_PAK_TEMPLATE = "re_chunk_000.pak.patch_<REPLACE>.pak";
 
-        public static bool IsREChunkPatchPak(string file)
+        public static bool IsREChunkPatchPak(GameType type, string file)
         {
             bool isPak = false;
 
-            if (
-                file.Contains("re_chunk_") &&
-                file.Contains("pak.patch") &&
-                file.Contains(".pak")
-                )
+            if (type == GameType.MonsterHunterRise || type == GameType.MonsterHunterWorld)
             {
-                isPak = true;
+                if (file.Contains("re_chunk_") && file.Contains("pak.patch") && file.Contains(".pak"))
+                {
+                    isPak = true;
+                }
             }
 
             return isPak;
         }
 
-        public static List<ModData> InterceptModInstaller(List<ModData> modData)
+        public static List<ModData> Patch(List<ModData> modData)
         {
             List<ModData> installList = new List<ModData>();
 
@@ -52,18 +51,6 @@ namespace REModman.Patches
             }
 
             return installList;
-        }
-
-        public static bool IsValidGameType(GameType type)
-        {
-            bool IsValidGameType = false;
-
-            if (type == GameType.MonsterHunterRise || type == GameType.MonsterHunterWorld)
-            {
-                IsValidGameType = true;
-            }
-
-            return IsValidGameType;
         }
     }
 }

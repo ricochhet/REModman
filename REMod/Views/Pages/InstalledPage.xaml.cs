@@ -9,7 +9,6 @@ using REMod.Models;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using REMod;
-using REMod.Helpers;
 using REModman.Configuration.Structs;
 using Wpf.Ui.Controls;
 using System.IO;
@@ -53,7 +52,7 @@ namespace REMod.Views.Pages
             }
         }
 
-        private void UninstallMod_Button_Click(object sender, RoutedEventArgs e)
+        private async void UninstallMod_Button_Click(object sender, RoutedEventArgs e)
         {
             Button? button = sender as Button;
             ModItem? item = button?.Tag as ModItem;
@@ -70,13 +69,19 @@ namespace REMod.Views.Pages
 
                         if (isModInstalled == true)
                         {
-                            ModData? temp = installedModList.Find(i => i.Name == selectedMod.Name && i.Guid == selectedMod.Guid);
-                            if (temp != null)
+                            BaseDialog confirmDialog = new BaseDialog("Mod Manager", $"Do you want to uninstall mod {item.Name} for {SettingsManager.GetLastSelectedGame()}?");
+                            confirmDialog.Show();
+
+                            if (await confirmDialog.Confirmed.Task == true)
                             {
-                                installedModList.Remove(temp);
-                                ModManager.Uninstall(SettingsManager.GetLastSelectedGame(), selectedMod);
-                                ModManager.SaveData(SettingsManager.GetLastSelectedGame(), installedModList);
-                                ModCollection.Remove(item);
+                                ModData? temp = installedModList.Find(i => i.Name == selectedMod.Name && i.Guid == selectedMod.Guid);
+                                if (temp != null)
+                                {
+                                    installedModList.Remove(temp);
+                                    ModManager.Uninstall(SettingsManager.GetLastSelectedGame(), selectedMod);
+                                    ModManager.SaveData(SettingsManager.GetLastSelectedGame(), installedModList);
+                                    ModCollection.Remove(item);
+                                }
                             }
                         }
                         else

@@ -62,70 +62,34 @@ namespace REModman.Internal
             return null;
         }
 
-        public static void Install(GameType type, List<ModData> selectedMods)
-        {
-            string installPath = SettingsManager.GetGamePath(type);
-            List<ModData> intercepted = new List<ModData>();
-
-            if (Directory.Exists(installPath))
-            {
-                foreach (ModData mod in selectedMods)
-                {
-                    if (REChunkPatchPak.IsREChunkPatchPak(mod.Path))
-                    {
-                        if (REChunkPatchPak.IsValidGameType(type))
-                        {
-                            intercepted.Add(mod);
-                        }
-                    }
-                    else
-                    {
-                        foreach (ModFile file in mod.ModFiles)
-                        {
-                            string path = "." + file.LocalFilePath.Substring(StringHelper.IndexOfNth(file.LocalFilePath, "\\", 1));
-                            file.InstallAbsolutePath = PathHelper.GetAbsolutePath(Path.Combine(installPath, path));
-                            file.InstallRelativePath = Path.Combine(installPath, path);
-                            FileStreamHelper.CopyFile(file.SourceRelativePath, Path.Combine(installPath, path), false);
-                        }
-                    }
-                }
-
-                if (REChunkPatchPak.IsValidGameType(type))
-                {
-                    if (intercepted.Count != 0)
-                    {
-                        List<ModData> reChunkPatchPakList = REChunkPatchPak.InterceptModInstaller(intercepted);
-
-                        foreach (ModData mod in reChunkPatchPakList)
-                        {
-                            if (REChunkPatchPak.IsREChunkPatchPak(mod.Path))
-                            {
-                                foreach (ModFile file in mod.ModFiles)
-                                {
-                                    string path = "." + file.LocalFilePath.Substring(StringHelper.IndexOfNth(file.LocalFilePath, "\\", 1));
-                                    file.InstallAbsolutePath = PathHelper.GetAbsolutePath(Path.Combine(installPath, path));
-                                    file.InstallRelativePath = Path.Combine(installPath, path);
-                                    FileStreamHelper.CopyFile(file.SourceRelativePath, Path.Combine(installPath, path), false);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         public static void Install(GameType type, ModData selectedMod)
         {
             string installPath = SettingsManager.GetGamePath(type);
-            List<ModData> intercepted = new List<ModData>();
 
             if (Directory.Exists(installPath))
             {
-                if (REChunkPatchPak.IsREChunkPatchPak(selectedMod.Path))
+                if (REChunkPatchPak.IsREChunkPatchPak(type, selectedMod.Path))
                 {
-                    if (REChunkPatchPak.IsValidGameType(type))
+                    List<ModData> installedModList = DeserializeData(type);
+                    List<ModData> pakModList = new List<ModData>();
+
+                    foreach (ModData installedMod in installedModList)
                     {
-                        intercepted.Add(selectedMod);
+                        if (REChunkPatchPak.IsREChunkPatchPak(type, installedMod.Path))
+                        {
+                            pakModList.Add(installedMod);
+                        }
+                    }
+
+                    pakModList.Add(selectedMod);
+                    ModData patchedMod = REChunkPatchPak.Patch(pakModList).Last();
+
+                    foreach (ModFile file in patchedMod.ModFiles)
+                    {
+                        string path = "." + file.LocalFilePath.Substring(StringHelper.IndexOfNth(file.LocalFilePath, "\\", 1));
+                        file.InstallAbsolutePath = PathHelper.GetAbsolutePath(Path.Combine(installPath, path));
+                        file.InstallRelativePath = Path.Combine(installPath, path);
+                        FileStreamHelper.CopyFile(file.SourceRelativePath, Path.Combine(installPath, path), false);
                     }
                 }
                 else
@@ -136,28 +100,6 @@ namespace REModman.Internal
                         file.InstallAbsolutePath = PathHelper.GetAbsolutePath(Path.Combine(installPath, path));
                         file.InstallRelativePath = Path.Combine(installPath, path);
                         FileStreamHelper.CopyFile(file.SourceRelativePath, Path.Combine(installPath, path), false);
-                    }
-                }
-
-                if (REChunkPatchPak.IsValidGameType(type))
-                {
-                    if (intercepted.Count != 0)
-                    {
-                        List<ModData> reChunkPatchPakList = REChunkPatchPak.InterceptModInstaller(intercepted);
-
-                        foreach (ModData mod in reChunkPatchPakList)
-                        {
-                            if (REChunkPatchPak.IsREChunkPatchPak(selectedMod.Path))
-                            {
-                                foreach (ModFile file in selectedMod.ModFiles)
-                                {
-                                    string path = "." + file.LocalFilePath.Substring(StringHelper.IndexOfNth(file.LocalFilePath, "\\", 1));
-                                    file.InstallAbsolutePath = PathHelper.GetAbsolutePath(Path.Combine(installPath, path));
-                                    file.InstallRelativePath = Path.Combine(installPath, path);
-                                    FileStreamHelper.CopyFile(file.SourceRelativePath, Path.Combine(installPath, path), false);
-                                }
-                            }
-                        }
                     }
                 }
             }

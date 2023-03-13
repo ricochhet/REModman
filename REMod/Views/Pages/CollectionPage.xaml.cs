@@ -9,7 +9,6 @@ using REMod.Models;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using REMod;
-using REMod.Helpers;
 using REModman.Configuration.Structs;
 using Wpf.Ui.Controls;
 using System.IO;
@@ -56,7 +55,7 @@ namespace REMod.Views.Pages
             }
         }
 
-        private void InstallMod_Button_Click(object sender, RoutedEventArgs e)
+        private async void InstallMod_Button_Click(object sender, RoutedEventArgs e)
         {
             Button? button = sender as Button;
             ModItem? item = button?.Tag as ModItem;
@@ -73,10 +72,15 @@ namespace REMod.Views.Pages
 
                         if (isModInstalled == false)
                         {
-                            installedModList.Add(selectedMod);
-                            ModManager.Install(SettingsManager.GetLastSelectedGame(), selectedMod);
-                            ModManager.SaveData(SettingsManager.GetLastSelectedGame(), installedModList);
-                            StatusNotifyHelper.Assign($"Installed mod: {item.Name} for {SettingsManager.GetLastSelectedGame()}.");
+                            BaseDialog confirmDialog = new BaseDialog("Mod Manager", $"Do you want to install mod {item.Name} for {SettingsManager.GetLastSelectedGame()}?");
+                            confirmDialog.Show();
+
+                            if (await confirmDialog.Confirmed.Task)
+                            {
+                                installedModList.Add(selectedMod);
+                                ModManager.Install(SettingsManager.GetLastSelectedGame(), selectedMod);
+                                ModManager.SaveData(SettingsManager.GetLastSelectedGame(), installedModList);
+                            }
                         }
                         else
                         {

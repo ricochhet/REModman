@@ -45,18 +45,6 @@
                         <ui:SymbolIcon Symbol="Collections24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-                <Border CornerRadius="4" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" Margin="8">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Grid.Row="0" Text="Status Log" FontSize="12" FontWeight="Medium" Margin="10" HorizontalAlignment="left" />
-                        <TextBlock Grid.Row="1" Padding="16,13,16,12" Text="No new notifications" FontSize="12" FontWeight="Medium" Margin="10" HorizontalAlignment="Center" Visibility="Collapsed" />
-                        <TextBlock Name="StatusBarNotifier_TextBlock" Grid.Row="1" Padding="16,13,16,12" Text="Notification 1&#x0a;Notification 2" FontSize="12" FontWeight="Medium" Margin="10" HorizontalAlignment="Left"/>
-                    </Grid>
-                </Border>
             </ui:NavigationView.MenuItems>
             <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem Content="Settings" TargetPageType="{x:Type pages:SettingsPage}">

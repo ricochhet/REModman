@@ -5,7 +5,6 @@ using Windows.Globalization;
 using Wpf.Ui.Appearance;
 using System.Windows.Controls;
 using REModman.Configuration.Enums;
-using REMod.Helpers;
 
 namespace REMod
 {

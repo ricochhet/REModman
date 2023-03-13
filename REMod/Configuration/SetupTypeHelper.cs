@@ -1,4 +1,4 @@
-﻿using REMod.Helpers;
+﻿using REMod.Dialogs;
 using REModman.Configuration.Enums;
 using REModman.Internal;
 using System;
@@ -8,15 +8,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace REMod.Helpers
+namespace REMod.Configuration
 {
-    public class SetupActionHelper
+    public class SetupTypeHelper
     {
-        public static void GetAction(SetupType setupType, GameType gameType)
+        public static void Execute(SetupType setupType, GameType gameType)
         {
             if (gameType == GameType.None)
             {
-                StatusNotifyHelper.Assign($"Please select a valid game.");
+                BaseDialog dialog = new BaseDialog("Configuration Error", $"Please select a valid game.");
+                dialog.Show();
             }
             else
             {
