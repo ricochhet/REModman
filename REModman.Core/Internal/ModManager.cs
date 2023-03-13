@@ -47,14 +47,14 @@ namespace REModman.Internal
 
             if (Directory.Exists(installPath))
             {
-                if (REChunkPatchPak.IsREChunkPatchPak(type, selectedMod.Path))
+                if (REChunkPatchPak.IsPatchable(type, selectedMod.Path))
                 {
                     List<ModData> installedModList = DeserializeData(type);
                     List<ModData> pakModList = new List<ModData>();
 
                     foreach (ModData installedMod in installedModList)
                     {
-                        if (REChunkPatchPak.IsREChunkPatchPak(type, installedMod.Path))
+                        if (REChunkPatchPak.IsPatchable(type, installedMod.Path))
                         {
                             pakModList.Add(installedMod);
                         }

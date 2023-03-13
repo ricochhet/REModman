@@ -31,9 +31,8 @@ namespace REMod.Views.Pages
                 ModCollection.Clear();
                 if (SetupManager.DataFolderExists(SettingsManager.GetLastSelectedGame()) && SetupManager.ModsFolderExists(SettingsManager.GetLastSelectedGame()))
                 {
-                    List<ModData> index = ModIndexer.Index(SettingsManager.GetLastSelectedGame());
-                    ModIndexer.SaveData(SettingsManager.GetLastSelectedGame(), index);
-
+                    List<ModData> index = ModDeploy.Index(SettingsManager.GetLastSelectedGame());
+                    ModDeploy.Save(SettingsManager.GetLastSelectedGame(), index);
                     foreach (ModData mod in index)
                     {
                         ModCollection.Add(new ModItem
@@ -59,33 +58,19 @@ namespace REMod.Views.Pages
         {
             Button? button = sender as Button;
             ModItem? item = button?.Tag as ModItem;
-
             if (item != null)
             {
                 if (SettingsManager.GetLastSelectedGame() != GameType.None)
                 {
                     if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
                     {
-                        ModData selectedMod = ModManager.Select(ModIndexer.DeserializeData(SettingsManager.GetLastSelectedGame()), item.Name, item.Guid);
-                        bool isModInstalled = ModManager.IsInstalled(SettingsManager.GetLastSelectedGame(), selectedMod);
-                        List<ModData> installedModList = ModManager.DeserializeData(SettingsManager.GetLastSelectedGame());
+                        BaseDialog confirmDialog = new BaseDialog("Mod Manager", $"Do you want to install mod {item.Name} for {SettingsManager.GetLastSelectedGame()}?");
+                        confirmDialog.Show();
 
-                        if (isModInstalled == false)
+                        if (await confirmDialog.Confirmed.Task)
                         {
-                            BaseDialog confirmDialog = new BaseDialog("Mod Manager", $"Do you want to install mod {item.Name} for {SettingsManager.GetLastSelectedGame()}?");
-                            confirmDialog.Show();
-
-                            if (await confirmDialog.Confirmed.Task)
-                            {
-                                installedModList.Add(selectedMod);
-                                ModManager.Install(SettingsManager.GetLastSelectedGame(), selectedMod);
-                                ModManager.SaveData(SettingsManager.GetLastSelectedGame(), installedModList);
-                            }
-                        }
-                        else
-                        {
-                            BaseDialog dialog = new BaseDialog("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} already has a mod called {item.Name}.");
-                            dialog.Show();
+                            ModDeploy.Enable(SettingsManager.GetLastSelectedGame(), item.Guid, true);
+                            // ModDeploy.Patch(SettingsManager.GetLastSelectedGame());
                         }
                     }
                     else

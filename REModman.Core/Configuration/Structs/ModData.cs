@@ -11,6 +11,7 @@ namespace REModman.Configuration.Structs
         public string LoadOrder { get; set; }
         public string Path { get; set; }
         public string Guid { get; set; }
+        public bool IsEnabled { get; set; }
         public List<ModFile> ModFiles { get; set; }
     }
 
