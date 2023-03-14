@@ -20,7 +20,7 @@ namespace REMod
 
             InitializeComponent();
 
-            Loaded += (_, _) => RootNavigation.Navigate(typeof(SetupPage));
+            Loaded += (_, _) => RootNavigation.Navigate(typeof(CollectionPage));
         }
     }
 }

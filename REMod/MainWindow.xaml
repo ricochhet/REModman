@@ -27,14 +27,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" IsBackButtonVisible="Collapsed" IsPaneToggleVisible="False">
+        <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" IsBackButtonVisible="Collapsed" IsPaneToggleVisible="False" PaneDisplayMode="Top">
             <ui:NavigationView.MenuItems>
                 <TextBlock Text="REMod" FontSize="28" FontWeight="Medium" Margin="10" HorizontalAlignment="Center" />
-                <ui:NavigationViewItem Content="Setup" TargetPageType="{x:Type pages:SetupPage}">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:SymbolIcon Symbol="Home24" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
                 <ui:NavigationViewItem Content="Collection" TargetPageType="{x:Type pages:CollectionPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="CollectionsAdd24" />

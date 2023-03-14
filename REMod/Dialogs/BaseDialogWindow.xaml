@@ -10,9 +10,9 @@
     Width="420"
     MinWidth="419"
     MaxWidth="421"
-    Height="152"
-    MinHeight="151"
-    MaxHeight="152"
+    Height="222"
+    MinHeight="221"
+    MaxHeight="223"
     ResizeMode="NoResize"
     Background="{ui:ThemeResource ApplicationBackgroundBrush}"
     ExtendsContentIntoTitleBar="True"
@@ -28,9 +28,11 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="1">
-                <TextBlock TextWrapping="Wrap" Margin="16,8,0,0" FontSize="20" Text="CONTENT_PLACEHOLDER" Name="Content_TextBlock" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-            </StackPanel>
+            <ui:CardAction Grid.Column="1" Margin="8,16,8,8" Padding="16,13,16,12" Icon="Warning28" IsHitTestVisible="False" IsChevronVisible="False">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Margin="16" FontSize="14" Text="CONTENT_PLACEHOLDER" Name="Content_TextBlock" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                </StackPanel>
+            </ui:CardAction>
         </Grid>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -39,10 +41,10 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
-                <ui:Button Margin="8,16,16,16" Content="Confirm" Width="120" Name="Confirm_Button" Appearance="Primary"/>
+                <ui:Button Margin="8,16,16,16" Content="Confirm" Width="120" Name="Confirm_Button" Appearance="Light"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <Button Margin="8,16,16,16" Content="Cancel" Width="120" Name="Cancel_Button" />
+                <ui:Button Margin="8,16,16,16" Content="Cancel" Width="120" Name="Cancel_Button" />
             </StackPanel>
         </Grid>
     </StackPanel>

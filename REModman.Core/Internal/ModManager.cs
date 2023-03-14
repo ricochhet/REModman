@@ -16,24 +16,24 @@ using System.Diagnostics;
 
 namespace REModman.Internal
 {
-    public class ModDeploy
+    public class ModManager
     {
         private static List<ModData> Deserialize(GameType type)
         {
-            List<ModData> modList = new List<ModData>();
-            string modFolder = Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type));
+            List<ModData> list = new List<ModData>();
+            string dataFolder = Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type));
 
-            if (Directory.Exists(modFolder))
+            if (Directory.Exists(dataFolder))
             {
-                if (File.Exists(Path.Combine(modFolder, Constants.MOD_INDEX_FILE)))
+                if (File.Exists(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE)))
                 {
-                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(modFolder, Constants.MOD_INDEX_FILE));
+                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE));
                     string file = FileStreamHelper.UnkBytesToStr(bytes);
-                    modList = JsonSerializer.Deserialize<List<ModData>>(file);
+                    list = JsonSerializer.Deserialize<List<ModData>>(file);
                 }
             }
 
-            return modList;
+            return list;
         }
 
         private static ModData Find(List<ModData> list, string identifier)
@@ -64,7 +64,7 @@ namespace REModman.Internal
 
         public static List<ModData> Index(GameType type)
         {
-            List<ModData> modList = Deserialize(type);
+            List<ModData> list = Deserialize(type);
             IniDataParser parser = new IniDataParser();
 
             string gamePath = SettingsManager.GetGamePath(type);
@@ -99,9 +99,9 @@ namespace REModman.Internal
 
                     string identifier = CryptoHelper.StringHash.Sha256(modHash);
 
-                    if (!Exists(modList, identifier))
+                    if (!Exists(list, identifier))
                     {
-                        modList.Add(new ModData
+                        list.Add(new ModData
                         {
                             Name = modInfo["name"],
                             Description = modInfo["description"],
@@ -115,7 +115,7 @@ namespace REModman.Internal
                 }
             }
 
-            return modList;
+            return list;
         }
 
         public static void Enable(GameType type, string identifier, bool isEnabled)
@@ -142,8 +142,8 @@ namespace REModman.Internal
 
         public static void Delete (GameType type, string identifier)
         {
-            List<ModData> data = Deserialize(type);
-            ModData mod = Find(data, identifier);
+            List<ModData> list = Deserialize(type);
+            ModData mod = Find(list, identifier);
 
             foreach (ModFile file in mod.Files)
             {
@@ -153,9 +153,9 @@ namespace REModman.Internal
                 }
             }
 
-            data.Remove(Find(data, identifier));
+            list.Remove(Find(list, identifier));
 
-            Save(type, data);
+            Save(type, list);
         }
     }
 }

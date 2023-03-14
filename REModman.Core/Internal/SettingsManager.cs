@@ -40,8 +40,7 @@ namespace REModman.Internal
 
         public static void SaveGamePath(GameType type)
         {
-            string gameName = EnumSwitch.GetProcName(type);
-            int id = ProcessHelper.GetProcIdFromName(gameName);
+            int id = ProcessHelper.GetProcIdFromName(EnumSwitch.GetProcName(type));
 
             if (id != 0)
             {
@@ -57,6 +56,18 @@ namespace REModman.Internal
                     SaveSettings(settingsData);
                 }
             }
+        }
+
+        public static bool IsGameRunning(GameType type)
+        {
+            int id = ProcessHelper.GetProcIdFromName(EnumSwitch.GetProcName(type));
+
+            if (id != 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public static string GetGamePath(GameType type)

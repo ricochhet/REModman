@@ -21,18 +21,30 @@ namespace REMod.Views.Pages
 {
     public partial class CollectionPage
     {
+        private GameType selectedGameType = GameType.None;
         public ObservableCollection<ModItem> ModCollection = new();
+
         public CollectionPage()
         {
+            if (!InitializerManager.SettingsFileExists())
+            {
+                InitializerManager.CreateSettings();
+            }
+
             InitializeComponent();
+            InitializeModCollection();
+        }
+
+        private void InitializeModCollection()
+        {
+            ModCollection.Clear();
 
             if (SettingsManager.GetLastSelectedGame() != GameType.None)
             {
-                ModCollection.Clear();
-                if (SetupManager.DataFolderExists(SettingsManager.GetLastSelectedGame()) && SetupManager.ModsFolderExists(SettingsManager.GetLastSelectedGame()))
+                if (InitializerManager.DataFolderExists(SettingsManager.GetLastSelectedGame()) && InitializerManager.ModsFolderExists(SettingsManager.GetLastSelectedGame()))
                 {
-                    List<ModData> index = ModDeploy.Index(SettingsManager.GetLastSelectedGame());
-                    ModDeploy.Save(SettingsManager.GetLastSelectedGame(), index);
+                    List<ModData> index = ModManager.Index(SettingsManager.GetLastSelectedGame());
+                    ModManager.Save(SettingsManager.GetLastSelectedGame(), index);
 
                     foreach (ModData mod in index)
                     {
@@ -56,6 +68,146 @@ namespace REMod.Views.Pages
             }
         }
 
+        private void InitializeSetupChecks(GameType type)
+        {
+            if (type != GameType.None)
+            {
+                if (!InitializerManager.ModsFolderExists(SettingsManager.GetLastSelectedGame()))
+                {
+                    InitializerManager.CreateModsFolder(SettingsManager.GetLastSelectedGame());
+                }
+
+                if (!InitializerManager.IndexFileExists(SettingsManager.GetLastSelectedGame()))
+                {
+                    InitializerManager.CreateIndex(SettingsManager.GetLastSelectedGame());
+                }
+            }
+        }
+
+        private void SetOpenModFolderVisibility()
+        {
+            if (SettingsManager.GetLastSelectedGame() != GameType.None)
+            {
+                if (SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame()) != "")
+                {
+                    OpenModFolder_CardAction.IsEnabled = true;
+                    OpenModFolder_CardAction.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    OpenModFolder_CardAction.IsEnabled = false;
+                    OpenModFolder_CardAction.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                OpenModFolder_CardAction.IsEnabled = false;
+                OpenModFolder_CardAction.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void SetSetupButtonVisiblity()
+        {
+            if (SettingsManager.GetLastSelectedGame() != GameType.None)
+            {
+                if (SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame()) != "")
+                {
+                    SetupGame_CardAction.IsEnabled = false;
+                    SetupGame_CardAction.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    SetupGame_CardAction.IsEnabled = true;
+                    SetupGame_CardAction.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                SetupGame_CardAction.IsEnabled = false;
+                SetupGame_CardAction.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void GameSelector_ComboBox_Initialize(object sender, EventArgs e)
+        {
+            GameSelector_ComboBox.Items.Clear();
+            GameSelector_ComboBox.ItemsSource = Enum.GetValues(typeof(GameType));
+            GameSelector_ComboBox.SelectedIndex = ((int)SettingsManager.GetLastSelectedGame());
+
+            InitializeSetupChecks(SettingsManager.GetLastSelectedGame());
+        }
+
+        private void GameSelector_ComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            if (GameSelector_ComboBox.SelectedItem != null)
+            {
+                selectedGameType = (GameType)Enum.Parse(typeof(GameType), GameSelector_ComboBox.SelectedItem.ToString() ?? GameType.None.ToString());
+                SettingsManager.SaveLastSelectedGame(selectedGameType);
+
+                GameSelector_ComboBox.SelectedIndex = ((int)SettingsManager.GetLastSelectedGame());
+
+                SetOpenModFolderVisibility();
+                SetSetupButtonVisiblity();
+                InitializeSetupChecks(SettingsManager.GetLastSelectedGame());
+                InitializeModCollection();
+            }
+        }
+
+        private void OpenModFolder_CardAction_Initialized(object sender, EventArgs e)
+        {
+            SetOpenModFolderVisibility();
+        }
+
+        private void OpenModFolder_CardAction_Click(object sender, RoutedEventArgs e)
+        {
+            if (SettingsManager.GetLastSelectedGame() != GameType.None)
+            {
+                if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo
+                    {
+                        Arguments = SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame()),
+                        FileName = "explorer.exe",
+                    };
+
+                    Process.Start(startInfo);
+                }
+            }
+        }
+
+        private void SetupGame_CardAction_Initialized(object sender, EventArgs e)
+        {
+            SetSetupButtonVisiblity();
+        }
+
+        private void SetupGame_CardAction_Click(object sender, RoutedEventArgs e)
+        {
+            if (SettingsManager.GetLastSelectedGame() != GameType.None)
+            {
+                if (!SettingsManager.IsGameRunning(SettingsManager.GetLastSelectedGame()))
+                {
+                    BaseDialog dialog = new BaseDialog("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} must be running to start the setup process.");
+                    dialog.Show();
+
+                    SetOpenModFolderVisibility();
+                    SetSetupButtonVisiblity();
+                    InitializeSetupChecks(SettingsManager.GetLastSelectedGame());
+                    InitializeModCollection();
+                }
+                else
+                {
+                    SettingsManager.SaveGamePath(SettingsManager.GetLastSelectedGame());
+                    BaseDialog dialog = new BaseDialog("Mod Manager", $"Setup has been completed for {SettingsManager.GetLastSelectedGame()}.");
+                    dialog.Show();
+
+                    SetOpenModFolderVisibility();
+                    SetSetupButtonVisiblity();
+                    InitializeSetupChecks(SettingsManager.GetLastSelectedGame());
+                    InitializeModCollection();
+                }
+            }
+        }
+
         private void EnableMod_ToggleSwitch_Checked(object sender, RoutedEventArgs e)
         {
             ToggleSwitch? toggle = sender as ToggleSwitch;
@@ -65,11 +217,11 @@ namespace REMod.Views.Pages
             {
                 if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
                 {
-                    ModDeploy.Enable(SettingsManager.GetLastSelectedGame(), item.Guid, true);
+                    ModManager.Enable(SettingsManager.GetLastSelectedGame(), item.Guid, true);
                 }
                 else
                 {
-                    BaseDialog dialog = new BaseDialog("Configuration Error", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    BaseDialog dialog = new BaseDialog("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
                     dialog.Show();
                 }
             }
@@ -84,11 +236,11 @@ namespace REMod.Views.Pages
             {
                 if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
                 {
-                    ModDeploy.Enable(SettingsManager.GetLastSelectedGame(), item.Guid, false);
+                    ModManager.Enable(SettingsManager.GetLastSelectedGame(), item.Guid, false);
                 }
                 else
                 {
-                    BaseDialog dialog = new BaseDialog("Configuration Error", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    BaseDialog dialog = new BaseDialog("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
                     dialog.Show();
                 }
             }
@@ -108,12 +260,12 @@ namespace REMod.Views.Pages
 
                     if (await confirmDialog.Confirmed.Task)
                     {
-                        ModDeploy.Delete(SettingsManager.GetLastSelectedGame(), item.Guid);
+                        ModManager.Delete(SettingsManager.GetLastSelectedGame(), item.Guid);
                     }
                 }
                 else
                 {
-                    BaseDialog dialog = new BaseDialog("Configuration Error", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    BaseDialog dialog = new BaseDialog("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
                     dialog.Show();
                 }
             }

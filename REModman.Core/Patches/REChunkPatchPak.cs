@@ -13,27 +13,22 @@ namespace REModman.Patches
 {
     public class REChunkPatchPak
     {
-        public static string CHUNK_PATCH_PAK_DEFAULT = "re_chunk_000.pak.patch_000.pak";
-        public static string CHUNK_PATCH_PAK_TEMPLATE = "re_chunk_000.pak.patch_<REPLACE>.pak";
-
         public static bool IsPatchable(GameType type, string file)
         {
-            bool isPak = false;
-
             if (type == GameType.MonsterHunterRise || type == GameType.MonsterHunterWorld)
             {
                 if (file.Contains("re_chunk_") && file.Contains("pak.patch") && file.Contains(".pak"))
                 {
-                    isPak = true;
+                    return true;
                 }
             }
 
-            return isPak;
+            return false;
         }
 
         public static string Patch(int value)
         {
-            return CHUNK_PATCH_PAK_TEMPLATE.Replace("<REPLACE>", value.ToString("D3"));
+            return "re_chunk_000.pak.patch_<REPLACE>.pak".Replace("<REPLACE>", value.ToString("D3"));
         }
     }
 }
