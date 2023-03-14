@@ -118,5 +118,17 @@ namespace REModman.Internal
 
             return false;
         }
+
+        public static string GetModFolderPath(GameType type)
+        {
+            string modFolder = EnumSwitch.GetModFolder(type);
+
+            if (Directory.Exists(Path.Combine(Constants.MODS_FOLDER, modFolder)))
+            {
+                return Path.Combine(Constants.MODS_FOLDER, modFolder);
+            }
+
+            return string.Empty;
+        }
     }
 }

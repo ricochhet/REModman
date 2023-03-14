@@ -13,6 +13,25 @@ namespace REModman.Patches
 {
     public class REChunkPatchPak
     {
+        public static bool IsPatchable(GameType type, ModData mod)
+        {
+            bool isPak = false;
+
+            if (type == GameType.MonsterHunterRise || type == GameType.MonsterHunterWorld)
+            {
+                foreach (ModFile file in mod.Files)
+                {
+                    if (file.SourcePath.Contains("re_chunk_") && file.SourcePath.Contains("pak.patch") && file.SourcePath.Contains(".pak"))
+                    {
+                        isPak = true;
+                        break;
+                    }
+                }
+            }
+
+            return isPak;
+        }
+
         public static bool IsPatchable(GameType type, string file)
         {
             if (type == GameType.MonsterHunterRise || type == GameType.MonsterHunterWorld)

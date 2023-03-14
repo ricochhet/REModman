@@ -124,23 +124,47 @@ namespace REModman.Internal
             ModData enabledMod = Find(list, identifier);
             enabledMod.IsEnabled = isEnabled;
 
-            int i = 0;
-            foreach (ModData mod in list)
+            if (isEnabled)
             {
-                foreach (ModFile file in mod.Files)
-                {
-                    if (REChunkPatchPak.IsPatchable(type, Path.GetFileName(file.InstallPath)))
-                    {
-                        file.InstallPath = file.InstallPath.Replace(Path.GetFileName(file.InstallPath), REChunkPatchPak.Patch(i));
-                        i++;
-                    }
-                }
+                Install(type, enabledMod);
+            }
+            else
+            {
+                Uninstall(type, enabledMod);
             }
 
             Save(type, list);
         }
 
-        public static void Delete (GameType type, string identifier)
+        private static void Install(GameType type, ModData mod)
+        {
+            if (Directory.Exists(SettingsManager.GetGamePath(type)))
+            {
+                foreach (ModFile file in mod.Files)
+                {
+                    if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE))
+                    {
+                        FileStreamHelper.CopyFile(file.SourcePath, file.InstallPath, false);
+                    }
+                }
+            }
+        }
+
+        private static void Uninstall(GameType type, ModData mod)
+        {
+            if (Directory.Exists(SettingsManager.GetGamePath(type)))
+            {
+                foreach (ModFile file in mod.Files)
+                {
+                    if (File.Exists(file.InstallPath))
+                    {
+                        File.Delete(file.InstallPath);
+                    }
+                }
+            }
+        }
+
+        public static void Delete(GameType type, string identifier)
         {
             List<ModData> list = Deserialize(type);
             ModData mod = Find(list, identifier);
@@ -151,10 +175,14 @@ namespace REModman.Internal
                 {
                     File.Delete(file.InstallPath);
                 }
+
+                if (File.Exists(file.SourcePath))
+                {
+                    File.Delete(file.SourcePath);
+                }
             }
 
             list.Remove(Find(list, identifier));
-
             Save(type, list);
         }
     }

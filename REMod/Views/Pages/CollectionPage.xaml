@@ -41,13 +41,26 @@
             </ComboBox>
         </ui:CardControl>
 
-        <ui:CardAction Grid.Row="1" Margin="8" Padding="16,13,16,12" Icon="Open28" Name="OpenModFolder_CardAction" Click="OpenModFolder_CardAction_Click" Initialized="OpenModFolder_CardAction_Initialized">
-            <StackPanel>
-                <TextBlock FontSize="14" Text="Open Mod Folder" />
-            </StackPanel>
-        </ui:CardAction>
+        <Grid Grid.Row="1" Name="OpenModFolder_Grid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
 
-        <ui:CardAction Grid.Row="1" Margin="8" Padding="16,13,16,12" Icon="Open28" Name="SetupGame_CardAction" Click="SetupGame_CardAction_Click" Initialized="SetupGame_CardAction_Initialized">
+            <ui:CardAction Grid.Column="0" Margin="8,0,0,8" Padding="16,13,16,12" Icon="Open28" Name="OpenModFolder_CardAction" Click="OpenModFolder_CardAction_Click" Initialized="OpenModFolder_CardAction_Initialized">
+                <StackPanel>
+                    <TextBlock FontSize="14" Text="Open Mod Folder" />
+                </StackPanel>
+            </ui:CardAction>
+
+            <ui:CardAction Grid.Column="1" Margin="8,0,8,8" Padding="16,13,16,12" Icon="ArrowClockwise28" IsChevronVisible="false" Name="Refresh_CardAction" Click="Refresh_CardAction_Click">
+                <StackPanel>
+                    <TextBlock FontSize="14" Text="Refresh" />
+                </StackPanel>
+            </ui:CardAction>
+        </Grid>
+
+        <ui:CardAction Visibility="Collapsed" Grid.Row="1" Margin="8" Padding="16,13,16,12" Icon="Open28" Name="SetupGame_CardAction" Click="SetupGame_CardAction_Click" Initialized="SetupGame_CardAction_Initialized">
             <StackPanel>
                 <TextBlock FontSize="14" Text="Setup Game (This only needs to be done once)." />
             </StackPanel>
@@ -58,14 +71,17 @@
             Grid.Row="2"
             Foreground="{DynamicResource TextFillColorSecondaryBrush}"
             VirtualizingPanel.CacheLengthUnit="Item">
+            
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="1"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
+            
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type models:ModItem}">
-                    <ui:CardControl Margin="8" Padding="16,13,16,12" HorizontalAlignment="Stretch" MinWidth="200">
+                    <ui:CardControl Margin="8,8,8,0" Padding="16,13,16,12" HorizontalAlignment="Stretch" MinWidth="200">
+                        
                         <ui:CardControl.Header>
                             <StackPanel>
                                 <TextBlock TextTrimming="CharacterEllipsis" FontSize="14" Text="{Binding Name, Mode=OneWay}"/>
@@ -74,6 +90,7 @@
                                 <TextBlock TextTrimming="CharacterEllipsis" FontSize="12" Text="{Binding Version, Mode=OneWay}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
                             </StackPanel>
                         </ui:CardControl.Header>
+                        
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
@@ -84,11 +101,13 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <ui:ToggleSwitch Margin="4,4,16,4" Grid.Column="0" Grid.Row="0" Content="Enable" Name="EnableMod_ToggleSwitch" Tag="{Binding}" IsChecked="{Binding IsEnabled}" Checked="EnableMod_ToggleSwitch_Checked" Unchecked="EnableMod_ToggleSwitch_Unchecked" />
-                            <ui:Button Margin="4" Grid.Column="1" Grid.Row="0" Content="Delete" Name="DeleteMod_Button" Click="DeleteMod_Button_Click" HorizontalAlignment="Stretch" Appearance="Danger" />
+                            <ui:Button Margin="4" Grid.Column="1" Grid.Row="0" Content="Delete" Name="DeleteMod_Button" Tag="{Binding}" Click="DeleteMod_Button_Click" HorizontalAlignment="Stretch" Appearance="Danger" />
                         </Grid>
+                        
                     </ui:CardControl>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
+            
         </ui:VirtualizingItemsControl>
     </Grid>
 </Page>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Wpf.Ui.Controls;
 
 namespace REMod.Dialogs
 {
@@ -21,6 +22,11 @@ namespace REMod.Dialogs
         public void Show()
         {
             dialogWindow.Show();
+        }
+
+        public void SetConfirmAppearance(ControlAppearance appearance)
+        {
+            dialogWindow.Confirm_Button.Appearance = appearance;
         }
 
         private void OnClick(object sender, EventArgs e)
