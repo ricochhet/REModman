@@ -3,6 +3,7 @@ using IniParser.Model;
 using REModman.Configuration;
 using REModman.Configuration.Enums;
 using REModman.Configuration.Structs;
+using REModman.Logger;
 using REModman.Patches;
 using REModman.Utils;
 using System;
@@ -36,8 +37,7 @@ namespace REModman.Internal
 
         public static void Save(GameType type, List<ModData> list)
         {
-            string modFolder = Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type));
-            FileStreamHelper.WriteFile(modFolder, Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true }), false);
+            FileStreamHelper.WriteFile(Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type)), Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true }), false);
         }
 
         public static List<ModData> Index(GameType type)
@@ -76,6 +76,7 @@ namespace REModman.Internal
                         {
                             if (REEnginePatcher.IsValid(type, modFilePath))
                             {
+                                LogBase.Info($"[MODMANAGER] File {PathHelper.UnixPath(sourcePath)} passed validation.");
                                 modFiles.Add(new ModFile
                                 {
                                     SourcePath = PathHelper.UnixPath(sourcePath),
@@ -85,6 +86,9 @@ namespace REModman.Internal
                             }
                             else
                             {
+                                LogBase.Warn($"[MODMANAGER] File {PathHelper.UnixPath(sourcePath)} failed validation.");
+                                LogBase.Info($"[MODMANAGER] {modInfo["name"]} will be removed due to containing invalid files.");
+                                LogBase.Info($"[MODMANAGER] Invalid file: {PathHelper.UnixPath(sourcePath)}.");
                                 containsInvalidFiles = true;
                                 break;
                             }
@@ -95,6 +99,7 @@ namespace REModman.Internal
 
                     if (!containsInvalidFiles)
                     {
+                        LogBase.Info($"[MODMANAGER] Added mod: {modInfo["name"]}.");
                         list.Add(new ModData
                         {
                             Name = modInfo["name"],
@@ -121,60 +126,24 @@ namespace REModman.Internal
 
             if (isEnabled)
             {
+                
                 Install(type, enabledMod);
-                list = Patch(type, list);
+                list = REEnginePatcher.Patch(type, list);
             }
             else
             {
                 Uninstall(type, enabledMod);
-                list = Patch(type, list);
+                list = REEnginePatcher.Patch(type, list);
             }
 
             Save(type, list);
-        }
-
-        private static List<ModData> Patch(GameType type, List<ModData> list)
-        {
-            int i = 0;
-            foreach (ModData mod in list) 
-            {
-                if (mod.IsEnabled)
-                {
-                    foreach (ModFile file in mod.Files)
-                    {
-                        if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && REEnginePatcher.IsPatchable(type, file.SourcePath))
-                        {
-                            string path = file.InstallPath.Replace(Path.GetFileName(file.InstallPath), REEnginePatcher.Patch(i));
-
-                            if (File.Exists(file.InstallPath))
-                            {
-                                File.Move(file.InstallPath, path);
-                            }
-
-                            file.InstallPath = path;
-                            i++;
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (ModFile file in mod.Files)
-                    {
-                        if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && REEnginePatcher.IsPatchable(type, file.InstallPath))
-                        {
-                            file.InstallPath = file.SourcePath;
-                        }
-                    }
-                }
-            }
-
-            return list;
         }
 
         private static void Install(GameType type, ModData mod)
         {
             if (Directory.Exists(SettingsManager.GetGamePath(type)))
             {
+                LogBase.Info($"[MODMANAGER] Attempting to install mod: {mod.Name}.");
                 foreach (ModFile file in mod.Files)
                 {
                     if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE))
@@ -189,10 +158,12 @@ namespace REModman.Internal
         {
             if (Directory.Exists(SettingsManager.GetGamePath(type)))
             {
+                LogBase.Info($"[MODMANAGER] Attempting to uninstall mod: {mod.Name}.");
                 foreach (ModFile file in mod.Files)
                 {
                     if (File.Exists(file.InstallPath))
                     {
+                        LogBase.Info($"[MODMANAGER] Removing file: {file.InstallPath}.");
                         File.Delete(file.InstallPath);
                     }
                 }
@@ -203,16 +174,19 @@ namespace REModman.Internal
         {
             List<ModData> list = Deserialize(type);
             ModData mod = Find(list, identifier);
+            LogBase.Info($"[MODMANAGER] Attempting to delete mod: {mod.Name}.");
 
             foreach (ModFile file in mod.Files)
             {
                 if (File.Exists(file.InstallPath))
                 {
+                    LogBase.Info($"[MODMANAGER] Removing file: {file.InstallPath}.");
                     File.Delete(file.InstallPath);
                 }
 
                 if (File.Exists(file.SourcePath))
                 {
+                    LogBase.Info($"[MODMANAGER] Removing file: {file.SourcePath}.");
                     File.Delete(file.SourcePath);
                 }
             }

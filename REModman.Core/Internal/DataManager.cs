@@ -1,6 +1,7 @@
 ﻿using REModman.Configuration;
 using REModman.Configuration.Enums;
 using REModman.Configuration.Structs;
+using REModman.Logger;
 using REModman.Utils;
 using System.Collections.Generic;
 using System.IO;
@@ -25,6 +26,7 @@ namespace REModman.Internal
 
             if (File.Exists(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE)))
             {
+                LogBase.Info($"[DATAMANAGER] Attempting to delete file: {Path.Combine(dataFolder, Constants.MOD_INDEX_FILE)}.");
                 File.Delete(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE));
             }
         }
@@ -33,6 +35,7 @@ namespace REModman.Internal
         {
             if (!File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
             {
+                LogBase.Info($"[DATAMANAGER] Attempting to create file: {Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)}.");
                 SettingsManager.SaveSettings(new SettingsData
                 {
                     LastSelectedGame = GameType.None,
@@ -45,7 +48,8 @@ namespace REModman.Internal
         {
             if (!File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
             {
-                File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE));
+                LogBase.Info($"[DATAMANAGER] Attempting to delete file: {Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)}.");
+                File.Delete(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE));
             }
         }
 
@@ -55,6 +59,7 @@ namespace REModman.Internal
 
             if (!Directory.Exists(Path.Combine(Constants.MODS_FOLDER, modFolder)))
             {
+                LogBase.Info($"[DATAMANAGER] Attempting to create folder: {Path.Combine(Constants.MODS_FOLDER, modFolder)}.");
                 Directory.CreateDirectory(Path.Combine(Constants.MODS_FOLDER, modFolder));
             }
         }
@@ -65,6 +70,7 @@ namespace REModman.Internal
 
             if (Directory.Exists(dataFolder))
             {
+                LogBase.Info($"[DATAMANAGER] Attempting to delete folder: {dataFolder}.");
                 Directory.Delete(dataFolder, true);
             }
         }
@@ -75,6 +81,7 @@ namespace REModman.Internal
 
             if (Directory.Exists(dataFolder))
             {
+                LogBase.Info($"[DATAMANAGER] Folder exists: {dataFolder}.");
                 return true;
             }
 
@@ -83,10 +90,11 @@ namespace REModman.Internal
 
         public static bool ModsFolderExists(GameType type)
         {
-            string modFolder = EnumSwitch.GetModFolder(type);
+            string modFolder = Path.Combine(Constants.MODS_FOLDER, EnumSwitch.GetModFolder(type));
 
-            if (Directory.Exists(Path.Combine(Constants.MODS_FOLDER, modFolder)))
+            if (Directory.Exists(modFolder))
             {
+                LogBase.Info($"[DATAMANAGER] Folder exists: {modFolder}.");
                 return true;
             }
 
@@ -99,6 +107,7 @@ namespace REModman.Internal
 
             if (File.Exists(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE)))
             {
+                LogBase.Info($"[DATAMANAGER] Folder exists: {Path.Combine(dataFolder, Constants.MOD_INDEX_FILE)}.");
                 return true;
             }
 
@@ -109,6 +118,7 @@ namespace REModman.Internal
         {
             if (File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
             {
+                LogBase.Info($"[DATAMANAGER] File exists: {Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)}.");
                 return true;
             }
 
@@ -121,6 +131,7 @@ namespace REModman.Internal
 
             if (Directory.Exists(Path.Combine(Constants.MODS_FOLDER, modFolder)))
             {
+                LogBase.Info($"[DATAMANAGER] Folder exists: {Path.Combine(Constants.MODS_FOLDER, modFolder)}.");
                 return Path.Combine(Constants.MODS_FOLDER, modFolder);
             }
 

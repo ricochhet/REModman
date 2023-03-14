@@ -1,7 +1,9 @@
 ﻿using REModman.Configuration;
 using REModman.Configuration.Enums;
 using REModman.Configuration.Structs;
+using REModman.Logger;
 using REModman.Utils;
+using System;
 using System.IO;
 using System.Text.Json;
 
@@ -15,6 +17,7 @@ namespace REModman.Internal
             {
                 SettingsData settingsData = DeserializeSettings();
                 settingsData.LastSelectedGame = type;
+                LogBase.Info($"[SETTINGSMANAGER] Saving last selected game {type}.");
                 SaveSettings(settingsData);
             }
         }
@@ -27,6 +30,7 @@ namespace REModman.Internal
             {
                 SettingsData settingsData = DeserializeSettings();
                 lastSelectedGame = settingsData.LastSelectedGame;
+                LogBase.Info($"[SETTINGSMANAGER] Getting last selected game {settingsData.LastSelectedGame}.");
             }
 
             return lastSelectedGame;
@@ -44,6 +48,7 @@ namespace REModman.Internal
 
                     if (!settingsData.GamePaths.ContainsKey(type.ToString()))
                     {
+                        LogBase.Info($"[SETTINGSMANAGER] Saving game path for {type}.");
                         settingsData.GamePaths.Add(type.ToString(), ProcessHelper.GetProcPath(id).ToString());
                     }
 
@@ -58,6 +63,7 @@ namespace REModman.Internal
 
             if (id != 0)
             {
+                LogBase.Info($"[SETTINGSMANAGER] {type} is running.");
                 return true;
             }
 
@@ -73,6 +79,7 @@ namespace REModman.Internal
                 SettingsData settingsData = DeserializeSettings();
                 if (settingsData.GamePaths.ContainsKey(type.ToString()))
                 {
+                    LogBase.Info($"[SETTINGSMANAGER] Getting game path for {type}.");
                     gamePath = Path.GetDirectoryName(settingsData.GamePaths[type.ToString()]);
                 }
             }

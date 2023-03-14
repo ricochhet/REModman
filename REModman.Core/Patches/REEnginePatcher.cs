@@ -1,12 +1,24 @@
+using REModman.Configuration;
 using REModman.Configuration.Enums;
+using REModman.Configuration.Structs;
+using REModman.Logger;
 using REModman.Utils;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace REModman.Patches
 {
     public class REEnginePatcher
     {
+        private static string[] InvalidFiles = new string[]
+        {
+            "re_chunk_000.pak",
+            "re_chunk_000.pak.patch_000.pak",
+            "re_chunk_000.pak.patch_001.pak",
+        };
+
         private static bool IsPakFormat(string String) => String.Contains("re_chunk_") && String.Contains("pak.patch") && String.Contains(".pak");
         public static string Patch(int value) => "re_chunk_000.pak.patch_<REPLACE>.pak".Replace("<REPLACE>", value.ToString("D3"));
 
@@ -18,12 +30,17 @@ namespace REModman.Patches
 
                 if (path == "natives")
                 {
+                    LogBase.Info($"[REENGINEPATCHER] Valid path \"{path}\" was found.");
                     return true;
                 }
                 else if (Path.GetExtension(path) == ".pak")
                 {
                     if (IsPakFormat(path) || String.Contains("re_chunk_000"))
+                    {
+                        LogBase.Warn($"[REENGINEPATCHER] Invalid path \"{path}\" was found.");
                         return false;
+                    }
+
                     return true;
                 }
             }
@@ -37,11 +54,69 @@ namespace REModman.Patches
             {
                 if ((String.Contains("re_chunk_000") && String.Contains("patch_") && String.Contains(".pak")) || String.Contains("re_chunk_000"))
                 {
+                    LogBase.Info($"[REENGINEPATCHER] {String} is patchable.");
                     return true;
                 }
             }
 
             return false;
+        }
+
+        private static bool IsSafe(string value)
+        {
+            if (InvalidFiles.Contains(value))
+            {
+                LogBase.Error($"[REENGINEPATCHER] DANGEROUS FILE FOUND: {value}.");
+                return false;
+            }
+
+            return true;
+        }
+
+        public static List<ModData> Patch(GameType type, List<ModData> list)
+        {
+            int i = 0;
+            foreach (ModData mod in list)
+            {
+                if (mod.IsEnabled)
+                {
+                    LogBase.Info($"[REENGINEPATCHER] Patch found enabled mod {mod.Name}.");
+                    foreach (ModFile file in mod.Files)
+                    {
+                        if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && IsPatchable(type, file.SourcePath))
+                        {
+                            string path = file.InstallPath.Replace(Path.GetFileName(file.InstallPath), Patch(i));
+
+                            if (IsSafe(path))
+                            {
+                                if (File.Exists(file.InstallPath))
+                                {
+                                    LogBase.Info($"[REENGINEPATCHER] Patching file for {mod.Name} with patch {path}.");
+                                    File.Move(file.InstallPath, path);
+                                }
+
+                                LogBase.Info($"[REENGINEPATCHER] Patching index for {mod.Name} with patch {path}.");
+                                file.InstallPath = path;
+                                i++;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    LogBase.Info($"[REENGINEPATCHER] Patch found disabled mod {mod.Name}.");
+                    foreach (ModFile file in mod.Files)
+                    {
+                        if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && IsPatchable(type, file.InstallPath))
+                        {
+                            LogBase.Info($"[REENGINEPATCHER] Unpatching index for {mod.Name} with patch {file.SourcePath}.");
+                            file.InstallPath = file.SourcePath;
+                        }
+                    }
+                }
+            }
+
+            return list;
         }
     }
 }

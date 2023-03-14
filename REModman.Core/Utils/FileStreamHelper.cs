@@ -19,7 +19,7 @@ namespace REModman.Utils
             {
                 foreach (string line in lines)
                 {
-                    LogBase.Info(line);
+                    LogBase.Info(StringHelper.Truncate(line, 128, "..."));
                 }
             }
         }
