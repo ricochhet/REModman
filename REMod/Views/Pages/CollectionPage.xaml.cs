@@ -3,6 +3,7 @@ using REMod.Models;
 using REModman.Configuration.Enums;
 using REModman.Configuration.Structs;
 using REModman.Internal;
+using REModman.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,10 +27,10 @@ namespace REMod.Views.Pages
             }
 
             InitializeComponent();
-            InitializeModCollection();
+            PopulateItemsControl();
         }
 
-        private void InitializeModCollection()
+        private void PopulateItemsControl()
         {
             ModCollection.Clear();
 
@@ -62,7 +63,7 @@ namespace REMod.Views.Pages
             }
         }
 
-        private static void InitializeSetupChecks()
+        private static void CheckSelectedGameState()
         {
             if (SettingsManager.GetLastSelectedGame() != GameType.None)
             {
@@ -78,7 +79,7 @@ namespace REMod.Views.Pages
             }
         }
 
-        private void SetOpenModFolderVisibility()
+        private void OpenModFolder_Grid_Visibility()
         {
             if (SettingsManager.GetLastSelectedGame() != GameType.None)
             {
@@ -100,7 +101,7 @@ namespace REMod.Views.Pages
             }
         }
 
-        private void SetSetupButtonVisiblity()
+        private void SetupGame_CardAction_Visibility()
         {
             if (SettingsManager.GetLastSelectedGame() != GameType.None)
             {
@@ -128,7 +129,7 @@ namespace REMod.Views.Pages
             GameSelector_ComboBox.ItemsSource = Enum.GetValues(typeof(GameType));
             GameSelector_ComboBox.SelectedIndex = ((int)SettingsManager.GetLastSelectedGame());
 
-            InitializeSetupChecks();
+            CheckSelectedGameState();
         }
 
         private void GameSelector_ComboBox_DropDownClosed(object sender, EventArgs e)
@@ -140,16 +141,16 @@ namespace REMod.Views.Pages
 
                 GameSelector_ComboBox.SelectedIndex = ((int)SettingsManager.GetLastSelectedGame());
 
-                SetOpenModFolderVisibility();
-                SetSetupButtonVisiblity();
-                InitializeSetupChecks();
-                InitializeModCollection();
+                OpenModFolder_Grid_Visibility();
+                SetupGame_CardAction_Visibility();
+                CheckSelectedGameState();
+                PopulateItemsControl();
             }
         }
 
         private void OpenModFolder_CardAction_Initialized(object sender, EventArgs e)
         {
-            SetOpenModFolderVisibility();
+            OpenModFolder_Grid_Visibility();
         }
 
         private void OpenModFolder_CardAction_Click(object sender, RoutedEventArgs e)
@@ -160,7 +161,24 @@ namespace REMod.Views.Pages
                 {
                     ProcessStartInfo startInfo = new()
                     {
-                        Arguments = DataManager.GetModFolderPath(SettingsManager.GetLastSelectedGame()),
+                        Arguments = PathHelper.GetAbsolutePath(DataManager.GetModFolderPath(SettingsManager.GetLastSelectedGame())),
+                        FileName = "explorer.exe",
+                    };
+
+                    Process.Start(startInfo);
+                }
+            }
+        }
+
+        private void OpenGameFolder_CardAction_Click(object sender, RoutedEventArgs e)
+        {
+            if (SettingsManager.GetLastSelectedGame() != GameType.None)
+            {
+                if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
+                {
+                    ProcessStartInfo startInfo = new()
+                    {
+                        Arguments = SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame()),
                         FileName = "explorer.exe",
                     };
 
@@ -173,16 +191,16 @@ namespace REMod.Views.Pages
         {
             if (SettingsManager.GetLastSelectedGame() != GameType.None)
             {
-                SetOpenModFolderVisibility();
-                SetSetupButtonVisiblity();
-                InitializeSetupChecks();
-                InitializeModCollection();
+                OpenModFolder_Grid_Visibility();
+                SetupGame_CardAction_Visibility();
+                CheckSelectedGameState();
+                PopulateItemsControl();
             }
         }
 
         private void SetupGame_CardAction_Initialized(object sender, EventArgs e)
         {
-            SetSetupButtonVisiblity();
+            SetupGame_CardAction_Visibility();
         }
 
         private void SetupGame_CardAction_Click(object sender, RoutedEventArgs e)
@@ -194,10 +212,10 @@ namespace REMod.Views.Pages
                     BaseDialog dialog = new("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} must be running to start the setup process.");
                     dialog.Show();
 
-                    SetOpenModFolderVisibility();
-                    SetSetupButtonVisiblity();
-                    InitializeSetupChecks();
-                    InitializeModCollection();
+                    OpenModFolder_Grid_Visibility();
+                    SetupGame_CardAction_Visibility();
+                    CheckSelectedGameState();
+                    PopulateItemsControl();
                 }
                 else
                 {
@@ -205,10 +223,10 @@ namespace REMod.Views.Pages
                     BaseDialog dialog = new("Mod Manager", $"Setup has been completed for {SettingsManager.GetLastSelectedGame()}.");
                     dialog.Show();
 
-                    SetOpenModFolderVisibility();
-                    SetSetupButtonVisiblity();
-                    InitializeSetupChecks();
-                    InitializeModCollection();
+                    OpenModFolder_Grid_Visibility();
+                    SetupGame_CardAction_Visibility();
+                    CheckSelectedGameState();
+                    PopulateItemsControl();
                 }
             }
         }
@@ -265,10 +283,10 @@ namespace REMod.Views.Pages
                     {
                         ModManager.Delete(SettingsManager.GetLastSelectedGame(), item.Guid);
 
-                        SetOpenModFolderVisibility();
-                        SetSetupButtonVisiblity();
-                        InitializeSetupChecks();
-                        InitializeModCollection();
+                        OpenModFolder_Grid_Visibility();
+                        SetupGame_CardAction_Visibility();
+                        CheckSelectedGameState();
+                        PopulateItemsControl();
                     }
                 }
                 else

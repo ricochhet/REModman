@@ -43,7 +43,8 @@
 
         <Grid Grid.Row="1" Name="OpenModFolder_Grid">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
@@ -53,7 +54,13 @@
                 </StackPanel>
             </ui:CardAction>
 
-            <ui:CardAction Grid.Column="1" Margin="8,0,8,8" Padding="16,13,16,12" Icon="ArrowClockwise28" IsChevronVisible="false" Name="Refresh_CardAction" Click="Refresh_CardAction_Click">
+            <ui:CardAction Grid.Column="1" Margin="8,0,0,8" Padding="16,13,16,12" Icon="OpenFolder28" Name="OpenGameFolder_CardAction" Click="OpenGameFolder_CardAction_Click">
+                <StackPanel>
+                    <TextBlock FontSize="14" Text="Open Game Folder" />
+                </StackPanel>
+            </ui:CardAction>
+
+            <ui:CardAction Grid.Column="2" Margin="8,0,8,8" Padding="16,13,16,12" Icon="ArrowClockwise28" IsChevronVisible="false" Name="Refresh_CardAction" Click="Refresh_CardAction_Click">
                 <StackPanel>
                     <TextBlock FontSize="14" Text="Refresh" />
                 </StackPanel>

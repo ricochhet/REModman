@@ -12,14 +12,26 @@ namespace REModman.Patches
 {
     public class REEnginePatcher
     {
-        private static string[] InvalidFiles = new string[]
+        private static readonly string[] InvalidFiles = new string[]
         {
             "re_chunk_000.pak",
             "re_chunk_000.pak.patch_000.pak",
             "re_chunk_000.pak.patch_001.pak",
+            "MonsterHunterRise.exe"
         };
 
         private static bool IsPakFormat(string String) => String.Contains("re_chunk_") && String.Contains("pak.patch") && String.Contains(".pak");
+        private static bool IsSafe(string value)
+        {
+            if (InvalidFiles.Contains(value))
+            {
+                LogBase.Error($"[REENGINEPATCHER] DANGEROUS FILE FOUND: {value}.");
+                return false;
+            }
+
+            return true;
+        }
+
         public static string Patch(int value) => "re_chunk_000.pak.patch_<REPLACE>.pak".Replace("<REPLACE>", value.ToString("D3"));
 
         public static bool IsValid(GameType type, string String)
@@ -27,6 +39,7 @@ namespace REModman.Patches
             if (type == GameType.MonsterHunterRise || type == GameType.MonsterHunterWorld)
             {
                 string path = PathHelper.GetFirstDirectory(String)[3];
+                if (!IsSafe(path)) return false;
 
                 if (path == "natives")
                 {
@@ -62,20 +75,9 @@ namespace REModman.Patches
             return false;
         }
 
-        private static bool IsSafe(string value)
-        {
-            if (InvalidFiles.Contains(value))
-            {
-                LogBase.Error($"[REENGINEPATCHER] DANGEROUS FILE FOUND: {value}.");
-                return false;
-            }
-
-            return true;
-        }
-
         public static List<ModData> Patch(GameType type, List<ModData> list)
         {
-            int i = 0;
+            int i = 2;
             foreach (ModData mod in list)
             {
                 if (mod.IsEnabled)
@@ -83,7 +85,24 @@ namespace REModman.Patches
                     LogBase.Info($"[REENGINEPATCHER] Patch found enabled mod {mod.Name}.");
                     foreach (ModFile file in mod.Files)
                     {
-                        if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && IsPatchable(type, file.SourcePath))
+                        if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && Path.GetExtension(file.SourcePath) == ".pak" && !IsPakFormat(file.SourcePath) && !file.SourcePath.Contains("re_chunk_000"))
+                        {
+                            string path = file.InstallPath.Replace(Path.GetFileName(file.InstallPath), Patch(i));
+
+                            if (IsSafe(path))
+                            {
+                                if (File.Exists(file.InstallPath))
+                                {
+                                    LogBase.Info($"[REENGINEPATCHER] Patching file for {mod.Name} with patch {path}.");
+                                    File.Move(file.InstallPath, path);
+                                }
+
+                                LogBase.Info($"[REENGINEPATCHER] Patching index for {mod.Name} with patch {path}.");
+                                file.InstallPath = path;
+                                i++;
+                            }
+                        }
+                        else if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && IsPatchable(type, file.SourcePath))
                         {
                             string path = file.InstallPath.Replace(Path.GetFileName(file.InstallPath), Patch(i));
 

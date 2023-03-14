@@ -1,4 +1,5 @@
-﻿using System;
+﻿using REModman.Logger;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using Wpf.Ui.Controls;
@@ -25,6 +26,7 @@ namespace REMod.Dialogs
 
         public void Show()
         {
+            LogBase.Info($"[DIALOG] Opening dialog box: {dialogWindow.RootTitleBar.Title} - {dialogWindow.Content_TextBlock.Text}");
             dialogWindow.Show();
             Application.Current.MainWindow.IsEnabled = false;
         }
@@ -45,6 +47,7 @@ namespace REMod.Dialogs
                 Confirmed.SetResult(false);
             }
 
+            LogBase.Info($"[DIALOG] Closing dialog box: {dialogWindow.RootTitleBar.Title} - {dialogWindow.Content_TextBlock.Text}");
             dialogWindow.Close();
             Application.Current.MainWindow.IsEnabled = true;
         }

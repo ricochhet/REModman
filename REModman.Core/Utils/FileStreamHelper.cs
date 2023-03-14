@@ -1,6 +1,8 @@
 using REModman.Logger;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace REModman.Utils
@@ -143,7 +145,7 @@ namespace REModman.Utils
             }
         }
 
-        public static byte[] ReadFile(string pathToFile)
+        public static byte[] ReadFile(string pathToFile, bool suppressLogs)
         {
             byte[] fileData = null;
 
@@ -152,7 +154,25 @@ namespace REModman.Utils
                 using (FileStream fs = File.OpenRead(pathToFile))
                 {
                     using BinaryReader binaryReader = new(fs);
+                    LineWriter(new string[] {
+                        "[READ] VARIABLE(pathToFile)     : " + pathToFile,
+                    }, suppressLogs);
+
                     fileData = binaryReader.ReadBytes((int)fs.Length);
+
+                    if (logMd5)
+                    {
+                        LineWriter(new string[] {
+                        "[READ] MD5(srcPathToFile)       : " + CryptoHelper.FileHash.Md5(pathToFile),
+                    }, suppressLogs);
+                    }
+
+                    if (logSha256)
+                    {
+                        LineWriter(new string[] {
+                        "[READ] SHA256(srcPathToFile)       : " + CryptoHelper.FileHash.Sha256(pathToFile),
+                    }, suppressLogs);
+                    }
                 }
 
                 return fileData;
@@ -187,6 +207,34 @@ namespace REModman.Utils
             }
 
             return files;
+        }
+
+        public static void DeleteEmptyDirectories(string startPath)
+        {
+            if (string.IsNullOrEmpty(startPath))
+            {
+                throw new ArgumentException("Starting directory is a null reference or an empty string", nameof(startPath));
+            }
+
+            try
+            {
+                foreach (string directory in Directory.EnumerateDirectories(startPath))
+                {
+                    DeleteEmptyDirectories(directory);
+                }
+
+                IEnumerable<string> entries = Directory.EnumerateFileSystemEntries(startPath);
+                if (!entries.Any())
+                {
+                    try
+                    {
+                        Directory.Delete(startPath);
+                    }
+                    catch (UnauthorizedAccessException) { }
+                    catch (DirectoryNotFoundException) { }
+                }
+            }
+            catch (UnauthorizedAccessException) { }
         }
     }
 }

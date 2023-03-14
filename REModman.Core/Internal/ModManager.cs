@@ -24,7 +24,7 @@ namespace REModman.Internal
             {
                 if (File.Exists(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE)))
                 {
-                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE));
+                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE), false);
                     string file = FileStreamHelper.UnkBytesToStr(bytes);
                     list = JsonSerializer.Deserialize<List<ModData>>(file);
                 }
@@ -52,7 +52,7 @@ namespace REModman.Internal
             {
                 foreach (string infoFile in FileStreamHelper.GetFiles(modFolder, Constants.MOD_INFO_FILE, false))
                 {
-                    byte[] infoBytes = FileStreamHelper.ReadFile(infoFile);
+                    byte[] infoBytes = FileStreamHelper.ReadFile(infoFile, false);
                     string infoData = FileStreamHelper.UnkBytesToStr(infoBytes);
 
                     IniData modIni = parser.Parse(infoData);
@@ -97,7 +97,7 @@ namespace REModman.Internal
 
                     string identifier = CryptoHelper.StringHash.Sha256(modHash);
 
-                    if (!containsInvalidFiles)
+                    if (!containsInvalidFiles && modFiles.Count != 0)
                     {
                         LogBase.Info($"[MODMANAGER] Added mod: {modInfo["name"]}.");
                         list.Add(new ModData
@@ -167,6 +167,9 @@ namespace REModman.Internal
                         File.Delete(file.InstallPath);
                     }
                 }
+
+                LogBase.Info($"[MODMANAGER] Cleaning folder: {SettingsManager.GetGamePath(type)}.");
+                FileStreamHelper.DeleteEmptyDirectories(SettingsManager.GetGamePath(type));
             }
         }
 

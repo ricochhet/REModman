@@ -2,12 +2,12 @@ namespace REModman.Configuration
 {
     public class Constants
     {
-        public const string DATA_FOLDER = ".\\REMData\\";
-        public const string MODS_FOLDER = ".\\REMMods\\";
+        public const string DATA_FOLDER = "./Data/";
+        public const string MODS_FOLDER = "./Mods/";
         public const string LOG_FILE = "./Logs/REModLog.log";
 
         public const string SETTINGS_FILE = "settings.json";
-        public const string MOD_INDEX_FILE = "modindex.json";
+        public const string MOD_INDEX_FILE = "modlist.json";
         public const string MOD_INFO_FILE = "modinfo.ini";
 
         public const string MONSTER_HUNTER_WORLD_APP_ID = "582010";
