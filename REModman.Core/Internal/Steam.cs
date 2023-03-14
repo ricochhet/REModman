@@ -1,7 +1,7 @@
-using System;
-using System.Diagnostics;
 using REModman.Configuration;
 using REModman.Configuration.Enums;
+using System;
+using System.Diagnostics;
 
 namespace REModman.Internal
 {

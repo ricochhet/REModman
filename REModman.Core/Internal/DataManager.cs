@@ -1,13 +1,9 @@
-﻿using REModman.Configuration.Enums;
+﻿using REModman.Configuration;
+using REModman.Configuration.Enums;
 using REModman.Configuration.Structs;
-using REModman.Configuration;
 using REModman.Utils;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace REModman.Internal
 {

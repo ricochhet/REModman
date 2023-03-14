@@ -1,18 +1,14 @@
 ﻿using IniParser;
+using IniParser.Model;
+using REModman.Configuration;
 using REModman.Configuration.Enums;
 using REModman.Configuration.Structs;
-using REModman.Configuration;
+using REModman.Patches;
 using REModman.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IniParser.Model;
 using System.Text.Json;
-using REModman.Patches;
-using System.Diagnostics;
 
 namespace REModman.Internal
 {
@@ -20,7 +16,7 @@ namespace REModman.Internal
     {
         private static List<ModData> Deserialize(GameType type)
         {
-            List<ModData> list = new List<ModData>();
+            List<ModData> list = new();
             string dataFolder = Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type));
 
             if (Directory.Exists(dataFolder))
@@ -38,18 +34,6 @@ namespace REModman.Internal
 
         private static ModData Find(List<ModData> list, string identifier) => list.Find(i => i.Hash == identifier);
 
-        private static ModFile Find(List<ModFile> list, string identifier) => list.Find(i => i.Hash == identifier);
-
-        private static bool Exists(List<ModData> list, string identifier)
-        {
-            if (Find(list, identifier) == null)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         public static void Save(GameType type, List<ModData> list)
         {
             string modFolder = Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type));
@@ -58,8 +42,8 @@ namespace REModman.Internal
 
         public static List<ModData> Index(GameType type)
         {
-            List<ModData> list = new List<ModData>();
-            IniDataParser parser = new IniDataParser();
+            List<ModData> list = new();
+            IniDataParser parser = new();
 
             string gamePath = SettingsManager.GetGamePath(type);
             string modFolder = Path.Combine(Constants.MODS_FOLDER, EnumSwitch.GetModFolder(type));
@@ -75,7 +59,7 @@ namespace REModman.Internal
                     PropertyCollection modInfo = modIni["modinfo"];
                     
                     string modPath = Path.GetDirectoryName(infoFile);
-                    List<ModFile> modFiles = new List<ModFile>();
+                    List<ModFile> modFiles = new();
                     bool containsInvalidFiles = false;
                     string modHash = string.Empty;
 

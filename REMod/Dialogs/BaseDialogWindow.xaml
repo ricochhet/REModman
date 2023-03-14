@@ -16,7 +16,7 @@
     ResizeMode="NoResize"
     Background="{ui:ThemeResource ApplicationBackgroundBrush}"
     ExtendsContentIntoTitleBar="True"
-    WindowStartupLocation="CenterScreen"
+    WindowStartupLocation="CenterOwner"
     WindowCornerPreference="Round"
     WindowBackdropType="Mica"
     Title="BaseDialogWindow">

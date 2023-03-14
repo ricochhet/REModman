@@ -1,14 +1,7 @@
+using REModman.Configuration.Enums;
+using REModman.Utils;
 using System;
 using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Collections.Generic;
-using IniParser;
-using IniParser.Model;
-using REModman.Utils;
-using REModman.Configuration.Enums;
-using REModman.Configuration.Structs;
-using System.Diagnostics;
 
 namespace REModman.Patches
 {

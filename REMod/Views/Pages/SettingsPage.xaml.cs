@@ -1,6 +1,4 @@
-﻿using REModman.Configuration.Enums;
-using REModman.Internal;
-using System;
+﻿using REModman.Internal;
 using System.Windows;
 using Wpf.Ui.Appearance;
 

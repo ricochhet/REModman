@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace REModman.Utils
 {
@@ -16,14 +14,10 @@ namespace REModman.Utils
             {
                 if (File.Exists(pathToFile))
                 {
-                    using (SHA256 sha256 = SHA256.Create())
-                    {
-                        using (FileStream fs = File.OpenRead(pathToFile))
-                        {
-                            byte[] hash = sha256.ComputeHash(fs);
-                            return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
-                        }
-                    }
+                    using SHA256 sha256 = SHA256.Create();
+                    using FileStream fs = File.OpenRead(pathToFile);
+                    byte[] hash = sha256.ComputeHash(fs);
+                    return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
                 }
 
                 return string.Empty;
@@ -33,14 +27,10 @@ namespace REModman.Utils
             {
                 if (File.Exists(pathToFile))
                 {
-                    using (MD5 md5 = MD5.Create())
-                    {
-                        using (FileStream fs = File.OpenRead(pathToFile))
-                        {
-                            byte[] hash = md5.ComputeHash(fs);
-                            return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
-                        }
-                    }
+                    using MD5 md5 = MD5.Create();
+                    using FileStream fs = File.OpenRead(pathToFile);
+                    byte[] hash = md5.ComputeHash(fs);
+                    return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
                 }
 
                 return string.Empty;
@@ -51,7 +41,7 @@ namespace REModman.Utils
         {
             public static string Sha256(string value)
             {
-                StringBuilder stringBuilder = new StringBuilder();
+                StringBuilder stringBuilder = new();
 
                 using (SHA256 sha256 = SHA256.Create())
                 {
@@ -69,7 +59,7 @@ namespace REModman.Utils
 
             public static string Md5(string value)
             {
-                StringBuilder stringBuilder = new StringBuilder();
+                StringBuilder stringBuilder = new();
 
                 using (MD5 md5 = MD5.Create())
                 {
@@ -87,7 +77,7 @@ namespace REModman.Utils
 
             public static string Uid()
             {
-                StringBuilder builder = new StringBuilder();
+                StringBuilder builder = new();
                 Enumerable
                    .Range(65, 26)
                     .Select(e => ((char)e).ToString())

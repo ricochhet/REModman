@@ -1,6 +1,5 @@
-using System;
 using REModman.Configuration.Enums;
-using REModman.Internal;
+using System;
 
 namespace REModman.Configuration
 {

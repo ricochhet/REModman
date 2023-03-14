@@ -1,21 +1,15 @@
-﻿using System;
-using System.Windows;
-using REModman.Internal;
-using REModman.Configuration.Enums;
-using System.Diagnostics;
-using WinRT;
-using System.Windows.Media;
+﻿using REMod.Dialogs;
 using REMod.Models;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using REMod;
+using REModman.Configuration.Enums;
 using REModman.Configuration.Structs;
-using Wpf.Ui.Controls;
+using REModman.Internal;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
-using Wpf.Ui.Contracts;
-using Wpf.Ui.Controls.Navigation;
-using System.Drawing.Printing;
-using REMod.Dialogs;
+using System.Windows;
+using Wpf.Ui.Controls;
 
 namespace REMod.Views.Pages
 {
@@ -30,6 +24,9 @@ namespace REMod.Views.Pages
             {
                 DataManager.CreateSettings();
             }
+
+            BaseDialog dialog = new("Mod Manager", $"silly popup window uwu");
+            dialog.Show();
 
             InitializeComponent();
             InitializeModCollection();
@@ -62,13 +59,13 @@ namespace REMod.Views.Pages
                 }
                 else
                 {
-                    BaseDialog dialog = new BaseDialog("Configuration Error", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    BaseDialog dialog = new("Configuration Error", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
                     dialog.Show();
                 }
             }
         }
 
-        private void InitializeSetupChecks()
+        private static void InitializeSetupChecks()
         {
             if (SettingsManager.GetLastSelectedGame() != GameType.None)
             {
@@ -164,7 +161,7 @@ namespace REMod.Views.Pages
             {
                 if (Directory.Exists(DataManager.GetModFolderPath(SettingsManager.GetLastSelectedGame())))
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo
+                    ProcessStartInfo startInfo = new()
                     {
                         Arguments = DataManager.GetModFolderPath(SettingsManager.GetLastSelectedGame()),
                         FileName = "explorer.exe",
@@ -197,7 +194,7 @@ namespace REMod.Views.Pages
             {
                 if (!SettingsManager.IsGameRunning(SettingsManager.GetLastSelectedGame()))
                 {
-                    BaseDialog dialog = new BaseDialog("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} must be running to start the setup process.");
+                    BaseDialog dialog = new("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} must be running to start the setup process.");
                     dialog.Show();
 
                     SetOpenModFolderVisibility();
@@ -208,7 +205,7 @@ namespace REMod.Views.Pages
                 else
                 {
                     SettingsManager.SaveGamePath(SettingsManager.GetLastSelectedGame());
-                    BaseDialog dialog = new BaseDialog("Mod Manager", $"Setup has been completed for {SettingsManager.GetLastSelectedGame()}.");
+                    BaseDialog dialog = new("Mod Manager", $"Setup has been completed for {SettingsManager.GetLastSelectedGame()}.");
                     dialog.Show();
 
                     SetOpenModFolderVisibility();
@@ -222,9 +219,8 @@ namespace REMod.Views.Pages
         private void EnableMod_ToggleSwitch_Checked(object sender, RoutedEventArgs e)
         {
             ToggleSwitch? toggle = sender as ToggleSwitch;
-            ModItem? item = toggle?.Tag as ModItem;
 
-            if (item != null && SettingsManager.GetLastSelectedGame() != GameType.None)
+            if (toggle?.Tag is ModItem item && SettingsManager.GetLastSelectedGame() != GameType.None)
             {
                 if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
                 {
@@ -232,7 +228,7 @@ namespace REMod.Views.Pages
                 }
                 else
                 {
-                    BaseDialog dialog = new BaseDialog("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    BaseDialog dialog = new("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
                     dialog.Show();
                 }
             }
@@ -241,9 +237,8 @@ namespace REMod.Views.Pages
         private void EnableMod_ToggleSwitch_Unchecked(object sender, RoutedEventArgs e)
         {
             ToggleSwitch? toggle = sender as ToggleSwitch;
-            ModItem? item = toggle?.Tag as ModItem;
 
-            if (item != null && SettingsManager.GetLastSelectedGame() != GameType.None)
+            if (toggle?.Tag is ModItem item && SettingsManager.GetLastSelectedGame() != GameType.None)
             {
                 if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
                 {
@@ -251,7 +246,7 @@ namespace REMod.Views.Pages
                 }
                 else
                 {
-                    BaseDialog dialog = new BaseDialog("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    BaseDialog dialog = new("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
                     dialog.Show();
                 }
             }
@@ -260,13 +255,12 @@ namespace REMod.Views.Pages
         private async void DeleteMod_Button_Click(object sender, RoutedEventArgs e)
         {
             Button? button = sender as Button;
-            ModItem? item = button?.Tag as ModItem;
 
-            if (item != null && SettingsManager.GetLastSelectedGame() != GameType.None)
+            if (button?.Tag is ModItem item && SettingsManager.GetLastSelectedGame() != GameType.None)
             {
                 if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
                 {
-                    BaseDialog confirmDialog = new BaseDialog("Mod Manager", $"Do you want to delete mod {item.Name} for {SettingsManager.GetLastSelectedGame()}?");
+                    BaseDialog confirmDialog = new("Mod Manager", $"Do you want to delete mod {item.Name} for {SettingsManager.GetLastSelectedGame()}?");
                     confirmDialog.SetConfirmAppearance(ControlAppearance.Danger);
                     confirmDialog.Show();
 
@@ -282,7 +276,7 @@ namespace REMod.Views.Pages
                 }
                 else
                 {
-                    BaseDialog dialog = new BaseDialog("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    BaseDialog dialog = new("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
                     dialog.Show();
                 }
             }

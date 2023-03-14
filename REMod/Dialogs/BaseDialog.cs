@@ -1,27 +1,32 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using Wpf.Ui.Controls;
 
 namespace REMod.Dialogs
 {
     public class BaseDialog
     {
-        private BaseDialogWindow dialogWindow;
-        public TaskCompletionSource<bool> Confirmed = new TaskCompletionSource<bool>();
+        private readonly BaseDialogWindow dialogWindow;
+        public TaskCompletionSource<bool> Confirmed = new();
 
         public BaseDialog(string title, string content)
         {
-            dialogWindow = new BaseDialogWindow();
-            dialogWindow.Title = title;
+            dialogWindow = new BaseDialogWindow
+            {
+                Title = title
+            };
             dialogWindow.RootTitleBar.Title = title;
             dialogWindow.Content_TextBlock.Text = content;
             dialogWindow.Confirm_Button.Click += (s, e) => { OnClick(s, e); };
             dialogWindow.Cancel_Button.Click += (s, e) => { OnClick(s, e); };
+            dialogWindow.Owner = Application.Current.MainWindow;
         }
 
         public void Show()
         {
             dialogWindow.Show();
+            Application.Current.MainWindow.IsEnabled = false;
         }
 
         public void SetConfirmAppearance(ControlAppearance appearance)
@@ -41,6 +46,7 @@ namespace REMod.Dialogs
             }
 
             dialogWindow.Close();
+            Application.Current.MainWindow.IsEnabled = true;
         }
     }
 }

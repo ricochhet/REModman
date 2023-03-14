@@ -1,9 +1,7 @@
-using System;
+using REModman.Logger;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using REModman.Logger;
 
 namespace REModman.Utils
 {

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace REModman.Logger
 {
@@ -20,10 +16,7 @@ namespace REModman.Logger
         {
             get
             {
-                if (_instance is null)
-                {
-                    _instance = new LogBase();
-                }
+                _instance ??= new LogBase();
 
                 return _instance;
             }
@@ -221,23 +214,6 @@ namespace REModman.Logger
 
                 foreach (ILogger logger in Instance._io)
                     await logger.Benchmark(message);
-
-            }
-            catch { }
-            finally
-            {
-                _ = _semaphore.Release();
-            }
-        }
-
-        private static async void BenchmarkLog(string format, params object[] args)
-        {
-            try
-            {
-                await _semaphore.WaitAsync();
-
-                foreach (ILogger logger in Instance._io)
-                    await logger.Benchmark(format, args);
 
             }
             catch { }

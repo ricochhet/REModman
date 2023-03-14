@@ -1,11 +1,7 @@
 ﻿using REMod.Views.Pages;
-using System.Windows;
-using System;
-using Windows.Globalization;
-using Wpf.Ui.Appearance;
-using System.Windows.Controls;
 using REModman.Configuration.Enums;
 using REModman.Logger;
+using Wpf.Ui.Appearance;
 
 namespace REMod
 {

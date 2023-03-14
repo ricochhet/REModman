@@ -1,15 +1,9 @@
-﻿using REModman.Configuration.Enums;
-using REModman.Configuration;
-using REModman;
-using REModman.Utils;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using REModman.Configuration;
+using REModman.Configuration.Enums;
 using REModman.Configuration.Structs;
+using REModman.Utils;
+using System.IO;
+using System.Text.Json;
 
 namespace REModman.Internal
 {
@@ -88,7 +82,7 @@ namespace REModman.Internal
 
         private static SettingsData DeserializeSettings()
         {
-            SettingsData settingsData = new SettingsData();
+            SettingsData settingsData = new();
             if (Directory.Exists(Constants.DATA_FOLDER))
             {
                 if (File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
