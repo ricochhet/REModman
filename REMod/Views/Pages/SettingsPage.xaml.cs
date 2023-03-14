@@ -1,6 +1,8 @@
-﻿using REModman.Internal;
+﻿using REMod.Dialogs;
+using REModman.Internal;
 using System.Windows;
 using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
 
 namespace REMod.Views.Pages
 {
@@ -26,39 +28,88 @@ namespace REMod.Views.Pages
             Theme.Apply(ThemeType.Dark);
         }
 
-        private void CreateIndex_CardAction_Click(object sender, RoutedEventArgs e)
+        private async void CreateIndex_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            DataManager.CreateIndex(SettingsManager.GetLastSelectedGame());
+            BaseDialog confirmDialog = new("Mod Manager", $"This action may have unintended consequences, are you sure?");
+            confirmDialog.SetConfirmAppearance(ControlAppearance.Danger);
+            confirmDialog.Show();
+
+            if (await confirmDialog.Confirmed.Task)
+            {
+                DataManager.CreateIndex(SettingsManager.GetLastSelectedGame());
+            }
         }
 
-        private void CreateSettings_CardAction_Click(object sender, RoutedEventArgs e)
+        private async void CreateSettings_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            DataManager.CreateSettings();
+            BaseDialog confirmDialog = new("Mod Manager", $"This action may have unintended consequences, are you sure?");
+            confirmDialog.SetConfirmAppearance(ControlAppearance.Danger);
+            confirmDialog.Show();
+
+            if (await confirmDialog.Confirmed.Task)
+            {
+                DataManager.CreateSettings();
+            }
         }
 
-        private void CreateModsFolder_CardAction_Click(object sender, RoutedEventArgs e)
+        private async void CreateModsFolder_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            DataManager.CreateModsFolder(SettingsManager.GetLastSelectedGame());
+            BaseDialog confirmDialog = new("Mod Manager", $"This action may have unintended consequences, are you sure?");
+            confirmDialog.SetConfirmAppearance(ControlAppearance.Danger);
+            confirmDialog.Show();
+
+            if (await confirmDialog.Confirmed.Task)
+            {
+                DataManager.CreateModsFolder(SettingsManager.GetLastSelectedGame());
+            }
         }
 
-        private void SaveGamePath_CardAction_Click(object sender, RoutedEventArgs e)
+        private async void SaveGamePath_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            SettingsManager.SaveGamePath(SettingsManager.GetLastSelectedGame());
+            BaseDialog confirmDialog = new("Mod Manager", $"This action may have unintended consequences, are you sure?");
+            confirmDialog.SetConfirmAppearance(ControlAppearance.Danger);
+            confirmDialog.Show();
+
+            if (await confirmDialog.Confirmed.Task)
+            {
+                SettingsManager.SaveGamePath(SettingsManager.GetLastSelectedGame());
+            }
         }
 
-        private void DeleteIndex_CardAction_Click(object sender, RoutedEventArgs e)
+        private async void DeleteIndex_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            DataManager.DeleteIndex(SettingsManager.GetLastSelectedGame());
+            BaseDialog confirmDialog = new("Mod Manager", $"This action may have unintended consequences, are you sure?");
+            confirmDialog.SetConfirmAppearance(ControlAppearance.Danger);
+            confirmDialog.Show();
+
+            if (await confirmDialog.Confirmed.Task)
+            {
+                DataManager.DeleteIndex(SettingsManager.GetLastSelectedGame());
+            }
         }
 
-        private void DeleteSettings_CardAction_Click(object sender, RoutedEventArgs e)
+        private async void DeleteSettings_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            DataManager.DeleteSettings();
+            BaseDialog confirmDialog = new("Mod Manager", $"This action may have unintended consequences, are you sure?");
+            confirmDialog.SetConfirmAppearance(ControlAppearance.Danger);
+            confirmDialog.Show();
+
+            if (await confirmDialog.Confirmed.Task)
+            {
+                DataManager.DeleteSettings();
+            }
         }
 
-        private void DeleteData_CardAction_Click(object sender, RoutedEventArgs e)
+        private async void DeleteData_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            DataManager.DeleteDataFolder(SettingsManager.GetLastSelectedGame());
+            BaseDialog confirmDialog = new("Mod Manager", $"This action may have unintended consequences, are you sure?");
+            confirmDialog.SetConfirmAppearance(ControlAppearance.Danger);
+            confirmDialog.Show();
+
+            if (await confirmDialog.Confirmed.Task)
+            {
+                DataManager.DeleteDataFolder(SettingsManager.GetLastSelectedGame());
+            }
         }
     }
 }
