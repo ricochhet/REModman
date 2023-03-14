@@ -121,6 +121,7 @@ namespace REModman.Internal
         public static void Enable(GameType type, string identifier, bool isEnabled)
         {
             List<ModData> list = Deserialize(type);
+
             ModData enabledMod = Find(list, identifier);
             enabledMod.IsEnabled = isEnabled;
 
