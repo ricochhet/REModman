@@ -5,14 +5,13 @@ namespace REModman.Utils
 {
     public class PathHelper
     {
-        public static String GetAbsolutePath(String path)
-        {
-            return GetAbsolutePath(null ?? string.Empty, path);
-        }
+        public static string UnixPath(string value) => value.Replace("\\", Path.AltDirectorySeparatorChar.ToString());
 
-        public static String GetAbsolutePath(String basePath, String path)
+        public static string GetAbsolutePath(string path) => GetAbsolutePath(null ?? string.Empty, path);
+
+        public static string GetAbsolutePath(string basePath, string path)
         {
-            String finalPath;
+            string finalPath;
 
             if (path == null) return null;
             if (basePath == null)
@@ -41,6 +40,11 @@ namespace REModman.Utils
             }
 
             return Path.GetFullPath(finalPath);
+        }
+
+        public static string[] GetFirstDirectory(string value)
+        {
+            return value[2..].Split(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }

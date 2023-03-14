@@ -26,9 +26,9 @@ namespace REMod.Views.Pages
 
         public CollectionPage()
         {
-            if (!InitializerManager.SettingsFileExists())
+            if (!DataManager.SettingsFileExists())
             {
-                InitializerManager.CreateSettings();
+                DataManager.CreateSettings();
             }
 
             InitializeComponent();
@@ -41,7 +41,7 @@ namespace REMod.Views.Pages
 
             if (SettingsManager.GetLastSelectedGame() != GameType.None)
             {
-                if (InitializerManager.DataFolderExists(SettingsManager.GetLastSelectedGame()) && InitializerManager.ModsFolderExists(SettingsManager.GetLastSelectedGame()))
+                if (DataManager.DataFolderExists(SettingsManager.GetLastSelectedGame()) && DataManager.ModsFolderExists(SettingsManager.GetLastSelectedGame()))
                 {
                     List<ModData> index = ModManager.Index(SettingsManager.GetLastSelectedGame());
                     ModManager.Save(SettingsManager.GetLastSelectedGame(), index);
@@ -72,14 +72,14 @@ namespace REMod.Views.Pages
         {
             if (SettingsManager.GetLastSelectedGame() != GameType.None)
             {
-                if (!InitializerManager.ModsFolderExists(SettingsManager.GetLastSelectedGame()))
+                if (!DataManager.ModsFolderExists(SettingsManager.GetLastSelectedGame()))
                 {
-                    InitializerManager.CreateModsFolder(SettingsManager.GetLastSelectedGame());
+                    DataManager.CreateModsFolder(SettingsManager.GetLastSelectedGame());
                 }
 
-                if (!InitializerManager.IndexFileExists(SettingsManager.GetLastSelectedGame()))
+                if (!DataManager.IndexFileExists(SettingsManager.GetLastSelectedGame()))
                 {
-                    InitializerManager.CreateIndex(SettingsManager.GetLastSelectedGame());
+                    DataManager.CreateIndex(SettingsManager.GetLastSelectedGame());
                 }
             }
         }
@@ -162,11 +162,11 @@ namespace REMod.Views.Pages
         {
             if (SettingsManager.GetLastSelectedGame() != GameType.None)
             {
-                if (Directory.Exists(InitializerManager.GetModFolderPath(SettingsManager.GetLastSelectedGame())))
+                if (Directory.Exists(DataManager.GetModFolderPath(SettingsManager.GetLastSelectedGame())))
                 {
                     ProcessStartInfo startInfo = new ProcessStartInfo
                     {
-                        Arguments = InitializerManager.GetModFolderPath(SettingsManager.GetLastSelectedGame()),
+                        Arguments = DataManager.GetModFolderPath(SettingsManager.GetLastSelectedGame()),
                         FileName = "explorer.exe",
                     };
 

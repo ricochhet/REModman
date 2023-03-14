@@ -5,6 +5,7 @@ using Windows.Globalization;
 using Wpf.Ui.Appearance;
 using System.Windows.Controls;
 using REModman.Configuration.Enums;
+using REModman.Logger;
 
 namespace REMod
 {
@@ -21,6 +22,10 @@ namespace REMod
             InitializeComponent();
 
             Loaded += (_, _) => RootNavigation.Navigate(typeof(CollectionPage));
+
+            ILogger logger = new NativeLogger();
+            LogBase.Add(logger);
+            LogBase.Info("REMod stdout has been initialized.");
         }
     }
 }

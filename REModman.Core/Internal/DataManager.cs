@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace REModman.Internal
 {
-    public class InitializerManager
+    public class DataManager
     {
         public static void CreateIndex(GameType type)
         {

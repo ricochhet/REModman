@@ -3,16 +3,17 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using REModman.Logger;
 
 namespace REModman.Utils
 {
     public class FileStreamHelper
     {
-        private static bool createDirectories = true;
-        private static bool overwrite = true;
-        private static bool logMd5 = true;
-        private static bool logSha256 = true;
-        private static bool debug = false;
+        private static readonly bool createDirectories = true;
+        private static readonly bool overwrite = true;
+        private static readonly bool logMd5 = true;
+        private static readonly bool logSha256 = true;
+        private static readonly bool debug = false;
 
         public static void LineWriter(string[] lines, bool suppressLogs)
         {
@@ -20,7 +21,7 @@ namespace REModman.Utils
             {
                 foreach (string line in lines)
                 {
-                    Console.WriteLine(line);
+                    LogBase.Info(line);
                 }
             }
         }
@@ -152,10 +153,8 @@ namespace REModman.Utils
             {
                 using (FileStream fs = File.OpenRead(pathToFile))
                 {
-                    using (BinaryReader binaryReader = new BinaryReader(fs))
-                    {
-                        fileData = binaryReader.ReadBytes((int)fs.Length);
-                    }
+                    using BinaryReader binaryReader = new(fs);
+                    fileData = binaryReader.ReadBytes((int)fs.Length);
                 }
 
                 return fileData;
@@ -166,19 +165,14 @@ namespace REModman.Utils
 
         public static string UnkBytesToStr(byte[] bytes)
         {
-            using (MemoryStream stream = new MemoryStream(bytes))
-            {
-                using (StreamReader streamReader = new StreamReader(stream))
-                {
-                    // System.Text.Encoding.UTF8.GetString
-                    return streamReader.ReadToEnd();
-                }
-            }
+            using MemoryStream stream = new(bytes);
+            using StreamReader streamReader = new(stream);
+            return streamReader.ReadToEnd();
         }
 
         public static List<string> GetFiles(string folderPath, string searchPattern, bool suppressLogs)
         {
-            List<string> files = new List<string>();
+            List<string> files = new();
 
             if (Directory.Exists(folderPath))
             {

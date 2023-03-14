@@ -30,17 +30,17 @@ namespace REMod.Views.Pages
 
         private void CreateIndex_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            InitializerManager.CreateIndex(SettingsManager.GetLastSelectedGame());
+            DataManager.CreateIndex(SettingsManager.GetLastSelectedGame());
         }
 
         private void CreateSettings_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            InitializerManager.CreateSettings();
+            DataManager.CreateSettings();
         }
 
         private void CreateModsFolder_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            InitializerManager.CreateModsFolder(SettingsManager.GetLastSelectedGame());
+            DataManager.CreateModsFolder(SettingsManager.GetLastSelectedGame());
         }
 
         private void SaveGamePath_CardAction_Click(object sender, RoutedEventArgs e)
@@ -50,17 +50,17 @@ namespace REMod.Views.Pages
 
         private void DeleteIndex_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            InitializerManager.DeleteIndex(SettingsManager.GetLastSelectedGame());
+            DataManager.DeleteIndex(SettingsManager.GetLastSelectedGame());
         }
 
         private void DeleteSettings_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            InitializerManager.DeleteSettings();
+            DataManager.DeleteSettings();
         }
 
         private void DeleteData_CardAction_Click(object sender, RoutedEventArgs e)
         {
-            InitializerManager.DeleteDataFolder(SettingsManager.GetLastSelectedGame());
+            DataManager.DeleteDataFolder(SettingsManager.GetLastSelectedGame());
         }
     }
 }

@@ -36,15 +36,9 @@ namespace REModman.Internal
             return list;
         }
 
-        private static ModData Find(List<ModData> list, string identifier)
-        {
-            return list.Find(i => i.Hash == identifier);
-        }
+        private static ModData Find(List<ModData> list, string identifier) => list.Find(i => i.Hash == identifier);
 
-        private static ModFile Find(List<ModFile> list, string identifier)
-        {
-            return list.Find(i => i.Hash == identifier);
-        }
+        private static ModFile Find(List<ModFile> list, string identifier) => list.Find(i => i.Hash == identifier);
 
         private static bool Exists(List<ModData> list, string identifier)
         {
@@ -64,7 +58,7 @@ namespace REModman.Internal
 
         public static List<ModData> Index(GameType type)
         {
-            List<ModData> list = Deserialize(type);
+            List<ModData> list = new List<ModData>();
             IniDataParser parser = new IniDataParser();
 
             string gamePath = SettingsManager.GetGamePath(type);
@@ -82,6 +76,7 @@ namespace REModman.Internal
                     
                     string modPath = Path.GetDirectoryName(infoFile);
                     List<ModFile> modFiles = new List<ModFile>();
+                    bool containsInvalidFiles = false;
                     string modHash = string.Empty;
 
                     foreach (string modFilePath in FileStreamHelper.GetFiles(modPath, "*.*", false))
@@ -89,17 +84,32 @@ namespace REModman.Internal
                         string fileHash = CryptoHelper.FileHash.Sha256(modFilePath);
                         modHash += fileHash;
 
-                        modFiles.Add(new ModFile
+                        string sourcePath = PathHelper.GetAbsolutePath(modFilePath);
+                        string installPath = PathHelper.GetAbsolutePath(
+                            Path.Combine(gamePath, string.Concat(".", modFilePath.AsSpan(StringHelper.IndexOfNth(modFilePath, "\\", 3)))));
+
+                        if (!Path.GetFileName(sourcePath).Contains(Constants.MOD_INFO_FILE))
                         {
-                            SourcePath = PathHelper.GetAbsolutePath(modFilePath),
-                            InstallPath = PathHelper.GetAbsolutePath(Path.Combine(gamePath, "." + modFilePath.Substring(StringHelper.IndexOfNth(modFilePath, "\\", 3)))),
-                            Hash = fileHash,
-                        });
+                            if (REEnginePatcher.IsValid(type, modFilePath))
+                            {
+                                modFiles.Add(new ModFile
+                                {
+                                    SourcePath = PathHelper.UnixPath(sourcePath),
+                                    InstallPath = PathHelper.UnixPath(installPath),
+                                    Hash = fileHash,
+                                });
+                            }
+                            else
+                            {
+                                containsInvalidFiles = true;
+                                break;
+                            }
+                        }
                     }
 
                     string identifier = CryptoHelper.StringHash.Sha256(modHash);
 
-                    if (!Exists(list, identifier))
+                    if (!containsInvalidFiles)
                     {
                         list.Add(new ModData
                         {
@@ -128,13 +138,53 @@ namespace REModman.Internal
             if (isEnabled)
             {
                 Install(type, enabledMod);
+                list = Patch(type, list);
             }
             else
             {
                 Uninstall(type, enabledMod);
+                list = Patch(type, list);
             }
 
             Save(type, list);
+        }
+
+        private static List<ModData> Patch(GameType type, List<ModData> list)
+        {
+            int i = 0;
+            foreach (ModData mod in list) 
+            {
+                if (mod.IsEnabled)
+                {
+                    foreach (ModFile file in mod.Files)
+                    {
+                        if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && REEnginePatcher.IsPatchable(type, file.SourcePath))
+                        {
+                            string path = file.InstallPath.Replace(Path.GetFileName(file.InstallPath), REEnginePatcher.Patch(i));
+
+                            if (File.Exists(file.InstallPath))
+                            {
+                                File.Move(file.InstallPath, path);
+                            }
+
+                            file.InstallPath = path;
+                            i++;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (ModFile file in mod.Files)
+                    {
+                        if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && REEnginePatcher.IsPatchable(type, file.InstallPath))
+                        {
+                            file.InstallPath = file.SourcePath;
+                        }
+                    }
+                }
+            }
+
+            return list;
         }
 
         private static void Install(GameType type, ModData mod)

@@ -4,6 +4,7 @@ namespace REModman.Configuration
     {
         public const string DATA_FOLDER = ".\\REMData\\";
         public const string MODS_FOLDER = ".\\REMMods\\";
+        public const string LOG_FILE = "./Logs/REModLog.log";
 
         public const string SETTINGS_FILE = "settings.json";
         public const string MOD_INDEX_FILE = "modindex.json";

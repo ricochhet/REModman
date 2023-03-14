@@ -18,7 +18,7 @@ namespace REModman.Utils
                 name = name.Replace(".bin", "");
             }
 
-            foreach (System.Diagnostics.Process process in processlist)
+            foreach (Process process in processlist)
             {
                 if (process.ProcessName.Equals(name, StringComparison.CurrentCultureIgnoreCase)) return process.Id;
             }
@@ -26,19 +26,13 @@ namespace REModman.Utils
             return 0;
         }
 
-        public static string GetProcPath(int procId)
-        {
-            return Process.GetProcessById(procId).MainModule.FileName;
-        }
+        public static string GetProcPath(int procId) => Process.GetProcessById(procId).MainModule.FileName;
 
-        public static string GetProcPath(string procName)
-        {
-            return Process.GetProcessById(GetProcIdFromName(procName)).MainModule.FileName;
-        }
+        public static string GetProcPath(string procName) => Process.GetProcessById(GetProcIdFromName(procName)).MainModule.FileName;
 
         public static void OpenProcess(string fileName, string command, string workingDir)
         {
-            ProcessStartInfo processStartInfo = new ProcessStartInfo(fileName, "-c \" " + command + " \"")
+            ProcessStartInfo processStartInfo = new(fileName, "-c \" " + command + " \"")
             {
                 WorkingDirectory = workingDir,
                 RedirectStandardOutput = true,
@@ -51,9 +45,9 @@ namespace REModman.Utils
             Process process = Process.Start(processStartInfo);
             process.WaitForExit();
 
-            string output = process.StandardOutput.ReadToEnd();
-            string error = process.StandardError.ReadToEnd();
-            int exitCode = process.ExitCode;
+            // string output = process.StandardOutput.ReadToEnd();
+            // string error = process.StandardError.ReadToEnd();
+            // int exitCode = process.ExitCode;
 
             process.Close();
         }
