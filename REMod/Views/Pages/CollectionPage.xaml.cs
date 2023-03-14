@@ -25,9 +25,6 @@ namespace REMod.Views.Pages
                 DataManager.CreateSettings();
             }
 
-            BaseDialog dialog = new("Mod Manager", $"silly popup window uwu");
-            dialog.Show();
-
             InitializeComponent();
             InitializeModCollection();
         }
