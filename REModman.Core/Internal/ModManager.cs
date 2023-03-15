@@ -127,13 +127,13 @@ namespace REModman.Internal
 
             if (isEnabled)
             {
-                list = REEnginePatcher.DebugPatch(type, list);
+                list = REEnginePatcher.Patch(type, list);
                 Install(type, enabledMod);
             }
             else
             {
                 Uninstall(type, enabledMod);
-                list = REEnginePatcher.DebugPatch(type, list);
+                list = REEnginePatcher.Patch(type, list);
             }
 
             Save(type, list);
