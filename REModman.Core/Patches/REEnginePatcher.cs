@@ -140,23 +140,7 @@ namespace REModman.Patches
 
         public static List<ModData> DebugPatch(GameType type, List<ModData> list)
         {
-            int defaultIndex = 2;
             int startIndex = 2;
-            foreach (ModData mod in list)
-            {
-                foreach (ModFile file in mod.Files)
-                {
-                    if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && IsPatchable(type, file.InstallPath) && mod.IsEnabled)
-                    {
-                        if (File.Exists(file.InstallPath))
-                        {
-                            // File.Delete(file.InstallPath);
-                            // file.InstallPath = file.DefaultInstallPath;
-                            // startIndex++;
-                        }
-                    }
-                }
-            }
 
             foreach (ModData mod in list)
             {
