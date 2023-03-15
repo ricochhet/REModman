@@ -129,7 +129,49 @@ namespace REModman.Patches
                         if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && IsPatchable(type, file.InstallPath))
                         {
                             LogBase.Info($"[REENGINEPATCHER] Unpatching index for {mod.Name} with patch {file.SourcePath}.");
-                            file.InstallPath = file.SourcePath;
+                            file.InstallPath = file.DefaultInstallPath;
+                        }
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        public static List<ModData> DebugPatch(GameType type, List<ModData> list)
+        {
+            int defaultIndex = 2;
+            int startIndex = 2;
+            foreach (ModData mod in list)
+            {
+                foreach (ModFile file in mod.Files)
+                {
+                    if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && IsPatchable(type, file.InstallPath) && mod.IsEnabled)
+                    {
+                        if (File.Exists(file.InstallPath))
+                        {
+                            // File.Delete(file.InstallPath);
+                            // file.InstallPath = file.DefaultInstallPath;
+                            // startIndex++;
+                        }
+                    }
+                }
+            }
+
+            foreach (ModData mod in list)
+            {
+                foreach (ModFile file in mod.Files)
+                {
+                    if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE) && Path.GetExtension(file.SourcePath) == ".pak" && !IsPakFormat(file.SourcePath) && !file.SourcePath.Contains("re_chunk_000") && mod.IsEnabled)
+                    {
+                        string path = file.InstallPath.Replace(Path.GetFileName(file.InstallPath), Patch(startIndex));
+
+                        if (IsSafe(path))
+                        {
+                            File.Delete(file.InstallPath);
+                            file.InstallPath = path;
+                            FileStreamHelper.CopyFile(file.SourcePath, path, false);
+                            startIndex++;
                         }
                     }
                 }

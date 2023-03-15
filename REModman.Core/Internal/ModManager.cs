@@ -42,7 +42,7 @@ namespace REModman.Internal
 
         public static List<ModData> Index(GameType type)
         {
-            List<ModData> list = new();
+            List<ModData> list = Deserialize(type);
             IniDataParser parser = new();
 
             string gamePath = SettingsManager.GetGamePath(type);
@@ -79,8 +79,9 @@ namespace REModman.Internal
                                 LogBase.Info($"[MODMANAGER] File {PathHelper.UnixPath(sourcePath)} passed validation.");
                                 modFiles.Add(new ModFile
                                 {
-                                    SourcePath = PathHelper.UnixPath(sourcePath),
+                                    DefaultInstallPath = PathHelper.UnixPath(installPath),
                                     InstallPath = PathHelper.UnixPath(installPath),
+                                    SourcePath = PathHelper.UnixPath(sourcePath),
                                     Hash = fileHash,
                                 });
                             }
@@ -97,7 +98,7 @@ namespace REModman.Internal
 
                     string identifier = CryptoHelper.StringHash.Sha256(modHash);
 
-                    if (!containsInvalidFiles && modFiles.Count != 0)
+                    if (!containsInvalidFiles && modFiles.Count != 0 && Find(list, identifier) == null)
                     {
                         LogBase.Info($"[MODMANAGER] Added mod: {modInfo["name"]}.");
                         list.Add(new ModData
@@ -126,14 +127,13 @@ namespace REModman.Internal
 
             if (isEnabled)
             {
-                
+                list = REEnginePatcher.DebugPatch(type, list);
                 Install(type, enabledMod);
-                list = REEnginePatcher.Patch(type, list);
             }
             else
             {
                 Uninstall(type, enabledMod);
-                list = REEnginePatcher.Patch(type, list);
+                list = REEnginePatcher.DebugPatch(type, list);
             }
 
             Save(type, list);
