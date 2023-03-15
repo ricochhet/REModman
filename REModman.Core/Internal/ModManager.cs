@@ -79,7 +79,6 @@ namespace REModman.Internal
                                 LogBase.Info($"[MODMANAGER] File {PathHelper.UnixPath(sourcePath)} passed validation.");
                                 modFiles.Add(new ModFile
                                 {
-                                    DefaultInstallPath = PathHelper.UnixPath(installPath),
                                     InstallPath = PathHelper.UnixPath(installPath),
                                     SourcePath = PathHelper.UnixPath(sourcePath),
                                     Hash = fileHash,

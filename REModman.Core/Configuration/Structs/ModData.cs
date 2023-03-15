@@ -15,7 +15,6 @@ namespace REModman.Configuration.Structs
 
     public class ModFile
     {
-        public string DefaultInstallPath { get; set; }
         public string InstallPath { get; set; }
         public string SourcePath { get; set; }
         public string Hash { get; set; }
