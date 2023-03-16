@@ -43,8 +43,29 @@ namespace REModman.Patches
 
         public static bool HasNativesFolder(string directory)
         {
-            if (Directory.Exists(Path.Combine(directory, "natives")))
+            if (directory == "natives")
             {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static string GetNativesFile(FileInfo path)
+        {
+            return "natives" + path.FullName.Split("natives")[1];
+        }
+
+        public static bool HasValidPak(string directory)
+        {
+            if (Path.GetExtension(directory) == ".pak")
+            {
+                if (IsPakFormat(directory) || directory.Contains("re_chunk_000"))
+                {
+                    LogBase.Warn($"[REENGINEPATCHER] Invalid path \"{directory}\" was found.");
+                    return false;
+                }
+
                 return true;
             }
 

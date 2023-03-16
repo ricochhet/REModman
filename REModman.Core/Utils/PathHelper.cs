@@ -5,7 +5,7 @@ namespace REModman.Utils
 {
     public class PathHelper
     {
-        public static string UnixPath(string value) => value.Replace("\\", Path.AltDirectorySeparatorChar.ToString());
+        public static string UnixPath(string value) => value.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
         public static string GetAbsolutePath(string path) => GetAbsolutePath(null ?? string.Empty, path);
 

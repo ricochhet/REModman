@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace REModman.Internal
@@ -52,64 +53,69 @@ namespace REModman.Internal
 
             if (Directory.Exists(modFolder))
             {
-                foreach (string infoFile in FileStreamHelper.GetFiles(modFolder, Constants.MOD_INFO_FILE, false))
+                DirectoryInfo[] mods = new DirectoryInfo(modFolder).GetDirectories("*.*", SearchOption.TopDirectoryOnly);
+
+                foreach (DirectoryInfo obj in mods)
                 {
-                    byte[] infoBytes = FileStreamHelper.ReadFile(infoFile, false);
-                    string infoData = FileStreamHelper.UnkBytesToStr(infoBytes);
-
-                    IniData modIni = parser.Parse(infoData);
-                    PropertyCollection modInfo = modIni["modinfo"];
-                    
-                    string modPath = Path.GetDirectoryName(infoFile);
-                    List<ModFile> modFiles = new();
-                    bool containsInvalidFiles = false;
                     string modHash = string.Empty;
+                    List<ModFile> modFiles = new();
 
-                    foreach (string modFilePath in FileStreamHelper.GetFiles(modPath, "*.*", false))
+                    DirectoryInfo[] directories = new DirectoryInfo(obj.FullName).GetDirectories("*.*", SearchOption.TopDirectoryOnly);
+                    foreach (DirectoryInfo directory in directories)
                     {
-                        string fileHash = CryptoHelper.FileHash.Sha256(modFilePath);
-                        modHash += fileHash;
-
-                        string sourcePath = PathHelper.GetAbsolutePath(modFilePath);
-                        string installPath = PathHelper.GetAbsolutePath(
-                            Path.Combine(gamePath, string.Concat(".", modFilePath.AsSpan(StringHelper.IndexOfNth(modFilePath, "\\", 3)))));
-
-                        if (!Path.GetFileName(sourcePath).Contains(Constants.MOD_INFO_FILE))
+                        if (PakDataPatch.HasNativesFolder(directory.Name))
                         {
-                            if (PakDataPatch.IsValid(type, modFilePath))
+                            FileInfo[] nativeFiles = new DirectoryInfo(directory.FullName).GetFiles("*.*", SearchOption.AllDirectories);
+
+                            foreach (FileInfo file in nativeFiles)
                             {
-                                LogBase.Info($"[MODMANAGER] File {PathHelper.UnixPath(sourcePath)} passed validation.");
+                                string fileHash = CryptoHelper.FileHash.Sha256(file.FullName);
+                                modHash += fileHash;
+
                                 modFiles.Add(new ModFile
                                 {
-                                    InstallPath = PathHelper.UnixPath(installPath),
-                                    SourcePath = PathHelper.UnixPath(sourcePath),
+                                    InstallPath = Path.Combine(gamePath, PakDataPatch.GetNativesFile(file)),
+                                    SourcePath = file.FullName,
                                     Hash = fileHash,
                                 });
                             }
-                            else
+                        }
+                    }
+
+                    FileInfo[] files = new DirectoryInfo(obj.FullName).GetFiles("*.*", SearchOption.TopDirectoryOnly);
+                    foreach (FileInfo file in files)
+                    {
+                        if (PakDataPatch.HasValidPak(file.FullName))
+                        {
+                            string fileHash = CryptoHelper.FileHash.Sha256(file.FullName);
+                            modHash += fileHash;
+
+                            modFiles.Add(new ModFile
                             {
-                                LogBase.Warn($"[MODMANAGER] File {PathHelper.UnixPath(sourcePath)} failed validation.");
-                                LogBase.Info($"[MODMANAGER] {modInfo["name"]} will be removed due to containing invalid files.");
-                                LogBase.Info($"[MODMANAGER] Invalid file: {PathHelper.UnixPath(sourcePath)}.");
-                                containsInvalidFiles = true;
-                                break;
-                            }
+                                InstallPath = Path.Combine(gamePath, file.Name),
+                                SourcePath = file.FullName,
+                                Hash = fileHash,
+                            });
                         }
                     }
 
                     string identifier = CryptoHelper.StringHash.Sha256(modHash);
 
-                    if (!containsInvalidFiles && modFiles.Count != 0 && Find(list, identifier) == null)
+                    if (modFiles.Count != 0 && Find(list, identifier) == null)
                     {
-                        LogBase.Info($"[MODMANAGER] Added mod: {modInfo["name"]}.");
+                        string basePath = PathHelper.UnixPath(Path.Combine(modFolder, 
+                            PathHelper.UnixPath(obj.FullName)
+                            .Split(modFolder.TrimStart('.'))[1]
+                            .TrimStart(Path.AltDirectorySeparatorChar)));
+
                         list.Add(new ModData
                         {
-                            Name = modInfo["name"],
-                            Description = modInfo["description"],
-                            Author = modInfo["author"],
-                            Version = modInfo["version"],
+                            Name = Path.GetFileName(basePath),
+                            Description = string.Empty,
+                            Author = string.Empty,
+                            Version = string.Empty,
                             Hash = identifier,
-                            BasePath = PathHelper.UnixPath(modPath),
+                            BasePath = basePath,
                             IsEnabled = false,
                             Files = modFiles
                         });
@@ -234,7 +240,7 @@ namespace REModman.Internal
                     IniData modIni = parser.Parse(infoData);
                     PropertyCollection modInfo = modIni["modinfo"];
                     modInfoName = modInfo["name"];
-                    
+
                     FileStreamHelper.CopyFile(Path.Combine(mod.BasePath, Constants.MOD_INFO_FILE), Path.Combine(patchedModDir, Constants.MOD_INFO_FILE), false);
                 }
 
