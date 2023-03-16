@@ -17,7 +17,7 @@ namespace REModman.Internal
             {
                 SettingsData settingsData = DeserializeSettings();
                 settingsData.LastSelectedGame = type;
-                LogBase.Info($"[SETTINGSMANAGER] Saving last selected game {type}.");
+                LogBase.Info($"Saving last selected game {type}.");
                 SaveSettings(settingsData);
             }
         }
@@ -30,7 +30,7 @@ namespace REModman.Internal
             {
                 SettingsData settingsData = DeserializeSettings();
                 lastSelectedGame = settingsData.LastSelectedGame;
-                LogBase.Info($"[SETTINGSMANAGER] Getting last selected game {settingsData.LastSelectedGame}.");
+                LogBase.Info($"Getting last selected game {settingsData.LastSelectedGame}.");
             }
 
             return lastSelectedGame;
@@ -48,7 +48,7 @@ namespace REModman.Internal
 
                     if (!settingsData.GamePaths.ContainsKey(type.ToString()))
                     {
-                        LogBase.Info($"[SETTINGSMANAGER] Saving game path for {type}.");
+                        LogBase.Info($"Saving game path for {type}.");
                         settingsData.GamePaths.Add(type.ToString(), ProcessHelper.GetProcPath(id).ToString());
                     }
 
@@ -63,7 +63,7 @@ namespace REModman.Internal
 
             if (id != 0)
             {
-                LogBase.Info($"[SETTINGSMANAGER] {type} is running.");
+                LogBase.Info($"{type} is running.");
                 return true;
             }
 
@@ -79,7 +79,7 @@ namespace REModman.Internal
                 SettingsData settingsData = DeserializeSettings();
                 if (settingsData.GamePaths.ContainsKey(type.ToString()))
                 {
-                    LogBase.Info($"[SETTINGSMANAGER] Getting game path for {type}.");
+                    LogBase.Info($"Getting game path for {type}.");
                     gamePath = Path.GetDirectoryName(settingsData.GamePaths[type.ToString()]);
                 }
             }

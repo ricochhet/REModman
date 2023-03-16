@@ -26,7 +26,7 @@ namespace REMod.Dialogs
 
         public void Show()
         {
-            LogBase.Info($"[DIALOG] Opening dialog box: {dialogWindow.RootTitleBar.Title} - {dialogWindow.Content_TextBlock.Text}");
+            LogBase.Info($"Opening dialog box: {dialogWindow.RootTitleBar.Title} - {dialogWindow.Content_TextBlock.Text}");
             dialogWindow.Show();
             Application.Current.MainWindow.IsEnabled = false;
         }
@@ -47,7 +47,7 @@ namespace REMod.Dialogs
                 Confirmed.SetResult(false);
             }
 
-            LogBase.Info($"[DIALOG] Closing dialog box: {dialogWindow.RootTitleBar.Title} - {dialogWindow.Content_TextBlock.Text}");
+            LogBase.Info($"Closing dialog box: {dialogWindow.RootTitleBar.Title} - {dialogWindow.Content_TextBlock.Text}");
             dialogWindow.Close();
             Application.Current.MainWindow.IsEnabled = true;
         }

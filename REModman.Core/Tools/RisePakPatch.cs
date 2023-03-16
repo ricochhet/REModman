@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using REModman.Logger;
@@ -26,7 +27,7 @@ namespace REModman.Tools
                 File.Delete(outputFile);
             }
 
-            FileInfo[] files = new DirectoryInfo(directory).GetFiles("*.*", SearchOption.AllDirectories);
+            FileInfo[] files = new DirectoryInfo(Path.Combine(directory, "natives")).GetFiles("*.*", SearchOption.AllDirectories);
             LogBase.Info($"Processing {files.Length} files...\n");
 
             List<FileEntry> list = new();

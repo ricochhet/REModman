@@ -3,15 +3,13 @@ using REMod.Models;
 using REModman.Configuration.Enums;
 using REModman.Configuration.Structs;
 using REModman.Internal;
-using REModman.Logger;
-using REModman.Patches;
+using REModman.Tools;
 using REModman.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using Wpf.Ui.Controls;
 
@@ -49,9 +47,7 @@ namespace REMod.Views.Pages
                         ModCollection.Add(new ModItem
                         {
                             Name = mod.Name,
-                            Guid = mod.Hash,
-                            Version = mod.Version,
-                            Description = mod.Description,
+                            Hash = mod.Hash,
                             IsEnabled = mod.IsEnabled,
                         });
                     }
@@ -242,7 +238,7 @@ namespace REMod.Views.Pages
             {
                 if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
                 {
-                    ModManager.Enable(SettingsManager.GetLastSelectedGame(), item.Guid, true);
+                    ModManager.Enable(SettingsManager.GetLastSelectedGame(), item.Hash, true);
                 }
                 else
                 {
@@ -260,12 +256,29 @@ namespace REMod.Views.Pages
             {
                 if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
                 {
-                    ModManager.Enable(SettingsManager.GetLastSelectedGame(), item.Guid, false);
+                    ModManager.Enable(SettingsManager.GetLastSelectedGame(), item.Hash, false);
                 }
                 else
                 {
                     BaseDialog dialog = new("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
                     dialog.Show();
+                }
+            }
+        }
+
+        private void PatchMod_Button_Initialized(object sender, EventArgs e)
+        {
+            Button? button = sender as Button;
+
+            if (button?.Tag is ModItem item && SettingsManager.GetLastSelectedGame() != GameType.None)
+            {
+                if (!RisePakPatchExtensions.IsPatchable(SettingsManager.GetLastSelectedGame(), item.Hash))
+                {
+                    button.IsEnabled = false;
+                }
+                else
+                {
+                    button.IsEnabled = true;
                 }
             }
         }
@@ -276,20 +289,15 @@ namespace REMod.Views.Pages
 
             if (button?.Tag is ModItem item && SettingsManager.GetLastSelectedGame() != GameType.None)
             {
-                if (ModManager.IsPatchable(SettingsManager.GetLastSelectedGame(), item.Guid))
+                if (RisePakPatchExtensions.IsPatchable(SettingsManager.GetLastSelectedGame(), item.Hash))
                 {
                     BaseDialog confirmDialog = new("Mod Manager", $"{item.Name} can be converted to a PAK mod, proceed?");
                     confirmDialog.Show();
 
                     if (await confirmDialog.Confirmed.Task)
                     {
-                        ModManager.Patch(SettingsManager.GetLastSelectedGame(), item.Guid);
+                        RisePakPatchExtensions.Patch(SettingsManager.GetLastSelectedGame(), item.Hash);
                     }
-                }
-                else
-                {
-                    BaseDialog dialog = new("Mod Manager", $"{item.Name} has no patchable data.");
-                    dialog.Show();
                 }
             }
         }
@@ -308,7 +316,7 @@ namespace REMod.Views.Pages
 
                     if (await confirmDialog.Confirmed.Task)
                     {
-                        ModManager.Delete(SettingsManager.GetLastSelectedGame(), item.Guid);
+                        ModManager.Delete(SettingsManager.GetLastSelectedGame(), item.Hash);
 
                         OpenModFolder_Grid_Visibility();
                         SetupGame_CardAction_Visibility();
