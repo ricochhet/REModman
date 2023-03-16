@@ -5,9 +5,11 @@ using REModman.Configuration.Enums;
 using REModman.Configuration.Structs;
 using REModman.Logger;
 using REModman.Patches;
+using REModman.Tools;
 using REModman.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 
@@ -74,7 +76,7 @@ namespace REModman.Internal
 
                         if (!Path.GetFileName(sourcePath).Contains(Constants.MOD_INFO_FILE))
                         {
-                            if (REEnginePatcher.IsValid(type, modFilePath))
+                            if (PakDataPatch.IsValid(type, modFilePath))
                             {
                                 LogBase.Info($"[MODMANAGER] File {PathHelper.UnixPath(sourcePath)} passed validation.");
                                 modFiles.Add(new ModFile
@@ -107,6 +109,7 @@ namespace REModman.Internal
                             Author = modInfo["author"],
                             Version = modInfo["version"],
                             Hash = identifier,
+                            BasePath = PathHelper.UnixPath(modPath),
                             IsEnabled = false,
                             Files = modFiles
                         });
@@ -126,13 +129,13 @@ namespace REModman.Internal
 
             if (isEnabled)
             {
-                list = REEnginePatcher.Patch(type, list);
+                list = PakDataPatch.Patch(list);
                 Install(type, enabledMod);
             }
             else
             {
                 Uninstall(type, enabledMod);
-                list = REEnginePatcher.Patch(type, list);
+                list = PakDataPatch.Patch(list);
             }
 
             Save(type, list);
@@ -195,6 +198,55 @@ namespace REModman.Internal
 
             list.Remove(Find(list, identifier));
             Save(type, list);
+        }
+
+        public static bool IsPatchable(GameType type, string identifier)
+        {
+            List<ModData> list = Deserialize(type);
+            ModData mod = Find(list, identifier);
+
+            if (PakDataPatch.HasNativesFolder(mod.BasePath))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static void Patch(GameType type, string identifier)
+        {
+            List<ModData> list = Deserialize(type);
+            ModData mod = Find(list, identifier);
+            IniDataParser parser = new();
+            string modInfoName = string.Empty;
+
+            if (Directory.Exists(mod.BasePath))
+            {
+                string patchedModDir = mod.BasePath + "PakPatch";
+                if (Directory.Exists(patchedModDir))
+                    Directory.Delete(patchedModDir, true);
+
+                Directory.CreateDirectory(patchedModDir);
+                if (File.Exists(Path.Combine(mod.BasePath, Constants.MOD_INFO_FILE)))
+                {
+                    byte[] infoBytes = FileStreamHelper.ReadFile(Path.Combine(mod.BasePath, Constants.MOD_INFO_FILE), false);
+                    string infoData = FileStreamHelper.UnkBytesToStr(infoBytes);
+                    IniData modIni = parser.Parse(infoData);
+                    PropertyCollection modInfo = modIni["modinfo"];
+                    modInfoName = modInfo["name"];
+                    
+                    FileStreamHelper.CopyFile(Path.Combine(mod.BasePath, Constants.MOD_INFO_FILE), Path.Combine(patchedModDir, Constants.MOD_INFO_FILE), false);
+                }
+
+                if (File.Exists(Path.Combine(patchedModDir, Constants.MOD_INFO_FILE)))
+                {
+                    byte[] infoBytes = FileStreamHelper.ReadFile(Path.Combine(patchedModDir, Constants.MOD_INFO_FILE), false);
+                    string infoData = FileStreamHelper.UnkBytesToStr(infoBytes).Replace(modInfoName, modInfoName + " (PakPatch)");
+                    FileStreamHelper.WriteFile(patchedModDir, Constants.MOD_INFO_FILE, infoData, false);
+                }
+
+                RisePakPatch.ProcessDirectory(mod.BasePath, Path.Combine(patchedModDir, PathHelper.MakeValid(mod.Name).Replace(" ", "") + ".pak"));
+            }
         }
     }
 }

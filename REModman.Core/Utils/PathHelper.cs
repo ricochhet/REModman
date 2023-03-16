@@ -42,9 +42,19 @@ namespace REModman.Utils
             return Path.GetFullPath(finalPath);
         }
 
-        public static string[] GetFirstDirectory(string value)
+        public static string[] GetFirstDirectory(string value) => value[2..].Split(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+        
+        public static string MakeValid(string value)
         {
-            return value[2..].Split(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+            string temp = value;
+
+            foreach (char invalidChar in Path.GetInvalidFileNameChars())
+                temp = temp.Replace(char.ToString(invalidChar), "");
+
+            foreach (char invalidChar in Path.GetInvalidPathChars())
+                temp = temp.Replace(char.ToString(invalidChar), "");
+
+            return temp;
         }
     }
 }

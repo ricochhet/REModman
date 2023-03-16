@@ -3,12 +3,15 @@ using REMod.Models;
 using REModman.Configuration.Enums;
 using REModman.Configuration.Structs;
 using REModman.Internal;
+using REModman.Logger;
+using REModman.Patches;
 using REModman.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using Wpf.Ui.Controls;
 
@@ -262,6 +265,30 @@ namespace REMod.Views.Pages
                 else
                 {
                     BaseDialog dialog = new("Mod Manager", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    dialog.Show();
+                }
+            }
+        }
+
+        private async void PatchMod_Button_Click(object sender, RoutedEventArgs e)
+        {
+            Button? button = sender as Button;
+
+            if (button?.Tag is ModItem item && SettingsManager.GetLastSelectedGame() != GameType.None)
+            {
+                if (ModManager.IsPatchable(SettingsManager.GetLastSelectedGame(), item.Guid))
+                {
+                    BaseDialog confirmDialog = new("Mod Manager", $"{item.Name} can be converted to a PAK mod, proceed?");
+                    confirmDialog.Show();
+
+                    if (await confirmDialog.Confirmed.Task)
+                    {
+                        ModManager.Patch(SettingsManager.GetLastSelectedGame(), item.Guid);
+                    }
+                }
+                else
+                {
+                    BaseDialog dialog = new("Mod Manager", $"{item.Name} has no patchable data.");
                     dialog.Show();
                 }
             }

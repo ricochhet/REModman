@@ -5,12 +5,14 @@ using REModman.Logger;
 using REModman.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace REModman.Patches
 {
-    public class REEnginePatcher
+    public class PakDataPatch
     {
         private static readonly string[] InvalidFiles = new string[]
         {
@@ -20,7 +22,14 @@ namespace REModman.Patches
             "MonsterHunterRise.exe"
         };
 
+        public static readonly GameType[] ValidGameTypes = new GameType[]
+        {
+            GameType.MonsterHunterRise
+        };
+
         private static bool IsPakFormat(string String) => String.Contains("re_chunk_") && String.Contains("pak.patch") && String.Contains(".pak");
+        private static string Patch(int value) => "re_chunk_000.pak.patch_<REPLACE>.pak".Replace("<REPLACE>", value.ToString("D3"));
+
         private static bool IsSafe(string value)
         {
             if (InvalidFiles.Contains(value))
@@ -32,25 +41,33 @@ namespace REModman.Patches
             return true;
         }
 
-        public static string Patch(int value) => "re_chunk_000.pak.patch_<REPLACE>.pak".Replace("<REPLACE>", value.ToString("D3"));
-
-        public static bool IsValid(GameType type, string String)
+        public static bool HasNativesFolder(string directory)
         {
-            if (type == GameType.MonsterHunterRise || type == GameType.MonsterHunterWorld)
+            if (Directory.Exists(Path.Combine(directory, "natives")))
             {
-                string path = PathHelper.GetFirstDirectory(String)[3];
-                if (!IsSafe(path)) return false;
+                return true;
+            }
 
-                if (path == "natives")
+            return false;
+        }
+
+        public static bool IsValid(GameType type, string directory)
+        {
+            if (ValidGameTypes.Contains(type))
+            {
+                string directoryName = PathHelper.GetFirstDirectory(directory)[3];
+                if (!IsSafe(directoryName)) return false;
+
+                if (directoryName == "natives")
                 {
-                    LogBase.Info($"[REENGINEPATCHER] Valid path \"{path}\" was found.");
+                    LogBase.Info($"[REENGINEPATCHER] Valid path \"{directoryName}\" was found.");
                     return true;
                 }
-                else if (Path.GetExtension(path) == ".pak")
+                else if (Path.GetExtension(directoryName) == ".pak")
                 {
-                    if (IsPakFormat(path) || String.Contains("re_chunk_000"))
+                    if (IsPakFormat(directoryName) || directory.Contains("re_chunk_000"))
                     {
-                        LogBase.Warn($"[REENGINEPATCHER] Invalid path \"{path}\" was found.");
+                        LogBase.Warn($"[REENGINEPATCHER] Invalid path \"{directoryName}\" was found.");
                         return false;
                     }
 
@@ -61,23 +78,23 @@ namespace REModman.Patches
             return false;
         }
 
-        public static bool IsPatchable(GameType type, string String)
-        {
-            if (type == GameType.MonsterHunterRise || type == GameType.MonsterHunterWorld)
-            {
-                if ((String.Contains("re_chunk_000") && String.Contains("patch_") && String.Contains(".pak")) || String.Contains("re_chunk_000"))
-                {
-                    LogBase.Info($"[REENGINEPATCHER] {String} is patchable.");
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public static List<ModData> Patch(GameType type, List<ModData> list)
+        public static List<ModData> Patch(List<ModData> list)
         {
             int startIndex = 2;
+
+            foreach (ModData mod in list)
+            {
+                foreach (ModFile file in mod.Files)
+                {
+                    if (Path.GetExtension(file.SourcePath) == ".pak")
+                    {
+                        if (File.Exists(file.InstallPath))
+                        {
+                            File.Delete(file.InstallPath);
+                        }
+                    }
+                }
+            }
 
             foreach (ModData mod in list)
             {
@@ -87,13 +104,9 @@ namespace REModman.Patches
                     {
                         string path = file.InstallPath.Replace(Path.GetFileName(file.InstallPath), Patch(startIndex));
 
-                        if (IsSafe(path))
-                        {
-                            File.Delete(file.InstallPath);
-                            file.InstallPath = path;
-                            FileStreamHelper.CopyFile(file.SourcePath, path, false);
-                            startIndex++;
-                        }
+                        FileStreamHelper.CopyFile(file.SourcePath, path, false);
+                        file.InstallPath = path;
+                        startIndex++;
                     }
                 }
             }
