@@ -1,4 +1,4 @@
-namespace REModman.Tools
+namespace REMod.Core.Tools
 {
     public class FileEntry
     {

@@ -1,6 +1,6 @@
-﻿using REMod.Views.Pages;
-using REModman.Configuration.Enums;
-using REModman.Logger;
+﻿using REMod.Core.Configuration.Enums;
+using REMod.Core.Logger;
+using REMod.Views.Pages;
 using Wpf.Ui.Appearance;
 
 namespace REMod
@@ -25,7 +25,7 @@ namespace REMod
             AppVersion_TextBlock.Text = GetAssemblyVersion();
         }
 
-        private string GetAssemblyVersion()
+        private static string GetAssemblyVersion()
         {
             return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
         }

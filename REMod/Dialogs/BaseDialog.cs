@@ -1,4 +1,4 @@
-﻿using REModman.Logger;
+﻿using REMod.Core.Logger;
 using System;
 using System.Threading.Tasks;
 using System.Windows;

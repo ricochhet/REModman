@@ -1,11 +1,11 @@
-using REModman.Logger;
+using REMod.Core.Logger;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace REModman.Utils
+namespace REMod.Core.Utils
 {
     public class FileStreamHelper
     {

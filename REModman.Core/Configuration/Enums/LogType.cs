@@ -1,4 +1,4 @@
-namespace REModman.Configuration.Enums
+namespace REMod.Core.Configuration.Enums
 {
     public enum LogType
     {

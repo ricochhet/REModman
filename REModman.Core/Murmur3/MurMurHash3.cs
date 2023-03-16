@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace REModman.Murmur3
+namespace REMod.Core.Murmur3
 {
     public static class MurMurHash3
     {

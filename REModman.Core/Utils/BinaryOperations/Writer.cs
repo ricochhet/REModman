@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace REModman.Utils.BinaryOperations
+namespace REMod.Core.Utils.BinaryOperations
 {
     public class Writer
     {

@@ -1,10 +1,9 @@
-using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.CompilerServices;
 using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace REModman.Utils.BinaryOperations
+namespace REMod.Core.Utils.BinaryOperations
 {
     public class Conversions
     {
@@ -21,10 +20,10 @@ namespace REModman.Utils.BinaryOperations
             ulong num = 0uL;
             checked
             {
-                int num2 = Strings.Len(Value) - 1;
+                int num2 = Value.Length - 1;
                 for (int i = 0; i <= num2; i++)
                 {
-                    num = (ulong)Math.Round(Math.Round((double)num + Conversion.Val(Strings.Mid(Value, Strings.Len(Value) - i + 1, 1)) * Math.Pow(2.0, i - 1)));
+                    num = (ulong)Math.Round(Math.Round((double)num + Val(Value.Substring(Value.Length - i + 1, 1)) * Math.Pow(2.0, i - 1)));
                 }
 
                 return (int)num;
@@ -128,7 +127,7 @@ namespace REModman.Utils.BinaryOperations
 
                 for (int i = 0; i <= num; i++)
                 {
-                    array[i] = (byte)Math.Round(Math.Round(Conversion.Val(string.Concat("&h", Value.AsSpan(i * 2, 2)))));
+                    array[i] = (byte)Math.Round(Math.Round(Val(string.Concat("&h", Value.AsSpan(i * 2, 2)))));
                 }
 
                 return array;
@@ -208,8 +207,8 @@ namespace REModman.Utils.BinaryOperations
             string text = null;
             do
             {
-                text += Microsoft.VisualBasic.CompilerServices.Conversions.ToString(Value % 2);
-                Value = checked((int)Math.Round((double)Value / 2.0));
+                text += (Value % 2).ToString();
+                Value = checked((int)Math.Round(Value / 2.0));
             }
 
             while (Value >= 1);
@@ -240,9 +239,10 @@ namespace REModman.Utils.BinaryOperations
 
         public static string ObjectToHex(object Value)
         {
-            if (Operators.CompareString(Value.GetType().ToString(), "System.Byte[]", TextCompare: false) != 0)
+            if (Value.GetType().ToString() != "System.Byte[]")
             {
-                return Conversion.Hex(RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(Value)));
+                byte[] bytes = Encoding.Unicode.GetBytes(RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(Value)).ToString());
+                return BitConverter.ToString(bytes);
             }
 
             return BitConverter.ToString((byte[])Value).Replace("-", "");
@@ -278,6 +278,23 @@ namespace REModman.Utils.BinaryOperations
             }
 
             return Encoding.BigEndianUnicode.GetBytes(Value);
+        }
+
+        private static double Val(string value)
+        {
+            string result = string.Empty;
+
+            foreach (char c in value)
+            {
+                if (result.Length == 0 && c.Equals('-')) 
+                    result += c;
+                else if (char.IsNumber(c) || (c.Equals('.') && !result.Any(x => x.Equals('.'))))
+                    result += c;
+                else if (!c.Equals(' '))
+                    return string.IsNullOrEmpty(result) ? 0 : Convert.ToDouble(result);
+            }
+
+            return (string.IsNullOrEmpty(result) || result == "-") ? 0 : Convert.ToDouble(result);
         }
     }
 }

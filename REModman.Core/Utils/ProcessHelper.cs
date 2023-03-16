@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace REModman.Utils
+namespace REMod.Core.Utils
 {
     public class ProcessHelper
     {

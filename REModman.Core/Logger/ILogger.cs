@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace REModman.Logger
+namespace REMod.Core.Logger
 {
     public interface ILogger
     {

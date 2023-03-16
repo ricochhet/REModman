@@ -1,7 +1,7 @@
-using REModman.Configuration.Enums;
+using REMod.Core.Configuration.Enums;
 using System;
 
-namespace REModman.Configuration
+namespace REMod.Core.Configuration
 {
     public class EnumSwitch
     {

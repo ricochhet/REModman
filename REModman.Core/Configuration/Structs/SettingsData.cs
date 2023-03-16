@@ -1,7 +1,7 @@
-﻿using REModman.Configuration.Enums;
+﻿using REMod.Core.Configuration.Enums;
 using System.Collections.Generic;
 
-namespace REModman.Configuration.Structs
+namespace REMod.Core.Configuration.Structs
 {
     public class SettingsData
     {

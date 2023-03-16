@@ -1,12 +1,12 @@
-﻿using REModman.Configuration;
-using REModman.Configuration.Enums;
+﻿using REMod.Core.Configuration;
+using REMod.Core.Configuration.Enums;
 using System;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace REModman.Logger
+namespace REMod.Core.Logger
 {
     public class FileStreamLogger : ILogger, IDisposable
     {

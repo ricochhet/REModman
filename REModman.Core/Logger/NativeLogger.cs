@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace REModman.Logger
+namespace REMod.Core.Logger
 {
     public class NativeLogger : ILogger
     {

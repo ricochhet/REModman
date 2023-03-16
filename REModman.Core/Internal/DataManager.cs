@@ -1,12 +1,12 @@
-﻿using REModman.Configuration;
-using REModman.Configuration.Enums;
-using REModman.Configuration.Structs;
-using REModman.Logger;
-using REModman.Utils;
+﻿using REMod.Core.Configuration;
+using REMod.Core.Configuration.Enums;
+using REMod.Core.Configuration.Structs;
+using REMod.Core.Logger;
+using REMod.Core.Utils;
 using System.Collections.Generic;
 using System.IO;
 
-namespace REModman.Internal
+namespace REMod.Core.Internal
 {
     public class DataManager
     {

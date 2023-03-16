@@ -1,4 +1,4 @@
-namespace REModman.Configuration
+namespace REMod.Core.Configuration
 {
     public class Constants
     {
@@ -8,7 +8,6 @@ namespace REModman.Configuration
 
         public const string SETTINGS_FILE = "settings.json";
         public const string MOD_INDEX_FILE = "modlist.json";
-        public const string MOD_INFO_FILE = "modinfo.ini";
 
         public const string MONSTER_HUNTER_WORLD_APP_ID = "582010";
         public const string MONSTER_HUNTER_WORLD_MOD_FOLDER = "MonsterHunterWorld";

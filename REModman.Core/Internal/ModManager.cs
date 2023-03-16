@@ -1,14 +1,14 @@
-﻿using REModman.Configuration;
-using REModman.Configuration.Enums;
-using REModman.Configuration.Structs;
-using REModman.Logger;
-using REModman.Patches;
-using REModman.Utils;
+﻿using REMod.Core.Configuration;
+using REMod.Core.Configuration.Enums;
+using REMod.Core.Configuration.Structs;
+using REMod.Core.Logger;
+using REMod.Core.Patches;
+using REMod.Core.Utils;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
-namespace REModman.Internal
+namespace REMod.Core.Internal
 {
     public class ModManager
     {
@@ -143,10 +143,7 @@ namespace REModman.Internal
                 LogBase.Info($"Attempting to install mod: {mod.Name}.");
                 foreach (ModFile file in mod.Files)
                 {
-                    if (!Path.GetFileName(file.SourcePath).Contains(Constants.MOD_INFO_FILE))
-                    {
-                        FileStreamHelper.CopyFile(file.SourcePath, file.InstallPath, false);
-                    }
+                    FileStreamHelper.CopyFile(file.SourcePath, file.InstallPath, false);
                 }
             }
         }
@@ -188,6 +185,8 @@ namespace REModman.Internal
                 }
             }
 
+            list.Remove(Find(list, mod.Hash));
+            FileStreamHelper.DeleteEmptyDirectories(Constants.MODS_FOLDER);
             Save(type, list);
         }
     }

@@ -1,5 +1,5 @@
 ﻿using REMod.Dialogs;
-using REModman.Internal;
+using REMod.Core.Internal;
 using System.Windows;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;

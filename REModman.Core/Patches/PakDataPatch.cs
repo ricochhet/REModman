@@ -1,12 +1,12 @@
-using REModman.Configuration.Enums;
-using REModman.Configuration.Structs;
-using REModman.Logger;
-using REModman.Utils;
+using REMod.Core.Configuration.Enums;
+using REMod.Core.Configuration.Structs;
+using REMod.Core.Logger;
+using REMod.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace REModman.Patches
+namespace REMod.Core.Patches
 {
     public class PakDataPatch
     {

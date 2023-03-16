@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "REModman.Core", "REModman.Core\REModman.Core.csproj", "{F8FAE56C-FE83-4EBE-BC6E-A223DCED439E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "REMod.Core", "REModman.Core\REMod.Core.csproj", "{F8FAE56C-FE83-4EBE-BC6E-A223DCED439E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wpf.Ui", "Wpf.Ui\Wpf.Ui.csproj", "{C747B31E-A8B1-49DE-8E65-126CDE1C86DF}"
 EndProject

@@ -1,4 +1,4 @@
-namespace REModman.Utils.BinaryOperations
+namespace REMod.Core.Utils.BinaryOperations
 {
     public enum Endian
     {

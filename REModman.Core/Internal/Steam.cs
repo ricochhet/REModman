@@ -1,9 +1,9 @@
-using REModman.Configuration;
-using REModman.Configuration.Enums;
+using REMod.Core.Configuration;
+using REMod.Core.Configuration.Enums;
 using System;
 using System.Diagnostics;
 
-namespace REModman.Internal
+namespace REMod.Core.Internal
 {
     public class Steam
     {

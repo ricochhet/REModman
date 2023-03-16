@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace REModman.Logger
+namespace REMod.Core.Logger
 {
     public class LogBase
     {

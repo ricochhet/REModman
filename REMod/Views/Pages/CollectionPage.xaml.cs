@@ -1,10 +1,10 @@
 ﻿using REMod.Dialogs;
 using REMod.Models;
-using REModman.Configuration.Enums;
-using REModman.Configuration.Structs;
-using REModman.Internal;
-using REModman.Tools;
-using REModman.Utils;
+using REMod.Core.Configuration.Enums;
+using REMod.Core.Configuration.Structs;
+using REMod.Core.Internal;
+using REMod.Core.Tools;
+using REMod.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

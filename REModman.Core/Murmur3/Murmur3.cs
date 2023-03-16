@@ -1,6 +1,6 @@
 using System;
 
-namespace REModman.Murmur3
+namespace REMod.Core.Murmur3
 {
     public class Murmur3
     {

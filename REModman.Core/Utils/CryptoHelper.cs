@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace REModman.Utils
+namespace REMod.Core.Utils
 {
     public class CryptoHelper
     {
