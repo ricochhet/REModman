@@ -49,7 +49,7 @@ namespace REModman.Patches
             {
                 if (IsPatchPak(directory) || directory.Contains("re_chunk_000"))
                 {
-                    LogBase.Error($"[REENGINEPATCHER] Invalid path \"{directory}\" was found.");
+                    LogBase.Error($"Invalid path \"{directory}\" was found.");
                     return false;
                 }
 

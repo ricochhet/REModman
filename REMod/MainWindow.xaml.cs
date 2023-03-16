@@ -22,6 +22,12 @@ namespace REMod
             ILogger logger = new NativeLogger();
             LogBase.Add(logger);
             LogBase.Info("REMod stdout has been initialized.");
+            AppVersion_TextBlock.Text = GetAssemblyVersion();
+        }
+
+        private string GetAssemblyVersion()
+        {
+            return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
         }
     }
 }
