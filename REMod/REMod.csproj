@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\REModman.Core\REMod.Core.csproj" />
+    <ProjectReference Include="..\REMod.Core\REMod.Core.csproj" />
     <ProjectReference Include="..\Wpf.Ui\Wpf.Ui.csproj" />
   </ItemGroup>
 
