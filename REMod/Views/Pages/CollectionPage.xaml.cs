@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using Wpf.Ui.Controls;
+using REMod.Core.Logger;
 
 namespace REMod.Views.Pages
 {
@@ -298,6 +299,29 @@ namespace REMod.Views.Pages
                     {
                         RisePakPatchExtension.Patch(SettingsManager.GetLastSelectedGame(), item.Hash);
                     }
+                }
+            }
+        }
+
+        private void LoadOrder_NumberBox_Initialized(object sender, EventArgs e)
+        {
+            NumberBox? numberBox = sender as NumberBox;
+
+            if (numberBox?.Tag is ModItem item && SettingsManager.GetLastSelectedGame() != GameType.None)
+            {
+                numberBox.Value = ModManager.GetLoadOrder(SettingsManager.GetLastSelectedGame(), item.Hash);
+            }
+        }
+
+        private void LoadOrder_NumberBox_ValueChanged(object sender, RoutedEventArgs e)
+        {
+            NumberBox? numberBox = sender as NumberBox;
+
+            if (numberBox?.Tag is ModItem item && SettingsManager.GetLastSelectedGame() != GameType.None)
+            {
+                if (numberBox.Value != null)
+                {
+                    ModManager.SetLoadOrder(SettingsManager.GetLastSelectedGame(), item.Hash, (int)numberBox.Value);
                 }
             }
         }

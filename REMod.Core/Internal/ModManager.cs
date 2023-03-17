@@ -6,6 +6,7 @@ using REMod.Core.Logger;
 using REMod.Core.Utils;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace REMod.Core.Internal
@@ -34,7 +35,8 @@ namespace REMod.Core.Internal
 
         public static void Save(GameType type, List<ModData> list)
         {
-            FileStreamHelper.WriteFile(Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type)), Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true }), false);
+            List<ModData> sorted = list.OrderBy(i => i.LoadOrder).ToList();
+            FileStreamHelper.WriteFile(Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type)), Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(sorted, new JsonSerializerOptions { WriteIndented = true }), false);
         }
 
         public static List<ModData> Index(GameType type)
@@ -104,6 +106,7 @@ namespace REMod.Core.Internal
                         {
                             Name = Path.GetFileName(basePath),
                             Hash = identifier,
+                            LoadOrder = 0,
                             BasePath = obj.FullName,
                             IsEnabled = false,
                             Files = modFiles
@@ -113,6 +116,29 @@ namespace REMod.Core.Internal
             }
 
             return list;
+        }
+
+        public static void SetLoadOrder(GameType type, string identifier, int value)
+        {
+            List<ModData> list = Deserialize(type);
+            ModData mod = Find(list, identifier);
+
+            if (mod == null)
+                return;
+
+            mod.LoadOrder = value;
+            Save(type, list);
+        }
+
+        public static int GetLoadOrder(GameType type, string identifier)
+        {
+            List<ModData> list = Deserialize(type);
+            ModData mod = Find(list, identifier);
+
+            if (mod == null)
+                return 0;
+
+            return mod.LoadOrder;
         }
 
         public static void Enable(GameType type, string identifier, bool isEnabled)
