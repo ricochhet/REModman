@@ -272,7 +272,7 @@ namespace REMod.Views.Pages
 
             if (button?.Tag is ModItem item && SettingsManager.GetLastSelectedGame() != GameType.None)
             {
-                if (!RisePakPatch.IsPatchable(SettingsManager.GetLastSelectedGame(), item.Hash))
+                if (!RisePakPatchExtension.IsPatchable(SettingsManager.GetLastSelectedGame(), item.Hash))
                 {
                     button.IsEnabled = false;
                 }
@@ -289,14 +289,14 @@ namespace REMod.Views.Pages
 
             if (button?.Tag is ModItem item && SettingsManager.GetLastSelectedGame() != GameType.None)
             {
-                if (RisePakPatch.IsPatchable(SettingsManager.GetLastSelectedGame(), item.Hash))
+                if (RisePakPatchExtension.IsPatchable(SettingsManager.GetLastSelectedGame(), item.Hash))
                 {
                     BaseDialog confirmDialog = new("Mod Manager", $"{StringHelper.Truncate(item.Name, 38)} can be converted to a PAK mod, proceed?");
                     confirmDialog.Show();
 
                     if (await confirmDialog.Confirmed.Task)
                     {
-                        RisePakPatch.Patch(SettingsManager.GetLastSelectedGame(), item.Hash);
+                        RisePakPatchExtension.Patch(SettingsManager.GetLastSelectedGame(), item.Hash);
                     }
                 }
             }

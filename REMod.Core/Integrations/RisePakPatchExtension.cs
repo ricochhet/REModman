@@ -12,7 +12,7 @@ using System.IO;
 
 namespace REMod.Core.Tools
 {
-    public class RisePakPatch
+    public class RisePakPatchExtension
     {
         public static bool IsPatchable(GameType type, string identifier)
         {
@@ -34,7 +34,7 @@ namespace REMod.Core.Tools
 
             if (Directory.Exists(mod.BasePath))
             {
-                string directory = mod.BasePath + "_PAK";
+                string directory = mod.BasePath + " Pak Version";
                 if (Directory.Exists(directory))
                     Directory.Delete(directory, true);
 
@@ -42,26 +42,7 @@ namespace REMod.Core.Tools
 
                 if (File.GetAttributes(mod.BasePath).HasFlag(FileAttributes.Directory))
                 {
-                    try
-                    {
-                        ProcessStartInfo startInfo = new()
-                        {
-                            Arguments = $"\"{new DirectoryInfo(mod.BasePath).FullName}\" \"{Path.Combine(directory, PathHelper.MakeValid(mod.Name) + ".pak")}\"",
-                            FileName = $"{Constants.TOOLS_FOLDER}RisePakPatch.exe",
-                            CreateNoWindow = true,
-                        };
-
-                        Process process = new()
-                        {
-                            StartInfo = startInfo
-                        };
-
-                        Process.Start(startInfo);
-                    }
-                    catch (Exception err)
-                    {
-                        LogBase.Error(err.ToString());
-                    }
+                    RisePakPatch.ProcessDirectory(new DirectoryInfo(mod.BasePath).FullName, Path.Combine(directory, PathHelper.MakeValid(mod.Name) + ".pak"));
                 }
             }
         }
