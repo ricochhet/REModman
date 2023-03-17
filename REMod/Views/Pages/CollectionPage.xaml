@@ -107,10 +107,10 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <ui:ToggleSwitch Margin="4,4,16,4" Grid.Column="0" Grid.Row="0" Content="Enable" Name="EnableMod_ToggleSwitch" Tag="{Binding}" IsChecked="{Binding IsEnabled}" Checked="EnableMod_ToggleSwitch_Checked" Unchecked="EnableMod_ToggleSwitch_Unchecked" />
+                            <ui:ToggleSwitch Margin="4,4,16,4" Grid.Column="0" Grid.Row="0" Name="EnableMod_ToggleSwitch" Tag="{Binding}" IsChecked="{Binding IsEnabled}" Checked="EnableMod_ToggleSwitch_Checked" Unchecked="EnableMod_ToggleSwitch_Unchecked" />
                             <ui:NumberBox Margin="4,4,4,4" Grid.Column="1" Grid.Row="0" Name="LoadOrder_NumberBox" Tag="{Binding}" PlaceholderText="0" PlaceholderEnabled="True" MaxDecimalPlaces="0" AcceptsExpression="False" ValueChanged="LoadOrder_NumberBox_ValueChanged" MaxLength="4" Initialized="LoadOrder_NumberBox_Initialized" />
-                            <ui:Button Margin="4" Grid.Column="2" Grid.Row="0" Content="Patch" Name="PatchMod_Button" Tag="{Binding}" Initialized="PatchMod_Button_Initialized" Click="PatchMod_Button_Click"  HorizontalAlignment="Stretch" Appearance="Info" />
-                            <ui:Button Margin="4" Grid.Column="3" Grid.Row="0" Content="Delete" Name="DeleteMod_Button" Tag="{Binding}" Click="DeleteMod_Button_Click" HorizontalAlignment="Stretch" Appearance="Danger" />
+                            <ui:Button Padding="8" Icon="Edit28" Margin="4" Grid.Column="2" Grid.Row="0" Name="PatchMod_Button" Tag="{Binding}" Initialized="PatchMod_Button_Initialized" Click="PatchMod_Button_Click"  HorizontalAlignment="Stretch" />
+                            <ui:Button Padding="8" Icon="Delete28" Margin="4" Grid.Column="3" Grid.Row="0" Name="DeleteMod_Button" Tag="{Binding}" Click="DeleteMod_Button_Click" HorizontalAlignment="Stretch" />
                         </Grid>
                         
                     </ui:CardControl>
