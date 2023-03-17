@@ -1,8 +1,8 @@
 ﻿using REMod.Core.Configuration;
 using REMod.Core.Configuration.Enums;
 using REMod.Core.Configuration.Structs;
+using REMod.Core.Integrations;
 using REMod.Core.Logger;
-using REMod.Core.Patches;
 using REMod.Core.Utils;
 using System.Collections.Generic;
 using System.IO;
@@ -104,7 +104,7 @@ namespace REMod.Core.Internal
                         {
                             Name = Path.GetFileName(basePath),
                             Hash = identifier,
-                            BasePath = basePath,
+                            BasePath = obj.FullName,
                             IsEnabled = false,
                             Files = modFiles
                         });

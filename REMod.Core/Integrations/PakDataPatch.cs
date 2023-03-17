@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace REMod.Core.Patches
+namespace REMod.Core.Integrations
 {
     public class PakDataPatch
     {

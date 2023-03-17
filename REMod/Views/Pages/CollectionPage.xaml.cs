@@ -272,7 +272,7 @@ namespace REMod.Views.Pages
 
             if (button?.Tag is ModItem item && SettingsManager.GetLastSelectedGame() != GameType.None)
             {
-                if (!RisePakPatchExtensions.IsPatchable(SettingsManager.GetLastSelectedGame(), item.Hash))
+                if (!RisePakPatch.IsPatchable(SettingsManager.GetLastSelectedGame(), item.Hash))
                 {
                     button.IsEnabled = false;
                 }
@@ -289,14 +289,14 @@ namespace REMod.Views.Pages
 
             if (button?.Tag is ModItem item && SettingsManager.GetLastSelectedGame() != GameType.None)
             {
-                if (RisePakPatchExtensions.IsPatchable(SettingsManager.GetLastSelectedGame(), item.Hash))
+                if (RisePakPatch.IsPatchable(SettingsManager.GetLastSelectedGame(), item.Hash))
                 {
-                    BaseDialog confirmDialog = new("Mod Manager", $"{item.Name} can be converted to a PAK mod, proceed?");
+                    BaseDialog confirmDialog = new("Mod Manager", $"{StringHelper.Truncate(item.Name, 38)} can be converted to a PAK mod, proceed?");
                     confirmDialog.Show();
 
                     if (await confirmDialog.Confirmed.Task)
                     {
-                        RisePakPatchExtensions.Patch(SettingsManager.GetLastSelectedGame(), item.Hash);
+                        RisePakPatch.Patch(SettingsManager.GetLastSelectedGame(), item.Hash);
                     }
                 }
             }
@@ -310,7 +310,7 @@ namespace REMod.Views.Pages
             {
                 if (Directory.Exists(SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame())))
                 {
-                    BaseDialog confirmDialog = new("Mod Manager", $"Do you want to delete mod {item.Name} for {SettingsManager.GetLastSelectedGame()}?");
+                    BaseDialog confirmDialog = new("Mod Manager", $"Do you want to delete mod {StringHelper.Truncate(item.Name, 38)} for {SettingsManager.GetLastSelectedGame()}?");
                     confirmDialog.SetConfirmAppearance(ControlAppearance.Danger);
                     confirmDialog.Show();
 

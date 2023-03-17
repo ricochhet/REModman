@@ -30,7 +30,7 @@
             </Grid.ColumnDefinitions>
             <ui:CardAction Grid.Column="1" Margin="8,16,8,8" Padding="16,13,16,12" Icon="Warning28" IsHitTestVisible="False" IsChevronVisible="False">
                 <StackPanel>
-                    <TextBlock TextWrapping="Wrap" Margin="16" FontSize="14" Text="CONTENT_PLACEHOLDER" Name="Content_TextBlock" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                    <TextBlock TextWrapping="Wrap" Margin="16" FontSize="12" Text="CONTENT_PLACEHOLDER" Name="Content_TextBlock" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
                 </StackPanel>
             </ui:CardAction>
         </Grid>
