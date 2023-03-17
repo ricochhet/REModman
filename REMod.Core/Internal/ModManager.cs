@@ -118,8 +118,11 @@ namespace REMod.Core.Internal
         public static void Enable(GameType type, string identifier, bool isEnabled)
         {
             List<ModData> list = Deserialize(type);
-
             ModData enabledMod = Find(list, identifier);
+
+            if (enabledMod == null) 
+                return;
+
             enabledMod.IsEnabled = isEnabled;
 
             if (isEnabled)
@@ -171,6 +174,9 @@ namespace REMod.Core.Internal
         {
             List<ModData> list = Deserialize(type);
             ModData mod = Find(list, identifier);
+
+            if (mod == null)
+                return;
 
             Uninstall(type, mod);
             list = PakDataPatch.Patch(list);
