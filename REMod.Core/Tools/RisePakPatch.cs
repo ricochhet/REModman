@@ -25,8 +25,13 @@ namespace REMod.Core.Tools
                 File.Delete(outputFile);
             }
 
-            FileInfo[] files = new DirectoryInfo(Path.Combine(directory, "natives")).GetFiles("*.*", SearchOption.AllDirectories);
-            LogBase.Info($"Processing {files.Length} files...\n");
+            // FileInfo[] files = new DirectoryInfo(Path.Combine(directory, "natives")).GetFiles("*.*", SearchOption.AllDirectories);
+            string[] sortedFiles = Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories)
+                .OrderBy(Path.GetDirectoryName)
+                .ThenBy(p => p.Count(c => c == Path.PathSeparator))
+                .ThenBy(Path.GetFileNameWithoutExtension).ToArray();
+
+            LogBase.Info($"Processing {sortedFiles.Length} files...\n");
 
             List<FileEntry> list = new();
             File.Create(outputFile).Dispose();
@@ -34,14 +39,9 @@ namespace REMod.Core.Tools
             Writer writer = new(outputFile);
             writer.WriteUInt32(1095454795u);
             writer.WriteUInt32(4u);
-            writer.WriteUInt32((uint)files.Length);
+            writer.WriteUInt32((uint)sortedFiles.Length);
             writer.WriteUInt32(0u);
-            writer.Seek(48 * files.Length + writer.Position);
-
-            string[] sortedFiles = Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories)
-                .OrderBy(Path.GetDirectoryName)
-                .ThenBy(p => p.Count(c => c == Path.PathSeparator))
-                .ThenBy(Path.GetFileNameWithoutExtension).ToArray();
+            writer.Seek(48 * sortedFiles.Length + writer.Position);
 
             foreach (string obj in sortedFiles)
             {

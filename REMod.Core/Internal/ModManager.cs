@@ -178,17 +178,12 @@ namespace REMod.Core.Internal
             if (mod == null)
                 return;
 
-            Uninstall(type, mod);
-            list = PakDataPatch.Patch(list);
+            Enable(type, mod.Hash, false);
             LogBase.Info($"Attempting to delete mod: {mod.Name}.");
 
-            foreach (ModFile file in mod.Files)
+            if (Directory.Exists(mod.BasePath))
             {
-                if (File.Exists(file.SourcePath))
-                {
-                    LogBase.Info($"Removing file: {file.SourcePath}.");
-                    File.Delete(file.SourcePath);
-                }
+                Directory.Delete(mod.BasePath, true);
             }
 
             list.Remove(Find(list, mod.Hash));

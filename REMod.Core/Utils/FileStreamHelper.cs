@@ -228,7 +228,10 @@ namespace REMod.Core.Utils
                 {
                     try
                     {
-                        Directory.Delete(startPath);
+                        if (Directory.Exists(startPath))
+                        {
+                            Directory.Delete(startPath);
+                        }
                     }
                     catch (UnauthorizedAccessException) { }
                     catch (DirectoryNotFoundException) { }
