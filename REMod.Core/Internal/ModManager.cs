@@ -124,7 +124,9 @@ namespace REMod.Core.Internal
             ModData mod = Find(list, identifier);
 
             if (mod == null)
+            {
                 return;
+            }
 
             mod.LoadOrder = value;
             Save(type, list);
@@ -136,7 +138,9 @@ namespace REMod.Core.Internal
             ModData mod = Find(list, identifier);
 
             if (mod == null)
+            {
                 return 0;
+            }
 
             return mod.LoadOrder;
         }
@@ -146,8 +150,15 @@ namespace REMod.Core.Internal
             List<ModData> list = Deserialize(type);
             ModData enabledMod = Find(list, identifier);
 
-            if (enabledMod == null) 
+            if (enabledMod == null)
+            {
                 return;
+            }
+
+            if (enabledMod.IsEnabled == isEnabled)
+            {
+                return;
+            }
 
             enabledMod.IsEnabled = isEnabled;
 
@@ -202,7 +213,9 @@ namespace REMod.Core.Internal
             ModData mod = Find(list, identifier);
 
             if (mod == null)
+            {
                 return;
+            }
 
             Enable(type, mod.Hash, false);
             LogBase.Info($"Attempting to delete mod: {mod.Name}.");

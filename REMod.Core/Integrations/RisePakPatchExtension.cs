@@ -19,8 +19,10 @@ namespace REMod.Core.Tools
             List<ModData> list = ModManager.Deserialize(type);
             ModData mod = ModManager.Find(list, identifier);
 
-            if (mod == null) 
+            if (mod == null)
+            {
                 return false;
+            }
 
             if (PakDataPatch.NativesExists(mod.BasePath))
             {
@@ -35,8 +37,10 @@ namespace REMod.Core.Tools
             List<ModData> list = ModManager.Deserialize(type);
             ModData mod = ModManager.Find(list, identifier);
 
-            if (mod == null) 
+            if (mod == null)
+            {
                 return;
+            }
 
             if (Directory.Exists(mod.BasePath))
             {
