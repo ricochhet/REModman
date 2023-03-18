@@ -94,7 +94,7 @@ namespace REMod.Core.Internal
             {
                 if (File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
                 {
-                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE), false);
+                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE), true);
                     string file = FileStreamHelper.UnkBytesToStr(bytes);
                     settingsData = JsonSerializer.Deserialize<SettingsData>(file);
                 }

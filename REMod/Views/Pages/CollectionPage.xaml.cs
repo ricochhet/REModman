@@ -19,6 +19,8 @@ namespace REMod.Views.Pages
     public partial class CollectionPage
     {
         private GameType selectedGameType = GameType.None;
+        private string selectedGamePath = string.Empty;
+
         public ObservableCollection<ModItem> ModCollection = new();
 
         public CollectionPage()
@@ -41,7 +43,6 @@ namespace REMod.Views.Pages
                 {
                     List<ModData> index = ModManager.Index(selectedGameType);
                     ModManager.SafeSave(selectedGameType, index);
-                    Debug.WriteLine("hello");
 
                     foreach (ModData mod in index)
                     {
@@ -83,7 +84,7 @@ namespace REMod.Views.Pages
         {
             if (selectedGameType != GameType.None)
             {
-                if (SettingsManager.GetGamePath(selectedGameType) != "")
+                if (selectedGamePath != "")
                 {
                     OpenModFolder_Grid.IsEnabled = true;
                     OpenModFolder_Grid.Visibility = Visibility.Visible;
@@ -105,7 +106,7 @@ namespace REMod.Views.Pages
         {
             if (selectedGameType != GameType.None)
             {
-                if (SettingsManager.GetGamePath(selectedGameType) != "")
+                if (selectedGamePath != "")
                 {
                     SetupGame_CardAction.IsEnabled = false;
                     SetupGame_CardAction.Visibility = Visibility.Collapsed;
@@ -135,8 +136,9 @@ namespace REMod.Views.Pages
         {
             GameSelector_ComboBox.Items.Clear();
             GameSelector_ComboBox.ItemsSource = Enum.GetValues(typeof(GameType));
-            GameSelector_ComboBox.SelectedIndex = ((int)SettingsManager.GetLastSelectedGame());
+            GameSelector_ComboBox.SelectedIndex = (int)SettingsManager.GetLastSelectedGame();
             selectedGameType = SettingsManager.GetLastSelectedGame();
+            selectedGamePath = SettingsManager.GetGamePath(selectedGameType);
 
             CheckSelectedGameState();
         }
@@ -148,7 +150,8 @@ namespace REMod.Views.Pages
                 selectedGameType = (GameType)Enum.Parse(typeof(GameType), GameSelector_ComboBox.SelectedItem.ToString() ?? GameType.None.ToString());
                 SettingsManager.SaveLastSelectedGame(selectedGameType);
 
-                GameSelector_ComboBox.SelectedIndex = ((int)SettingsManager.GetLastSelectedGame());
+                GameSelector_ComboBox.SelectedIndex = (int)SettingsManager.GetLastSelectedGame();
+                selectedGamePath = SettingsManager.GetGamePath(selectedGameType);
 
                 OpenModFolder_Grid_Visibility();
                 SetupGame_CardAction_Visibility();
@@ -183,11 +186,11 @@ namespace REMod.Views.Pages
         {
             if (selectedGameType != GameType.None)
             {
-                if (Directory.Exists(SettingsManager.GetGamePath(selectedGameType)))
+                if (Directory.Exists(selectedGamePath))
                 {
                     ProcessStartInfo startInfo = new()
                     {
-                        Arguments = SettingsManager.GetGamePath(SettingsManager.GetLastSelectedGame()),
+                        Arguments = selectedGamePath,
                         FileName = "explorer.exe",
                     };
 
@@ -246,7 +249,7 @@ namespace REMod.Views.Pages
 
             if (toggle?.Tag is ModItem item && selectedGameType != GameType.None)
             {
-                if (Directory.Exists(SettingsManager.GetGamePath(selectedGameType)))
+                if (Directory.Exists(selectedGamePath))
                 {
                     ModManager.Enable(selectedGameType, item.Hash, true);
                 }
@@ -264,7 +267,7 @@ namespace REMod.Views.Pages
 
             if (toggle?.Tag is ModItem item && selectedGameType != GameType.None)
             {
-                if (Directory.Exists(SettingsManager.GetGamePath(selectedGameType)))
+                if (Directory.Exists(selectedGamePath))
                 {
                     ModManager.Enable(selectedGameType, item.Hash, false);
                 }
@@ -341,7 +344,7 @@ namespace REMod.Views.Pages
 
             if (button?.Tag is ModItem item && selectedGameType != GameType.None)
             {
-                if (Directory.Exists(SettingsManager.GetGamePath(selectedGameType)))
+                if (Directory.Exists(selectedGamePath))
                 {
                     BaseDialog confirmDialog = new("Mod Manager", $"Do you want to delete mod {StringHelper.Truncate(item.Name, 38)} for {SettingsManager.GetLastSelectedGame()}?");
                     confirmDialog.SetConfirmAppearance(ControlAppearance.Danger);

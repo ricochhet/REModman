@@ -90,7 +90,6 @@ namespace REMod.Core.Internal
 
             if (Directory.Exists(dataFolder))
             {
-                LogBase.Info($"Folder exists: {dataFolder}.");
                 return true;
             }
 
@@ -103,7 +102,6 @@ namespace REMod.Core.Internal
 
             if (Directory.Exists(modFolder))
             {
-                LogBase.Info($"Folder exists: {modFolder}.");
                 return true;
             }
 
@@ -116,7 +114,6 @@ namespace REMod.Core.Internal
 
             if (File.Exists(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE)))
             {
-                LogBase.Info($"Folder exists: {Path.Combine(dataFolder, Constants.MOD_INDEX_FILE)}.");
                 return true;
             }
 
@@ -127,7 +124,6 @@ namespace REMod.Core.Internal
         {
             if (File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
             {
-                LogBase.Info($"File exists: {Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)}.");
                 return true;
             }
 
@@ -140,7 +136,6 @@ namespace REMod.Core.Internal
 
             if (Directory.Exists(Path.Combine(Constants.MODS_FOLDER, modFolder)))
             {
-                LogBase.Info($"Folder exists: {Path.Combine(Constants.MODS_FOLDER, modFolder)}.");
                 return Path.Combine(Constants.MODS_FOLDER, modFolder);
             }
 

@@ -24,7 +24,7 @@ namespace REMod.Core.Internal
             {
                 if (File.Exists(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE)))
                 {
-                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE), false);
+                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE), true);
                     string file = FileStreamHelper.UnkBytesToStr(bytes);
                     list = JsonSerializer.Deserialize<List<ModData>>(file);
                 }
@@ -241,7 +241,14 @@ namespace REMod.Core.Internal
 
             if (Directory.Exists(mod.BasePath))
             {
-                Directory.Delete(mod.BasePath, true);
+                try
+                {
+                    Directory.Delete(mod.BasePath, true);
+                }
+                catch
+                {
+                    LogBase.Error($"Failed to remove directory: {mod.BasePath}.");
+                }
             }
 
             list.Remove(Find(list, mod.Hash));
