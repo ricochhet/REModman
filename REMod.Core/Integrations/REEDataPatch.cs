@@ -8,7 +8,7 @@ using System.IO;
 
 namespace REMod.Core.Integrations
 {
-    public class PakDataPatch
+    public class REEDataPatch
     {
         public static readonly GameType[] ValidGameTypes = new GameType[]
         {
@@ -38,9 +38,24 @@ namespace REMod.Core.Integrations
             return false;
         }
 
+        public static bool IsREFMod(string directory)
+        {
+            if (directory == "reframework")
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static string GetNativesFile(FileInfo path)
         {
             return "natives" + path.FullName.Split("natives")[1];
+        }
+
+        public static string GetREFFile(FileInfo path)
+        {
+            return "reframework" + path.FullName.Split("reframework")[1];
         }
 
         public static bool IsValidPak(string directory)
@@ -53,6 +68,16 @@ namespace REMod.Core.Integrations
                     return false;
                 }
 
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsLua(string directory)
+        {
+            if (Path.GetExtension(directory) == ".lua")
+            {
                 return true;
             }
 

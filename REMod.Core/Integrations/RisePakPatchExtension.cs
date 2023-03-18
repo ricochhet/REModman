@@ -20,7 +20,7 @@ namespace REMod.Core.Tools
                 return false;
             }
 
-            if (PakDataPatch.NativesExists(mod.BasePath))
+            if (REEDataPatch.NativesExists(mod.BasePath))
             {
                 return true;
             }

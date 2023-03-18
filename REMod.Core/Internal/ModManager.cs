@@ -86,7 +86,7 @@ namespace REMod.Core.Internal
                     DirectoryInfo[] directories = new DirectoryInfo(obj.FullName).GetDirectories("*.*", SearchOption.TopDirectoryOnly);
                     foreach (DirectoryInfo directory in directories)
                     {
-                        if (PakDataPatch.IsNatives(directory.Name))
+                        if (REEDataPatch.IsNatives(directory.Name))
                         {
                             FileInfo[] nativeFiles = new DirectoryInfo(directory.FullName).GetFiles("*.*", SearchOption.AllDirectories);
 
@@ -99,7 +99,27 @@ namespace REMod.Core.Internal
 
                                     modFiles.Add(new ModFile
                                     {
-                                        InstallPath = Path.Combine(gamePath, PakDataPatch.GetNativesFile(file)),
+                                        InstallPath = Path.Combine(gamePath, REEDataPatch.GetNativesFile(file)),
+                                        SourcePath = file.FullName,
+                                        Hash = fileHash,
+                                    });
+                                }
+                            }
+                        }
+                        else if (REEDataPatch.IsREFMod(directory.Name))
+                        {
+                            FileInfo[] refFiles = new DirectoryInfo(directory.FullName).GetFiles("*.*", SearchOption.AllDirectories);
+
+                            foreach (FileInfo file in refFiles)
+                            {
+                                if (FileCheck.IsSafe(file.Name))
+                                {
+                                    string fileHash = CryptoHelper.FileHash.Sha256(file.FullName);
+                                    modHash += fileHash;
+
+                                    modFiles.Add(new ModFile
+                                    {
+                                        InstallPath = Path.Combine(gamePath, REEDataPatch.GetREFFile(file)),
                                         SourcePath = file.FullName,
                                         Hash = fileHash,
                                     });
@@ -111,7 +131,7 @@ namespace REMod.Core.Internal
                     FileInfo[] files = new DirectoryInfo(obj.FullName).GetFiles("*.*", SearchOption.TopDirectoryOnly);
                     foreach (FileInfo file in files)
                     {
-                        if (PakDataPatch.IsValidPak(file.FullName) && FileCheck.IsSafe(file.Name))
+                        if (REEDataPatch.IsValidPak(file.FullName) && FileCheck.IsSafe(file.Name))
                         {
                             string fileHash = CryptoHelper.FileHash.Sha256(file.FullName);
                             modHash += fileHash;
@@ -147,7 +167,7 @@ namespace REMod.Core.Internal
                 }
             }
 
-            return list;
+            return list.OrderBy(i => i.LoadOrder).ToList();
         }
 
         public static void SetLoadOrder(GameType type, string identifier, int value)
@@ -201,13 +221,13 @@ namespace REMod.Core.Internal
 
             if (isEnabled)
             {
-                list = PakDataPatch.Patch(list);
+                list = REEDataPatch.Patch(list);
                 Install(type, mod);
             }
             else
             {
                 Uninstall(type, mod);
-                list = PakDataPatch.Patch(list);
+                list = REEDataPatch.Patch(list);
             }
 
             SaveByModified(type, list);
