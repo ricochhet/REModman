@@ -4,7 +4,9 @@ using REMod.Core.Configuration.Structs;
 using REMod.Core.Integrations;
 using REMod.Core.Logger;
 using REMod.Core.Utils;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -37,6 +39,18 @@ namespace REMod.Core.Internal
         {
             List<ModData> sorted = list.OrderBy(i => i.LoadOrder).ToList();
             FileStreamHelper.WriteFile(Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type)), Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(sorted, new JsonSerializerOptions { WriteIndented = true }), false);
+        }
+
+        public static void SafeSave(GameType type, List<ModData> list)
+        {
+            List<ModData> deserializedList = Deserialize(type);
+            List<ModData> listDiff = list.Where(p => !deserializedList.Any(l => p.Hash == l.Hash)).ToList();
+
+            if (listDiff.Count != 0)
+            {
+                List<ModData> sorted = list.OrderBy(i => i.LoadOrder).ToList();
+                FileStreamHelper.WriteFile(Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type)), Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(sorted, new JsonSerializerOptions { WriteIndented = true }), false);
+            }
         }
 
         public static List<ModData> Index(GameType type)
@@ -124,6 +138,11 @@ namespace REMod.Core.Internal
             ModData mod = Find(list, identifier);
 
             if (mod == null)
+            {
+                return;
+            }
+
+            if (mod.LoadOrder == value)
             {
                 return;
             }

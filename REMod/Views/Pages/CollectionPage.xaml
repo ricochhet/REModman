@@ -76,6 +76,7 @@
         <ui:VirtualizingItemsControl
             x:Name="ModsItemsControl"
             Grid.Row="2"
+            Initialized="ModsItemsControl_Initialized"
             Foreground="{DynamicResource TextFillColorSecondaryBrush}"
             VirtualizingPanel.CacheLengthUnit="Item">
             
