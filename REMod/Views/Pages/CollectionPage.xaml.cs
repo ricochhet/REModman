@@ -41,7 +41,7 @@ namespace REMod.Views.Pages
                 if (DataManager.DataFolderExists(selectedGameType) && DataManager.ModsFolderExists(selectedGameType))
                 {
                     List<ModData> index = ModManager.Index(selectedGameType);
-                    ModManager.Save(selectedGameType, index);
+                    ModManager.SaveIndex(selectedGameType, index);
 
                     foreach (ModData mod in index)
                     {

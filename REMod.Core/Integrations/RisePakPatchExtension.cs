@@ -12,7 +12,7 @@ namespace REMod.Core.Tools
     {
         public static bool IsPatchable(GameType type, string identifier)
         {
-            List<ModData> list = ModManager.Deserialize(type);
+            List<ModData> list = ModManager.DeserializeIndex(type);
             ModData mod = ModManager.Find(list, identifier);
 
             if (mod == null)
@@ -30,7 +30,7 @@ namespace REMod.Core.Tools
 
         public static void Patch(GameType type, string identifier)
         {
-            List<ModData> list = ModManager.Deserialize(type);
+            List<ModData> list = ModManager.DeserializeIndex(type);
             ModData mod = ModManager.Find(list, identifier);
 
             if (mod == null)

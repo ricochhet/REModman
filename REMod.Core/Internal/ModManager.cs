@@ -14,7 +14,13 @@ namespace REMod.Core.Internal
 {
     public class ModManager
     {
-        public static List<ModData> Deserialize(GameType type)
+        private static void Save(GameType type, List<ModData> list)
+        {
+            List<ModData> sorted = list.OrderBy(i => i.LoadOrder).ToList();
+            FileStreamHelper.WriteFile(Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type)), Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(sorted, new JsonSerializerOptions { WriteIndented = true }), false);
+        }
+
+        public static List<ModData> DeserializeIndex(GameType type)
         {
             List<ModData> list = new();
             string dataFolder = Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type));
@@ -34,21 +40,20 @@ namespace REMod.Core.Internal
 
         public static ModData Find(List<ModData> list, string identifier) => list.Find(i => i.Hash == identifier);
 
-        public static void Save(GameType type, List<ModData> list)
+        public static void SaveIndex(GameType type, List<ModData> list)
         {
-            List<ModData> deserializedList = Deserialize(type);
+            List<ModData> deserializedList = DeserializeIndex(type);
             List<ModData> listDiff = list.Where(p => !deserializedList.Any(l => p.Hash == l.Hash)).ToList();
 
             if (listDiff.Count != 0)
             {
-                List<ModData> sorted = list.OrderBy(i => i.LoadOrder).ToList();
-                FileStreamHelper.WriteFile(Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type)), Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(sorted, new JsonSerializerOptions { WriteIndented = true }), false);
+                Save(type, list);
             }
         }
 
         public static List<ModData> Index(GameType type)
         {
-            List<ModData> list = Deserialize(type);
+            List<ModData> list = DeserializeIndex(type);
             string gamePath = SettingsManager.GetGamePath(type);
             string baseModDir = Path.Combine(Constants.MODS_FOLDER, EnumSwitch.GetModFolder(type));
 
@@ -130,7 +135,7 @@ namespace REMod.Core.Internal
 
         public static void SetLoadOrder(GameType type, string identifier, int value)
         {
-            List<ModData> list = Deserialize(type);
+            List<ModData> list = DeserializeIndex(type);
             ModData mod = Find(list, identifier);
 
             if (mod == null)
@@ -144,12 +149,12 @@ namespace REMod.Core.Internal
             }
 
             mod.LoadOrder = value;
-            Save(type, list);
+            SaveIndex(type, list);
         }
 
         public static int GetLoadOrder(GameType type, string identifier)
         {
-            List<ModData> list = Deserialize(type);
+            List<ModData> list = DeserializeIndex(type);
             ModData mod = Find(list, identifier);
 
             if (mod == null)
@@ -162,7 +167,7 @@ namespace REMod.Core.Internal
 
         public static void Enable(GameType type, string identifier, bool isEnabled)
         {
-            List<ModData> list = Deserialize(type);
+            List<ModData> list = DeserializeIndex(type);
             ModData mod = Find(list, identifier);
 
             if (mod == null)
@@ -188,7 +193,7 @@ namespace REMod.Core.Internal
                 list = PakDataPatch.Patch(list);
             }
 
-            Save(type, list);
+            SaveIndex(type, list);
         }
 
         private static void Install(GameType type, ModData mod)
@@ -233,7 +238,7 @@ namespace REMod.Core.Internal
 
         public static void Delete(GameType type, string identifier)
         {
-            List<ModData> list = Deserialize(type);
+            List<ModData> list = DeserializeIndex(type);
             ModData mod = Find(list, identifier);
 
             if (mod == null)
@@ -258,8 +263,9 @@ namespace REMod.Core.Internal
             }
 
             list.Remove(Find(list, mod.Hash));
-            FileStreamHelper.DeleteEmptyDirectories(Constants.MODS_FOLDER);
             Save(type, list);
+
+            FileStreamHelper.DeleteEmptyDirectories(Constants.MODS_FOLDER);
         }
     }
 }
