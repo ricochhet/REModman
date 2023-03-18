@@ -74,14 +74,20 @@ namespace REMod.Core.Integrations
             return false;
         }
 
-        public static bool IsLua(string directory)
+        public static bool ContainsValidPaks(ModData mod)
         {
-            if (Path.GetExtension(directory) == ".lua")
+            bool contains = false;
+
+            foreach (ModFile file in mod.Files)
             {
-                return true;
+                if (IsValidPak(file.SourcePath))
+                {
+                    contains = true;
+                    break;
+                }
             }
 
-            return false;
+            return contains;
         }
 
         public static List<ModData> Patch(List<ModData> list)

@@ -219,15 +219,25 @@ namespace REMod.Core.Internal
 
             mod.IsEnabled = isEnabled;
 
+            bool containsValidPaks = REEDataPatch.ContainsValidPaks(mod);
+
             if (isEnabled)
             {
-                list = REEDataPatch.Patch(list);
+                if (containsValidPaks)
+                {
+                    list = REEDataPatch.Patch(list);
+                }
+
                 Install(type, mod);
             }
             else
             {
                 Uninstall(type, mod);
-                list = REEDataPatch.Patch(list);
+
+                if (containsValidPaks)
+                {
+                    list = REEDataPatch.Patch(list);
+                }
             }
 
             SaveByModified(type, list);
