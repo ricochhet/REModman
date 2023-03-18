@@ -4,6 +4,7 @@ using REMod.Core.Configuration.Structs;
 using REMod.Core.Integrations;
 using REMod.Core.Logger;
 using REMod.Core.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,12 +35,6 @@ namespace REMod.Core.Internal
         public static ModData Find(List<ModData> list, string identifier) => list.Find(i => i.Hash == identifier);
 
         public static void Save(GameType type, List<ModData> list)
-        {
-            List<ModData> sorted = list.OrderBy(i => i.LoadOrder).ToList();
-            FileStreamHelper.WriteFile(Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type)), Constants.MOD_INDEX_FILE, JsonSerializer.Serialize(sorted, new JsonSerializerOptions { WriteIndented = true }), false);
-        }
-
-        public static void SafeSave(GameType type, List<ModData> list)
         {
             List<ModData> deserializedList = Deserialize(type);
             List<ModData> listDiff = list.Where(p => !deserializedList.Any(l => p.Hash == l.Hash)).ToList();
@@ -75,15 +70,18 @@ namespace REMod.Core.Internal
 
                             foreach (FileInfo file in nativeFiles)
                             {
-                                string fileHash = CryptoHelper.FileHash.Sha256(file.FullName);
-                                modHash += fileHash;
-
-                                modFiles.Add(new ModFile
+                                if (FileCheck.IsSafe(file.Name))
                                 {
-                                    InstallPath = Path.Combine(gamePath, PakDataPatch.GetNativesFile(file)),
-                                    SourcePath = file.FullName,
-                                    Hash = fileHash,
-                                });
+                                    string fileHash = CryptoHelper.FileHash.Sha256(file.FullName);
+                                    modHash += fileHash;
+
+                                    modFiles.Add(new ModFile
+                                    {
+                                        InstallPath = Path.Combine(gamePath, PakDataPatch.GetNativesFile(file)),
+                                        SourcePath = file.FullName,
+                                        Hash = fileHash,
+                                    });
+                                }
                             }
                         }
                     }
@@ -91,7 +89,7 @@ namespace REMod.Core.Internal
                     FileInfo[] files = new DirectoryInfo(obj.FullName).GetFiles("*.*", SearchOption.TopDirectoryOnly);
                     foreach (FileInfo file in files)
                     {
-                        if (PakDataPatch.IsValidPak(file.FullName))
+                        if (PakDataPatch.IsValidPak(file.FullName) && FileCheck.IsSafe(file.Name))
                         {
                             string fileHash = CryptoHelper.FileHash.Sha256(file.FullName);
                             modHash += fileHash;
@@ -165,28 +163,28 @@ namespace REMod.Core.Internal
         public static void Enable(GameType type, string identifier, bool isEnabled)
         {
             List<ModData> list = Deserialize(type);
-            ModData enabledMod = Find(list, identifier);
+            ModData mod = Find(list, identifier);
 
-            if (enabledMod == null)
+            if (mod == null)
             {
                 return;
             }
 
-            if (enabledMod.IsEnabled == isEnabled)
+            if (mod.IsEnabled == isEnabled)
             {
                 return;
             }
 
-            enabledMod.IsEnabled = isEnabled;
+            mod.IsEnabled = isEnabled;
 
             if (isEnabled)
             {
                 list = PakDataPatch.Patch(list);
-                Install(type, enabledMod);
+                Install(type, mod);
             }
             else
             {
-                Uninstall(type, enabledMod);
+                Uninstall(type, mod);
                 list = PakDataPatch.Patch(list);
             }
 
@@ -215,7 +213,16 @@ namespace REMod.Core.Internal
                     if (File.Exists(file.InstallPath))
                     {
                         LogBase.Info($"Removing file: {file.InstallPath}.");
-                        File.Delete(file.InstallPath);
+
+                        try
+                        {
+                            File.Delete(file.InstallPath);
+                        }
+                        catch (Exception e)
+                        {
+                            LogBase.Error($"Failed to remove file: {file.InstallPath}.");
+                            LogBase.Error(e.ToString());
+                        }
                     }
                 }
 
@@ -243,9 +250,10 @@ namespace REMod.Core.Internal
                 {
                     Directory.Delete(mod.BasePath, true);
                 }
-                catch
+                catch (Exception e)
                 {
                     LogBase.Error($"Failed to remove directory: {mod.BasePath}.");
+                    LogBase.Error(e.ToString());
                 }
             }
 

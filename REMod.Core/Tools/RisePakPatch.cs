@@ -1,10 +1,10 @@
 using REMod.Core.Logger;
-using REMod.Core.Utils.Murmur3;
 using REMod.Core.Utils.BinaryOperations;
+using REMod.Core.Utils.Murmur3;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Linq;
+using System.Text;
 
 namespace REMod.Core.Tools
 {
@@ -26,7 +26,7 @@ namespace REMod.Core.Tools
             }
 
             // FileInfo[] files = new DirectoryInfo(Path.Combine(directory, "natives")).GetFiles("*.*", SearchOption.AllDirectories);
-            string[] sortedFiles = Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories)
+            string[] sortedFiles = Directory.GetFiles(Path.Combine(directory, "natives"), "*.*", SearchOption.AllDirectories)
                 .OrderBy(Path.GetDirectoryName)
                 .ThenBy(p => p.Count(c => c == Path.PathSeparator))
                 .ThenBy(Path.GetFileNameWithoutExtension).ToArray();

@@ -233,11 +233,18 @@ namespace REMod.Core.Utils
                             Directory.Delete(startPath);
                         }
                     }
-                    catch (UnauthorizedAccessException) { }
-                    catch (DirectoryNotFoundException) { }
+                    catch (Exception e)
+                    {
+                        LogBase.Error($"Failed to remove directory: {startPath}.");
+                        LogBase.Error(e.ToString());
+                    }
                 }
             }
-            catch (UnauthorizedAccessException) { }
+            catch (Exception e)
+            {
+                LogBase.Error($"Failed to remove directory: {startPath}.");
+                LogBase.Error(e.ToString());
+            }
         }
     }
 }

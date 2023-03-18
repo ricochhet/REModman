@@ -1,13 +1,9 @@
-﻿using REMod.Core.Configuration;
-using REMod.Core.Configuration.Enums;
+﻿using REMod.Core.Configuration.Enums;
 using REMod.Core.Configuration.Structs;
 using REMod.Core.Integrations;
 using REMod.Core.Internal;
-using REMod.Core.Logger;
 using REMod.Core.Utils;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace REMod.Core.Tools

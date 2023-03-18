@@ -1,10 +1,10 @@
-﻿using REMod.Dialogs;
-using REMod.Models;
-using REMod.Core.Configuration.Enums;
+﻿using REMod.Core.Configuration.Enums;
 using REMod.Core.Configuration.Structs;
 using REMod.Core.Internal;
 using REMod.Core.Tools;
 using REMod.Core.Utils;
+using REMod.Dialogs;
+using REMod.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using Wpf.Ui.Controls;
-using REMod.Core.Logger;
 
 namespace REMod.Views.Pages
 {
@@ -42,7 +41,7 @@ namespace REMod.Views.Pages
                 if (DataManager.DataFolderExists(selectedGameType) && DataManager.ModsFolderExists(selectedGameType))
                 {
                     List<ModData> index = ModManager.Index(selectedGameType);
-                    ModManager.SafeSave(selectedGameType, index);
+                    ModManager.Save(selectedGameType, index);
 
                     foreach (ModData mod in index)
                     {
