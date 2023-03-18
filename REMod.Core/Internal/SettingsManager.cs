@@ -3,7 +3,6 @@ using REMod.Core.Configuration.Enums;
 using REMod.Core.Configuration.Structs;
 using REMod.Core.Logger;
 using REMod.Core.Utils;
-using System;
 using System.IO;
 using System.Text.Json;
 
@@ -30,7 +29,6 @@ namespace REMod.Core.Internal
             {
                 SettingsData settingsData = DeserializeSettings();
                 lastSelectedGame = settingsData.LastSelectedGame;
-                LogBase.Info($"Getting last selected game {settingsData.LastSelectedGame}.");
             }
 
             return lastSelectedGame;
@@ -79,7 +77,6 @@ namespace REMod.Core.Internal
                 SettingsData settingsData = DeserializeSettings();
                 if (settingsData.GamePaths.ContainsKey(type.ToString()))
                 {
-                    LogBase.Info($"Getting game path for {type}.");
                     gamePath = Path.GetDirectoryName(settingsData.GamePaths[type.ToString()]);
                 }
             }
