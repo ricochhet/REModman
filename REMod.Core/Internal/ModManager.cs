@@ -40,10 +40,27 @@ namespace REMod.Core.Internal
 
         public static ModData Find(List<ModData> list, string identifier) => list.Find(i => i.Hash == identifier);
 
-        public static void SaveIndex(GameType type, List<ModData> list)
+
+        public static void SaveByHashes(GameType type, List<ModData> list)
         {
             List<ModData> deserializedList = DeserializeIndex(type);
             List<ModData> listDiff = list.Where(p => !deserializedList.Any(l => p.Hash == l.Hash)).ToList();
+
+            if (listDiff.Count != 0)
+            {
+                Save(type, list);
+            }
+        }
+
+
+        public static void SaveByModified(GameType type, List<ModData> list)
+        {
+            List<ModData> deserializedList = DeserializeIndex(type);
+            List<ModData> listDiff = list.Where(p => 
+                !deserializedList.Any(l => p.Hash == l.Hash) || 
+                deserializedList.Any(l => p.IsEnabled != l.IsEnabled) || 
+                deserializedList.Any(l => p.LoadOrder != l.LoadOrder)
+            ).ToList();
 
             if (listDiff.Count != 0)
             {
@@ -149,7 +166,7 @@ namespace REMod.Core.Internal
             }
 
             mod.LoadOrder = value;
-            SaveIndex(type, list);
+            SaveByModified(type, list);
         }
 
         public static int GetLoadOrder(GameType type, string identifier)
@@ -193,7 +210,7 @@ namespace REMod.Core.Internal
                 list = PakDataPatch.Patch(list);
             }
 
-            SaveIndex(type, list);
+            SaveByModified(type, list);
         }
 
         private static void Install(GameType type, ModData mod)
