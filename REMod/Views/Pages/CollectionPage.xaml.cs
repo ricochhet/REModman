@@ -72,6 +72,11 @@ namespace REMod.Views.Pages
                     DataManager.CreateModsFolder(selectedGameType);
                 }
 
+                if (!DataManager.DownloadsFolderExists(selectedGameType))
+                {
+                    DataManager.CreateDownloadsFolder(selectedGameType);
+                }
+
                 if (!DataManager.IndexFileExists(selectedGameType))
                 {
                     DataManager.CreateIndex(selectedGameType);
@@ -79,25 +84,25 @@ namespace REMod.Views.Pages
             }
         }
 
-        private void OpenModFolder_Grid_Visibility()
+        private void ToolBar_Grid_Visibility()
         {
             if (selectedGameType != GameType.None)
             {
                 if (selectedGamePath != "")
                 {
-                    OpenModFolder_Grid.IsEnabled = true;
-                    OpenModFolder_Grid.Visibility = Visibility.Visible;
+                    ToolBar_Grid.IsEnabled = true;
+                    ToolBar_Grid.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    OpenModFolder_Grid.IsEnabled = false;
-                    OpenModFolder_Grid.Visibility = Visibility.Collapsed;
+                    ToolBar_Grid.IsEnabled = false;
+                    ToolBar_Grid.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
-                OpenModFolder_Grid.IsEnabled = false;
-                OpenModFolder_Grid.Visibility = Visibility.Collapsed;
+                ToolBar_Grid.IsEnabled = false;
+                ToolBar_Grid.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -152,49 +157,24 @@ namespace REMod.Views.Pages
                 GameSelector_ComboBox.SelectedIndex = (int)SettingsManager.GetLastSelectedGame();
                 selectedGamePath = SettingsManager.GetGamePath(selectedGameType);
 
-                OpenModFolder_Grid_Visibility();
+                ToolBar_Grid_Visibility();
                 SetupGame_CardAction_Visibility();
                 CheckSelectedGameState();
                 PopulateItemsControl();
             }
         }
 
-        private void OpenModFolder_CardAction_Initialized(object sender, EventArgs e)
+        private void OpenFolder_CardAction_Initialized(object sender, EventArgs e)
         {
-            OpenModFolder_Grid_Visibility();
+            ToolBar_Grid_Visibility();
         }
 
-        private void OpenModFolder_CardAction_Click(object sender, RoutedEventArgs e)
+        private void OpenFolder_CardAction_Click(object sender, RoutedEventArgs e)
         {
             if (selectedGameType != GameType.None)
             {
-                if (Directory.Exists(DataManager.GetModFolderPath(selectedGameType)))
-                {
-                    ProcessStartInfo startInfo = new()
-                    {
-                        Arguments = PathHelper.GetAbsolutePath(DataManager.GetModFolderPath(selectedGameType)),
-                        FileName = "explorer.exe",
-                    };
-
-                    Process.Start(startInfo);
-                }
-            }
-        }
-
-        private void OpenGameFolder_CardAction_Click(object sender, RoutedEventArgs e)
-        {
-            if (selectedGameType != GameType.None)
-            {
-                if (Directory.Exists(selectedGamePath))
-                {
-                    ProcessStartInfo startInfo = new()
-                    {
-                        Arguments = selectedGamePath,
-                        FileName = "explorer.exe",
-                    };
-
-                    Process.Start(startInfo);
-                }
+                OpenFolder confirmDialog = new("Open Folder", selectedGameType, selectedGamePath);
+                confirmDialog.Show();
             }
         }
 
@@ -202,7 +182,7 @@ namespace REMod.Views.Pages
         {
             if (selectedGameType != GameType.None)
             {
-                OpenModFolder_Grid_Visibility();
+                ToolBar_Grid_Visibility();
                 SetupGame_CardAction_Visibility();
                 CheckSelectedGameState();
                 PopulateItemsControl();
@@ -223,7 +203,7 @@ namespace REMod.Views.Pages
                     BaseDialog dialog = new("Mod Manager", $"{selectedGameType} must be running to start the setup process.");
                     dialog.Show();
 
-                    OpenModFolder_Grid_Visibility();
+                    ToolBar_Grid_Visibility();
                     SetupGame_CardAction_Visibility();
                     CheckSelectedGameState();
                     PopulateItemsControl();
@@ -234,7 +214,7 @@ namespace REMod.Views.Pages
                     BaseDialog dialog = new("Mod Manager", $"Setup has been completed for {selectedGameType}.");
                     dialog.Show();
 
-                    OpenModFolder_Grid_Visibility();
+                    ToolBar_Grid_Visibility();
                     SetupGame_CardAction_Visibility();
                     CheckSelectedGameState();
                     PopulateItemsControl();
@@ -353,7 +333,7 @@ namespace REMod.Views.Pages
                     {
                         ModManager.Delete(selectedGameType, item.Hash);
 
-                        OpenModFolder_Grid_Visibility();
+                        ToolBar_Grid_Visibility();
                         SetupGame_CardAction_Visibility();
                         CheckSelectedGameState();
                         PopulateItemsControl();

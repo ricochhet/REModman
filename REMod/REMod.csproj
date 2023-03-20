@@ -34,4 +34,10 @@
     <Resource Include="Assets\REMod-Icon-256.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Dialogs\OpenFolderDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

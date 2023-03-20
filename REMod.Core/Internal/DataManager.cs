@@ -35,12 +35,23 @@ namespace REMod.Core.Internal
 
         public static void CreateModsFolder(GameType type)
         {
-            string modFolder = EnumSwitch.GetModFolder(type);
+            string modFolder = Path.Combine(Constants.MODS_FOLDER, EnumSwitch.GetModFolder(type));
 
-            if (!Directory.Exists(Path.Combine(Constants.MODS_FOLDER, modFolder)))
+            if (!Directory.Exists(modFolder))
             {
-                LogBase.Info($"Attempting to create folder: {Path.Combine(Constants.MODS_FOLDER, modFolder)}.");
-                Directory.CreateDirectory(Path.Combine(Constants.MODS_FOLDER, modFolder));
+                LogBase.Info($"Attempting to create folder: {modFolder}.");
+                Directory.CreateDirectory(modFolder);
+            }
+        }
+
+        public static void CreateDownloadsFolder(GameType type)
+        {
+            string downloadFolder = Path.Combine(Constants.DOWNLOADS_FOLDER, EnumSwitch.GetModFolder(type));
+                
+            if (!Directory.Exists(downloadFolder))
+            {
+                LogBase.Info($"Attempting to create folder: {downloadFolder}.");
+                Directory.CreateDirectory(downloadFolder);
             }
         }
 
@@ -108,6 +119,18 @@ namespace REMod.Core.Internal
             return false;
         }
 
+        public static bool DownloadsFolderExists(GameType type)
+        {
+            string downloadFolder = Path.Combine(Constants.DOWNLOADS_FOLDER, EnumSwitch.GetModFolder(type));
+
+            if (Directory.Exists(downloadFolder))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool IndexFileExists(GameType type)
         {
             string dataFolder = Path.Combine(Constants.DATA_FOLDER, EnumSwitch.GetModFolder(type));
@@ -137,6 +160,18 @@ namespace REMod.Core.Internal
             if (Directory.Exists(Path.Combine(Constants.MODS_FOLDER, modFolder)))
             {
                 return Path.Combine(Constants.MODS_FOLDER, modFolder);
+            }
+
+            return string.Empty;
+        }
+
+        public static string GetDownloadFolderPath(GameType type)
+        {
+            string downloadFolder = EnumSwitch.GetModFolder(type);
+
+            if (Directory.Exists(Path.Combine(Constants.DOWNLOADS_FOLDER, downloadFolder)))
+            {
+                return Path.Combine(Constants.DOWNLOADS_FOLDER, downloadFolder);
             }
 
             return string.Empty;

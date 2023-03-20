@@ -4,7 +4,7 @@ namespace REMod.Core.Configuration
     {
         public const string DATA_FOLDER = "./Data/";
         public const string MODS_FOLDER = "./Mods/";
-        public const string TOOLS_FOLDER = "./Tools/";
+        public const string DOWNLOADS_FOLDER = "./Downloads/";
         public const string LOG_FILE = "./Logs/REModLog.log";
 
         public const string SETTINGS_FILE = "settings.json";
