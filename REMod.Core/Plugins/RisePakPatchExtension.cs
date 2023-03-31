@@ -1,26 +1,26 @@
 ﻿using REMod.Core.Configuration.Enums;
 using REMod.Core.Configuration.Structs;
 using REMod.Core.Integrations;
-using REMod.Core.Internal;
+using REMod.Core.Manager;
 using REMod.Core.Utils;
 using System.Collections.Generic;
 using System.IO;
 
-namespace REMod.Core.Tools
+namespace REMod.Core.Plugins
 {
     public class RisePakPatchExtension
     {
         public static bool IsPatchable(GameType type, string identifier)
         {
-            List<ModData> list = ModManager.DeserializeIndex(type);
-            ModData mod = ModManager.Find(list, identifier);
+            List<ModData> list = ManagerCache.Load(type);
+            ModData mod = ManagerCache.Find(list, identifier);
 
             if (mod == null)
             {
                 return false;
             }
 
-            if (REEDataPatch.NativesExists(mod.BasePath))
+            if (REEDataPatch.HasNatives(mod.BasePath))
             {
                 return true;
             }
@@ -30,8 +30,8 @@ namespace REMod.Core.Tools
 
         public static void Patch(GameType type, string identifier)
         {
-            List<ModData> list = ModManager.DeserializeIndex(type);
-            ModData mod = ModManager.Find(list, identifier);
+            List<ModData> list = ManagerCache.Load(type);
+            ModData mod = ManagerCache.Find(list, identifier);
 
             if (mod == null)
             {

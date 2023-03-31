@@ -3,7 +3,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace REMod.Core.Utils.BinaryOperations
+namespace REMod.Core.Plugins.BinaryOperations
 {
     public class Conversions
     {
@@ -23,7 +23,7 @@ namespace REMod.Core.Utils.BinaryOperations
                 int num2 = Value.Length - 1;
                 for (int i = 0; i <= num2; i++)
                 {
-                    num = (ulong)Math.Round(Math.Round((double)num + Val(Value.Substring(Value.Length - i + 1, 1)) * Math.Pow(2.0, i - 1)));
+                    num = (ulong)Math.Round(Math.Round(num + Val(Value.Substring(Value.Length - i + 1, 1)) * Math.Pow(2.0, i - 1)));
                 }
 
                 return (int)num;
@@ -122,8 +122,8 @@ namespace REMod.Core.Utils.BinaryOperations
             }
             checked
             {
-                byte[] array = new byte[(int)Math.Round(Math.Round((double)Value.Length / 2.0 - 1.0)) + 1];
-                int num = (int)Math.Round(Math.Round((double)Value.Length / 2.0 - 1.0));
+                byte[] array = new byte[(int)Math.Round(Math.Round(Value.Length / 2.0 - 1.0)) + 1];
+                int num = (int)Math.Round(Math.Round(Value.Length / 2.0 - 1.0));
 
                 for (int i = 0; i <= num; i++)
                 {
@@ -286,15 +286,15 @@ namespace REMod.Core.Utils.BinaryOperations
 
             foreach (char c in value)
             {
-                if (result.Length == 0 && c.Equals('-')) 
+                if (result.Length == 0 && c.Equals('-'))
                     result += c;
-                else if (char.IsNumber(c) || (c.Equals('.') && !result.Any(x => x.Equals('.'))))
+                else if (char.IsNumber(c) || c.Equals('.') && !result.Any(x => x.Equals('.')))
                     result += c;
                 else if (!c.Equals(' '))
                     return string.IsNullOrEmpty(result) ? 0 : Convert.ToDouble(result);
             }
 
-            return (string.IsNullOrEmpty(result) || result == "-") ? 0 : Convert.ToDouble(result);
+            return string.IsNullOrEmpty(result) || result == "-" ? 0 : Convert.ToDouble(result);
         }
     }
 }

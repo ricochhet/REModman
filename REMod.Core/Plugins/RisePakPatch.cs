@@ -1,12 +1,12 @@
 using REMod.Core.Logger;
-using REMod.Core.Utils.BinaryOperations;
-using REMod.Core.Utils.Murmur3;
+using REMod.Core.Plugins.BinaryOperations;
+using REMod.Core.Plugins.Murmur3;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace REMod.Core.Tools
+namespace REMod.Core.Plugins
 {
     public class RisePakPatch
     {

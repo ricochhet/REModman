@@ -1,5 +1,7 @@
 ﻿using REMod.Core.Configuration.Enums;
-using REMod.Core.Internal;
+using REMod.Core.Providers;
+using REMod.Core.Resolvers;
+using REMod.Core.Resolvers.Enums;
 using REMod.Core.Utils;
 using System.Diagnostics;
 using System.IO;
@@ -25,11 +27,11 @@ namespace REMod.Dialogs
         {
             if (selectedGameType != GameType.None)
             {
-                if (Directory.Exists(DataManager.GetModFolderPath(selectedGameType)))
+                if (DataProvider.Exists(FolderType.Mods, selectedGameType))
                 {
                     ProcessStartInfo startInfo = new()
                     {
-                        Arguments = PathHelper.GetAbsolutePath(DataManager.GetModFolderPath(selectedGameType)),
+                        Arguments = PathHelper.GetAbsolutePath(PathResolver.ModPath(selectedGameType)),
                         FileName = "explorer.exe",
                     };
 
@@ -42,11 +44,11 @@ namespace REMod.Dialogs
         {
             if (selectedGameType != GameType.None)
             {
-                if (Directory.Exists(DataManager.GetModFolderPath(selectedGameType)))
+                if (DataProvider.Exists(FolderType.Mods, selectedGameType))
                 {
                     ProcessStartInfo startInfo = new()
                     {
-                        Arguments = PathHelper.GetAbsolutePath(DataManager.GetDownloadFolderPath(selectedGameType)),
+                        Arguments = PathHelper.GetAbsolutePath(PathResolver.DownloadPath(selectedGameType)),
                         FileName = "explorer.exe",
                     };
 

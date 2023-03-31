@@ -1,7 +1,9 @@
 ﻿using REMod.Core.Configuration.Enums;
 using REMod.Core.Configuration.Structs;
-using REMod.Core.Internal;
-using REMod.Core.Tools;
+using REMod.Core.Manager;
+using REMod.Core.Plugins;
+using REMod.Core.Providers;
+using REMod.Core.Resolvers.Enums;
 using REMod.Core.Utils;
 using REMod.Dialogs;
 using REMod.Models;
@@ -24,9 +26,9 @@ namespace REMod.Views.Pages
 
         public CollectionPage()
         {
-            if (!DataManager.SettingsFileExists())
+            if (!DataProvider.Exists(FileType.Settings))
             {
-                DataManager.CreateSettings();
+                DataProvider.Create(FileType.Settings);
             }
 
             InitializeComponent();
@@ -38,10 +40,10 @@ namespace REMod.Views.Pages
 
             if (selectedGameType != GameType.None)
             {
-                if (DataManager.DataFolderExists(selectedGameType) && DataManager.ModsFolderExists(selectedGameType))
+                if (DataProvider.Exists(FolderType.Data, selectedGameType) && DataProvider.Exists(FolderType.Mods, selectedGameType))
                 {
-                    List<ModData> index = ModManager.Index(selectedGameType);
-                    ModManager.SaveByHashes(selectedGameType, index);
+                    List<ModData> index = ManagerCache.Build(selectedGameType);
+                    ManagerCache.SaveHashChanges(selectedGameType, index);
 
                     foreach (ModData mod in index)
                     {
@@ -57,7 +59,7 @@ namespace REMod.Views.Pages
                 }
                 else
                 {
-                    BaseDialog dialog = new("Configuration Error", $"{SettingsManager.GetLastSelectedGame()} has not been correctly configured.");
+                    BaseDialog dialog = new("Configuration Error", $"{ManagerSettings.GetLastSelectedGame()} has not been correctly configured.");
                     dialog.Show();
                 }
             }
@@ -67,19 +69,19 @@ namespace REMod.Views.Pages
         {
             if (selectedGameType != GameType.None)
             {
-                if (!DataManager.ModsFolderExists(selectedGameType))
+                if (!DataProvider.Exists(FolderType.Mods, selectedGameType))
                 {
-                    DataManager.CreateModsFolder(selectedGameType);
+                    DataProvider.Create(FolderType.Mods, selectedGameType);
                 }
 
-                if (!DataManager.DownloadsFolderExists(selectedGameType))
+                if (!DataProvider.Exists(FolderType.Downloads, selectedGameType))
                 {
-                    DataManager.CreateDownloadsFolder(selectedGameType);
+                    DataProvider.Create(FolderType.Downloads, selectedGameType);
                 }
 
-                if (!DataManager.IndexFileExists(selectedGameType))
+                if (!DataProvider.Exists(FileType.Cache, selectedGameType))
                 {
-                    DataManager.CreateIndex(selectedGameType);
+                    DataProvider.Create(FileType.Cache, selectedGameType);
                 }
             }
         }
@@ -140,9 +142,9 @@ namespace REMod.Views.Pages
         {
             GameSelector_ComboBox.Items.Clear();
             GameSelector_ComboBox.ItemsSource = Enum.GetValues(typeof(GameType));
-            GameSelector_ComboBox.SelectedIndex = (int)SettingsManager.GetLastSelectedGame();
-            selectedGameType = SettingsManager.GetLastSelectedGame();
-            selectedGamePath = SettingsManager.GetGamePath(selectedGameType);
+            GameSelector_ComboBox.SelectedIndex = (int)ManagerSettings.GetLastSelectedGame();
+            selectedGameType = ManagerSettings.GetLastSelectedGame();
+            selectedGamePath = ManagerSettings.GetGamePath(selectedGameType);
 
             CheckSelectedGameState();
         }
@@ -152,10 +154,10 @@ namespace REMod.Views.Pages
             if (GameSelector_ComboBox.SelectedItem != null)
             {
                 selectedGameType = (GameType)Enum.Parse(typeof(GameType), GameSelector_ComboBox.SelectedItem.ToString() ?? GameType.None.ToString());
-                SettingsManager.SaveLastSelectedGame(selectedGameType);
+                ManagerSettings.SaveLastSelectedGame(selectedGameType);
 
-                GameSelector_ComboBox.SelectedIndex = (int)SettingsManager.GetLastSelectedGame();
-                selectedGamePath = SettingsManager.GetGamePath(selectedGameType);
+                GameSelector_ComboBox.SelectedIndex = (int)ManagerSettings.GetLastSelectedGame();
+                selectedGamePath = ManagerSettings.GetGamePath(selectedGameType);
 
                 ToolBar_Grid_Visibility();
                 SetupGame_CardAction_Visibility();
@@ -198,7 +200,7 @@ namespace REMod.Views.Pages
         {
             if (selectedGameType != GameType.None)
             {
-                if (!SettingsManager.IsGameRunning(selectedGameType))
+                if (!ProcessHelper.IsProcRunning(selectedGameType))
                 {
                     BaseDialog dialog = new("Mod Manager", $"{selectedGameType} must be running to start the setup process.");
                     dialog.Show();
@@ -210,7 +212,7 @@ namespace REMod.Views.Pages
                 }
                 else
                 {
-                    SettingsManager.SaveGamePath(selectedGameType);
+                    ManagerSettings.SaveGamePath(selectedGameType);
                     BaseDialog dialog = new("Mod Manager", $"Setup has been completed for {selectedGameType}.");
                     dialog.Show();
 
@@ -230,7 +232,7 @@ namespace REMod.Views.Pages
             {
                 if (Directory.Exists(selectedGamePath))
                 {
-                    ModManager.Enable(selectedGameType, item.Hash, true);
+                    ModInstaller.Enable(selectedGameType, item.Hash, true);
                 }
                 else
                 {
@@ -248,7 +250,7 @@ namespace REMod.Views.Pages
             {
                 if (Directory.Exists(selectedGamePath))
                 {
-                    ModManager.Enable(selectedGameType, item.Hash, false);
+                    ModInstaller.Enable(selectedGameType, item.Hash, false);
                 }
                 else
                 {
@@ -300,7 +302,7 @@ namespace REMod.Views.Pages
 
             if (numberBox?.Tag is ModItem item && selectedGameType != GameType.None)
             {
-                numberBox.Value = ModManager.GetLoadOrder(selectedGameType, item.Hash);
+                numberBox.Value = ModInstaller.GetLoadOrder(selectedGameType, item.Hash);
             }
         }
 
@@ -312,7 +314,7 @@ namespace REMod.Views.Pages
             {
                 if (numberBox.Value != null)
                 {
-                    ModManager.SetLoadOrder(selectedGameType, item.Hash, (int)numberBox.Value);
+                    ModInstaller.SetLoadOrder(selectedGameType, item.Hash, (int)numberBox.Value);
                 }
             }
         }
@@ -325,13 +327,13 @@ namespace REMod.Views.Pages
             {
                 if (Directory.Exists(selectedGamePath))
                 {
-                    BaseDialog confirmDialog = new("Mod Manager", $"Do you want to delete mod {StringHelper.Truncate(item.Name, 38)} for {SettingsManager.GetLastSelectedGame()}?");
+                    BaseDialog confirmDialog = new("Mod Manager", $"Do you want to delete mod {StringHelper.Truncate(item.Name, 38)} for {ManagerSettings.GetLastSelectedGame()}?");
                     confirmDialog.SetConfirmAppearance(ControlAppearance.Danger);
                     confirmDialog.Show();
 
                     if (await confirmDialog.Confirmed.Task)
                     {
-                        ModManager.Delete(selectedGameType, item.Hash);
+                        ModInstaller.Delete(selectedGameType, item.Hash);
 
                         ToolBar_Grid_Visibility();
                         SetupGame_CardAction_Visibility();

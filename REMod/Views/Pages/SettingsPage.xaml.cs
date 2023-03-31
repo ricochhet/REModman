@@ -1,4 +1,6 @@
-﻿using REMod.Core.Internal;
+﻿using REMod.Core.Manager;
+using REMod.Core.Providers;
+using REMod.Core.Resolvers.Enums;
 using REMod.Dialogs;
 using System.Windows;
 using Wpf.Ui.Appearance;
@@ -36,7 +38,7 @@ namespace REMod.Views.Pages
 
             if (await confirmDialog.Confirmed.Task)
             {
-                DataManager.DeleteGameDataFolder(SettingsManager.GetLastSelectedGame());
+                DataProvider.Delete(FolderType.Data, ManagerSettings.GetLastSelectedGame());
             }
         }
     }

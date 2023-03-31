@@ -1,4 +1,3 @@
-using REMod.Core.Configuration.Enums;
 using REMod.Core.Configuration.Structs;
 using REMod.Core.Logger;
 using REMod.Core.Utils;
@@ -10,59 +9,21 @@ namespace REMod.Core.Integrations
 {
     public class REEDataPatch
     {
-        public static readonly GameType[] ValidGameTypes = new GameType[]
-        {
-            GameType.MonsterHunterRise
-        };
+        private static bool IsFilePatchPak(string String) => String.Contains("re_chunk_") && String.Contains("pak.patch") && String.Contains(".pak");
+        private static string FixPatchPakFileName(int value) => "re_chunk_000.pak.patch_<REPLACE>.pak".Replace("<REPLACE>", value.ToString("D3"));
 
-        private static bool IsPatchPak(string String) => String.Contains("re_chunk_") && String.Contains("pak.patch") && String.Contains(".pak");
-        private static string PatchString(int value) => "re_chunk_000.pak.patch_<REPLACE>.pak".Replace("<REPLACE>", value.ToString("D3"));
+        public static bool IsNatives(string directory) => directory == "natives";
+        public static bool HasNatives(string directory) => Directory.Exists(Path.Combine(directory, "natives"));
+        public static string GetRelativeFromNatives(FileInfo path) => "natives" + path.FullName.Split("natives")[1];
 
-        public static bool NativesExists(string directory)
-        {
-            if (Directory.Exists(Path.Combine(directory, "natives")))
-            {
-                return true;
-            }
+        public static bool IsREF(string directory) => directory == "reframework";
+        public static string GetRelativeFromREF(FileInfo path) => "reframework" + path.FullName.Split("reframework")[1];
 
-            return false;
-        }
-
-        public static bool IsNatives(string directory)
-        {
-            if (directory == "natives")
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public static bool IsREFMod(string directory)
-        {
-            if (directory == "reframework")
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public static string GetNativesFile(FileInfo path)
-        {
-            return "natives" + path.FullName.Split("natives")[1];
-        }
-
-        public static string GetREFFile(FileInfo path)
-        {
-            return "reframework" + path.FullName.Split("reframework")[1];
-        }
-
-        public static bool IsValidPak(string directory)
+        public static bool IsValidPatchPak(string directory)
         {
             if (Path.GetExtension(directory) == ".pak")
             {
-                if (IsPatchPak(directory) || directory.Contains("re_chunk_000"))
+                if (IsFilePatchPak(directory) || directory.Contains("re_chunk_000"))
                 {
                     LogBase.Error($"Invalid path \"{directory}\" was found.");
                     return false;
@@ -74,20 +35,34 @@ namespace REMod.Core.Integrations
             return false;
         }
 
-        public static bool ContainsValidPaks(ModData mod)
+        public static bool HasValidPatchPaks(ModData mod)
         {
-            bool contains = false;
+            bool hasValid = false;
 
             foreach (ModFile file in mod.Files)
             {
-                if (IsValidPak(file.SourcePath))
+                if (IsValidPatchPak(file.SourcePath))
                 {
-                    contains = true;
+                    hasValid = true;
                     break;
                 }
             }
 
-            return contains;
+            return hasValid;
+        }
+
+        public static string InstallPath(FileInfo fileInfo)
+        {
+            if (IsNatives(fileInfo.Name))
+            {
+                return GetRelativeFromNatives(fileInfo);
+            }
+            else if (IsREF(fileInfo.Name))
+            {
+                return GetRelativeFromREF(fileInfo);
+            }
+
+            return fileInfo.FullName;
         }
 
         public static List<ModData> Patch(List<ModData> list)
@@ -112,9 +87,9 @@ namespace REMod.Core.Integrations
             {
                 foreach (ModFile file in mod.Files)
                 {
-                    if (Path.GetExtension(file.SourcePath) == ".pak" && !IsPatchPak(file.SourcePath) && !file.SourcePath.Contains("re_chunk_000") && mod.IsEnabled)
+                    if (Path.GetExtension(file.SourcePath) == ".pak" && !IsFilePatchPak(file.SourcePath) && !file.SourcePath.Contains("re_chunk_000") && mod.IsEnabled)
                     {
-                        string path = file.InstallPath.Replace(Path.GetFileName(file.InstallPath), PatchString(startIndex));
+                        string path = file.InstallPath.Replace(Path.GetFileName(file.InstallPath), FixPatchPakFileName(startIndex));
                         FileStreamHelper.CopyFile(file.SourcePath, path, false);
                         file.InstallPath = path;
                         startIndex++;

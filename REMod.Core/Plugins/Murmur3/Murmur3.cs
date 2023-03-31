@@ -1,6 +1,6 @@
 using System;
 
-namespace REMod.Core.Utils.Murmur3
+namespace REMod.Core.Plugins.Murmur3
 {
     public class Murmur3
     {
@@ -55,7 +55,7 @@ namespace REMod.Core.Utils.Murmur3
 
         private static uint Rotl32(uint x, byte r)
         {
-            return (x << (int)r) | (x >> 32 - r);
+            return x << r | x >> 32 - r;
         }
 
         public static bool VerificationTest()

@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace REMod.Core.Utils.BinaryOperations
+namespace REMod.Core.Plugins.BinaryOperations
 {
     public class Functions
     {
@@ -11,7 +11,7 @@ namespace REMod.Core.Utils.BinaryOperations
 
         public static int FileLen(string FilePath) => checked((int)new FileInfo(FilePath).Length);
 
-        public static string GetRatio(long Arg0, long Arg1) => ((double)Arg0 / (double)Arg1).ToString("#.##") + "%";
+        public static string GetRatio(long Arg0, long Arg1) => (Arg0 / (double)Arg1).ToString("#.##") + "%";
 
         public static bool IsNumeric(long Numeric) => new Regex("^[0-9]+\\d").IsMatch(Numeric.ToString());
 

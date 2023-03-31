@@ -3,7 +3,7 @@ using REMod.Core.Configuration.Enums;
 using System;
 using System.Diagnostics;
 
-namespace REMod.Core.Internal
+namespace REMod.Core.Manager
 {
     public class Steam
     {

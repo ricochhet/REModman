@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace REMod.Core.Utils.Murmur3
+namespace REMod.Core.Plugins.Murmur3
 {
     public static class MurMurHash3
     {
@@ -18,7 +18,7 @@ namespace REMod.Core.Utils.Murmur3
                     switch (array.Length)
                     {
                         case 4:
-                            num2 = (uint)(array[0] | (array[1] << 8) | (array[2] << 16) | (array[3] << 24));
+                            num2 = (uint)(array[0] | array[1] << 8 | array[2] << 16 | array[3] << 24);
                             num2 *= 3432918353u;
                             num2 = Rotl32(num2, 15);
                             num2 *= 461845907;
@@ -27,14 +27,14 @@ namespace REMod.Core.Utils.Murmur3
                             num = num * 5 + 3864292196u;
                             break;
                         case 3:
-                            num2 = (uint)(array[0] | (array[1] << 8) | (array[2] << 16));
+                            num2 = (uint)(array[0] | array[1] << 8 | array[2] << 16);
                             num2 *= 3432918353u;
                             num2 = Rotl32(num2, 15);
                             num2 *= 461845907;
                             num ^= num2;
                             break;
                         case 2:
-                            num2 = (uint)(array[0] | (array[1] << 8));
+                            num2 = (uint)(array[0] | array[1] << 8);
                             num2 *= 3432918353u;
                             num2 = Rotl32(num2, 15);
                             num2 *= 461845907;
@@ -57,7 +57,7 @@ namespace REMod.Core.Utils.Murmur3
 
         private static uint Rotl32(uint x, byte r)
         {
-            return (x << (int)r) | (x >> 32 - r);
+            return x << r | x >> 32 - r;
         }
 
         private static uint Fmix(uint h)

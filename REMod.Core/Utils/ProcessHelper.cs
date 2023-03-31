@@ -1,3 +1,6 @@
+using REMod.Core.Configuration.Enums;
+using REMod.Core.Configuration;
+using REMod.Core.Logger;
 using System;
 using System.Diagnostics;
 
@@ -13,6 +16,7 @@ namespace REMod.Core.Utils
             {
                 name = name.Replace(".exe", "");
             }
+
             if (name.ToLower().Contains(".bin"))
             {
                 name = name.Replace(".bin", "");
@@ -27,8 +31,10 @@ namespace REMod.Core.Utils
         }
 
         public static string GetProcPath(int procId) => Process.GetProcessById(procId).MainModule.FileName;
-
+        public static string GetProcPath(GameType type) => Process.GetProcessById(GetProcIdFromName(type)).MainModule.FileName;
         public static string GetProcPath(string procName) => Process.GetProcessById(GetProcIdFromName(procName)).MainModule.FileName;
+        public static int GetProcIdFromName(GameType type) => GetProcIdFromName(GameTypeResolver.ProcessName(type));
+        public static bool IsProcRunning(GameType type) => GetProcIdFromName(type) != 0;
 
         public static void OpenProcess(string fileName, string command, string workingDir)
         {
@@ -44,11 +50,6 @@ namespace REMod.Core.Utils
 
             Process process = Process.Start(processStartInfo);
             process.WaitForExit();
-
-            // string output = process.StandardOutput.ReadToEnd();
-            // string error = process.StandardError.ReadToEnd();
-            // int exitCode = process.ExitCode;
-
             process.Close();
         }
     }
