@@ -45,12 +45,9 @@ namespace REMod.Core.Providers
             Directory.CreateDirectory(folderPath);
             string pathToFile = Path.Combine(folderPath, fileName);
 
-            if (!File.Exists(pathToFile))
-            {
-                using FileStream fs = File.Create(pathToFile);
-                byte[] data = new UTF8Encoding(true).GetBytes(String);
-                fs.Write(data, 0, data.Length);
-            }
+            using FileStream fs = File.Create(pathToFile);
+            byte[] data = new UTF8Encoding(true).GetBytes(String);
+            fs.Write(data, 0, data.Length);
         }
 
         public static void DeleteFile(string pathToFile)
