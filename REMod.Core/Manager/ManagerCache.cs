@@ -31,8 +31,8 @@ namespace REMod.Core.Manager
 
             if (FsProvider.Exists(PathResolver.DataPath(type)) && FsProvider.Exists(PathResolver.IndexPath(type)))
             {
-                byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE), true);
-                string file = FileStreamHelper.UnkBytesToStr(bytes);
+                byte[] bytes = FsProvider.ReadFile(Path.Combine(dataFolder, Constants.MOD_INDEX_FILE));
+                string file = FsProvider.UnkBytesToStr(bytes);
                 list = JsonSerializer.Deserialize<List<ModData>>(file);
             }
 

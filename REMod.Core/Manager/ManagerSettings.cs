@@ -24,8 +24,8 @@ namespace REMod.Core.Manager
             {
                 if (File.Exists(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE)))
                 {
-                    byte[] bytes = FileStreamHelper.ReadFile(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE), true);
-                    string file = FileStreamHelper.UnkBytesToStr(bytes);
+                    byte[] bytes = FsProvider.ReadFile(Path.Combine(Constants.DATA_FOLDER, Constants.SETTINGS_FILE));
+                    string file = FsProvider.UnkBytesToStr(bytes);
                     settingsData = JsonSerializer.Deserialize<SettingsData>(file);
                 }
             }

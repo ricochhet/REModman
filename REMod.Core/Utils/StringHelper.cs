@@ -32,7 +32,7 @@ namespace REMod.Core.Utils
             return value.Length <= maxLength ? value : value[..maxLength];
         }
 
-        public static string Truncate(string value, int maxLength, string truncationSuffix = "…")
+        public static string Truncate(string value, int maxLength, string truncationSuffix = "...")
         {
             return value?.Length > maxLength
                 ? string.Concat(value.AsSpan(0, maxLength), truncationSuffix)

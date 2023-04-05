@@ -1,6 +1,6 @@
 using REMod.Core.Configuration.Structs;
 using REMod.Core.Logger;
-using REMod.Core.Utils;
+using REMod.Core.Providers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -90,7 +90,7 @@ namespace REMod.Core.Integrations
                     if (Path.GetExtension(file.SourcePath) == ".pak" && !IsFilePatchPak(file.SourcePath) && !file.SourcePath.Contains("re_chunk_000") && mod.IsEnabled)
                     {
                         string path = file.InstallPath.Replace(Path.GetFileName(file.InstallPath), FixPatchPakFileName(startIndex));
-                        FileStreamHelper.CopyFile(file.SourcePath, path, false);
+                        FsProvider.CopyFile(file.SourcePath, path);
                         file.InstallPath = path;
                         startIndex++;
                     }
