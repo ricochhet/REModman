@@ -25,7 +25,6 @@ namespace REMod.Core.Plugins
                 File.Delete(outputFile);
             }
 
-            // FileInfo[] files = new DirectoryInfo(Path.Combine(directory, "natives")).GetFiles("*.*", SearchOption.AllDirectories);
             string[] sortedFiles = Directory.GetFiles(Path.Combine(directory, "natives"), "*.*", SearchOption.AllDirectories)
                 .OrderBy(Path.GetDirectoryName)
                 .ThenBy(p => p.Count(c => c == Path.PathSeparator))
