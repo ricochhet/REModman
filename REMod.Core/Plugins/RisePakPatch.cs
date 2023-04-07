@@ -50,7 +50,6 @@ namespace REMod.Core.Plugins
                 if (text.StartsWith("/"))
                 {
                     text = text[1..];
-
                 }
 
                 uint hash = GetHash(text.ToLower(), uint.MaxValue);
