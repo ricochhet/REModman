@@ -6,6 +6,7 @@ using REMod.Core.Providers;
 using REMod.Core.Resolvers;
 using REMod.Core.Utils;
 using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -67,6 +68,39 @@ namespace REMod.Core.Manager
             }
         }
 
+        private static string GetPathByType(GameType type, FileInfo fileInfo) => type switch
+        {
+            GameType.None => "",
+            GameType.MonsterHunterRise => REEDataPatch.InstallPath(fileInfo),
+            GameType.MonsterHunterWorld => MTFrameworkDataPatch.GetRelativeFromNatives(fileInfo),
+            _ => throw new NotImplementedException(),
+        };
+
+        private static void AddToList(GameType type, ref List<ModFile> modFiles, ref string modHash, DirectoryInfo modItem, string gameDirectory)
+        {
+            FileInfo[] modItemFiles = FsProvider.GetFiles(modItem.FullName, "*.*", SearchOption.AllDirectories);
+
+            foreach (FileInfo modItemFile in modItemFiles)
+            {
+                if (FsProvider.IsPathSafe(modItemFile.Name))
+                {
+                    string fileHash = CryptoHelper.FileHash.Sha256(modItemFile.FullName);
+                    string currentInstallPath = GetPathByType(type, modItemFile);
+                    modHash += fileHash;
+
+                    if (!string.IsNullOrEmpty(currentInstallPath))
+                    {
+                        modFiles.Add(new ModFile
+                        {
+                            InstallPath = Path.Combine(gameDirectory, currentInstallPath),
+                            SourcePath = modItemFile.FullName,
+                            Hash = fileHash,
+                        });
+                    }
+                }
+            }
+        }
+
         public static List<ModData> Build(GameType type)
         {
             List<ModData> list = Load(type);
@@ -85,25 +119,13 @@ namespace REMod.Core.Manager
 
                     foreach (DirectoryInfo modItem in modItems)
                     {
-                        if (REEDataPatch.IsNatives(modItem.Name) || REEDataPatch.IsREF(modItem.Name))
+                        if (type == GameType.MonsterHunterRise && (REEDataPatch.IsNatives(modItem.Name) || REEDataPatch.IsREF(modItem.Name)))
                         {
-                            FileInfo[] modItemFiles = FsProvider.GetFiles(modItem.FullName, "*.*", SearchOption.AllDirectories);
-
-                            foreach (FileInfo modItemFile in modItemFiles)
-                            {
-                                if (FsProvider.IsPathSafe(modItemFile.Name))
-                                {
-                                    string fileHash = CryptoHelper.FileHash.Sha256(modItemFile.FullName);
-                                    modHash += fileHash;
-
-                                    modFiles.Add(new ModFile
-                                    {
-                                        InstallPath = Path.Combine(gameDirectory, REEDataPatch.InstallPath(modItemFile)),
-                                        SourcePath = modItemFile.FullName,
-                                        Hash = fileHash,
-                                    });
-                                }
-                            }
+                            AddToList(type, ref modFiles, ref modHash, modItem, gameDirectory);
+                        }
+                        else if (type == GameType.MonsterHunterWorld && MTFrameworkDataPatch.IsNatives(modItem.Name))
+                        {
+                            AddToList(type, ref modFiles, ref modHash, modItem, gameDirectory);
                         }
                     }
 
