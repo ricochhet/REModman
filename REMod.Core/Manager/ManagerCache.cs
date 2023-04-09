@@ -133,7 +133,7 @@ namespace REMod.Core.Manager
 
                     foreach (FileInfo file in files)
                     {
-                        if (REEDataPatch.IsValidPatchPak(file.FullName) && FsProvider.IsPathSafe(file.Name))
+                        if (type == GameType.MonsterHunterRise && REEDataPatch.IsValidPatchPak(file.FullName) && FsProvider.IsPathSafe(file.Name))
                         {
                             string fileHash = CryptoHelper.FileHash.Sha256(file.FullName);
                             modHash += fileHash;
