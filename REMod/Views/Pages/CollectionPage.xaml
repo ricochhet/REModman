@@ -60,7 +60,7 @@
             </ui:CardAction>
         </Grid>
 
-        <ui:CardAction Visibility="Collapsed" Grid.Row="1" Margin="8" Padding="16,13,16,12" Icon="Open28" Name="SetupGame_CardAction" Click="SetupGame_CardAction_Click" Initialized="SetupGame_CardAction_Initialized">
+        <ui:CardAction Visibility="Collapsed" Grid.Row="1" Margin="8,0,8,8" Padding="16,13,16,12" Icon="Open28" Name="SetupGame_CardAction" Click="SetupGame_CardAction_Click" Initialized="SetupGame_CardAction_Initialized">
             <StackPanel>
                 <TextBlock FontSize="14" Text="Setup Game (This only needs to be done once)." />
             </StackPanel>
